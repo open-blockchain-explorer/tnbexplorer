@@ -18,6 +18,21 @@
 .env.test.local
 .env.production.local
 
+#logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Webstorm
+.idea/
+
+# VS Code
+.vs/
+.vscode/
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
