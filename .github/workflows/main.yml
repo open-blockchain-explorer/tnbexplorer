@@ -40,5 +40,8 @@ jobs:
         run: |
           git config --global user.name ${{ secrets.USER_NAME }}
           git config --global user.email ${{ secrets.USER_EMAIL }}
+          git config user.email
+          git config user.name
           git remote set-url origin https://${{ secrets.ACCESS_TOCKEN }}@github.com/open-blockchain-explorer/Website
+          git remote -v
           npm run deploy
