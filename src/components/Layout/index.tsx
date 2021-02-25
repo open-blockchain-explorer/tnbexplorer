@@ -1,25 +1,33 @@
-import React, { FC } from "react";
-import { Col, Grid, Layout as AntDLayout, Row } from "antd";
-import Header from "./Header";
+import React, {FC} from 'react';
+import {Grid, Layout as AntDLayout} from 'antd';
+import {responsiveWidth} from 'utils/responsive';
+import Header from 'containers/Header';
 
-import { layoutPadding } from "utils/responsive";
+const {useBreakpoint} = Grid;
 
-const { useBreakpoint } = Grid;
+const {Footer, Content} = AntDLayout;
 
-const { Footer, Content } = AntDLayout;
-
-const Layout: FC = ({ children }) => {
+const Layout: FC = ({children}) => {
   const screens = useBreakpoint();
-  console.log(screens);
+
+  /* eslint-disable sort-keys */
+  const width = {
+    xxl: '150px',
+    xl: '70px',
+    lg: '70px',
+    md: '10px',
+    sm: '25px',
+    xs: '12.5px',
+  };
+
+  console.log(screens, responsiveWidth(screens, width));
 
   return (
     <>
       <AntDLayout>
-        <Header />
-        <Content style={{ padding: "50px " + layoutPadding(screens) }}>
-          <Row gutter={[20, 30]}>{children}</Row>
-        </Content>
-        <Footer style={{ paddingLeft: layoutPadding(screens) }}>Footer</Footer>
+        <Header padding={responsiveWidth(screens, width)} />
+        <Content style={{padding: `50px ${responsiveWidth(screens, width)}`}}>{children}</Content>
+        <Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</Footer>
       </AntDLayout>
     </>
   );

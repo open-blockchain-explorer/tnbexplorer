@@ -30,6 +30,7 @@
   "plugins": ["react", "@typescript-eslint", "jest"],
   "rules": {
     "@typescript-eslint/camelcase": "off",
+    "@typescript-eslint/object-curly-spacing": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -52,6 +53,7 @@
     "react/jsx-curly-brace-presence": "off",
     "react/no-array-index-key": "off",
     "react/no-unescaped-entities": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/prop-types": "off",
     "react/require-default-props": "off",
     "sort-keys": "error"

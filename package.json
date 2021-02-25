@@ -33,9 +33,7 @@
     "test": "react-scripts test"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app"
-    ]
+    "extends": "eslint:recommended"
   },
   "browserslist": {
     "production": [
@@ -74,6 +72,17 @@
       "pre-commit": "lint-staged"
     }
   },
+  "eslintIgnore": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "build",
+    "docs",
+    ".vscode",
+    ".github",
+    ".idea",
+    ".storybook"
+  ],
   "lint-staged": {
     "{,!(node_modules)/**/}*.{ts,tsx,js}": [
       "eslint --cache --fix",
