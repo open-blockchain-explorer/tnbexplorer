@@ -2,7 +2,7 @@
   "name": "website",
   "version": "0.1.0",
   "private": false,
-  "homepage": "http://open-blockchain-explorer.github.io/Website",
+  "homepage": "/Website",
   "dependencies": {
     "@ant-design/icons": "^4.5.0",
     "@testing-library/jest-dom": "^5.11.9",
