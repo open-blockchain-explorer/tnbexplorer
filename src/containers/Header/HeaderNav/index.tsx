@@ -3,6 +3,8 @@ import {Menu} from 'antd';
 import {Link} from 'react-router-dom';
 
 const HeaderNav = () => {
+  const url = window.location.href;
+  console.log(url);
   return (
     <Menu style={{lineHeight: '40px'}} theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
       <Menu.Item style={{marginLeft: '0px'}} key="1">
