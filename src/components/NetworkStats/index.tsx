@@ -12,8 +12,8 @@ const NetworkStats = () => {
           <Space size="small" split={<Divider type="vertical" style={{height: '90px'}} />}>
             <InfoPane title="distributed coins" previousData={19755300} currentData={19780000} />
             <InfoPane title="Accounts" previousData={520} currentData={530} />
-            <InfoPane title="Transactions" previousData={19146168} currentData={23566453} showChangeAsPercent />
-            <InfoPane title="Active banks" previousData={70} currentData={72} />
+            <InfoPane title="Transactions" previousData={32566453} currentData={23566453} showChangeAsPercent />
+            <InfoPane title="Active banks" previousData={74} currentData={72} />
             <InfoPane title="Active Validators" previousData={94} currentData={104} />
           </Space>
         </Col>

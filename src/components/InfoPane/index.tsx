@@ -18,7 +18,8 @@ const InfoPane: FC<{
   const change = currentData - previousData;
   const isGain = change > 0;
 
-  const changeArrow = () => {};
+  const formatGain = (n: number) => {};
+
   return (
     <div {...otherProps}>
       <Row>
@@ -30,7 +31,7 @@ const InfoPane: FC<{
         </Col>
         <Col span={24}>
           <Text type={change >= 0 ? 'success' : 'danger'}>
-            {showChangeAsPercent ? `${formatNumber((change / previousData) * 100)}%` : formatNumber(change)}{' '}
+            {showChangeAsPercent ? `${formatNumber((change / previousData) * 100)}%` : formatNumber(change)}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
           </Text>
         </Col>

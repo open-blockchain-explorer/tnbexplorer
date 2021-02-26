@@ -2,8 +2,8 @@ import React from 'react';
 import {Card, Col, Divider, Grid, Row, Space, Typography} from 'antd';
 import {ArrowRightOutlined} from '@ant-design/icons';
 import {ColumnsType, TableProps} from 'antd/es/table';
+import {formatDistance, subMinutes} from 'date-fns';
 import {finance, internet, time} from 'faker';
-import {format, compareAsc} from 'date-fns';
 
 import {ButtonLink, InfoPane, NetworkStats, PageContentsLayout, Table} from 'components';
 
@@ -36,7 +36,9 @@ const Overview = () => {
     {
       dataIndex: 'time',
       key: 'time',
-      render: (timestamp) => <Text>{format(new Date(timestamp), 'yyyy-MM-dd hh:mm:s aa')}</Text>,
+      render: (timestamp) => (
+        <Text> {formatDistance(subMinutes(new Date(timestamp), Math.floor(Math.random() * 100)), new Date())}</Text>
+      ),
       title: 'Time',
     },
     {
@@ -83,7 +85,9 @@ const Overview = () => {
     {
       dataIndex: 'time',
       key: 'time',
-      render: (timestamp) => <Text>{format(new Date(timestamp), 'yyyy-MM-dd hh:mm:s aa')}</Text>,
+      render: (timestamp) => (
+        <Text> {formatDistance(subMinutes(new Date(timestamp), Math.floor(Math.random() * 100)), new Date())}</Text>
+      ),
       title: 'Time',
     },
     {
@@ -129,7 +133,6 @@ const Overview = () => {
         </Col>
 
         <Col sm={24} md={12}>
-          {' '}
           <Table buttonLink="" pagination={false} dataSource={transactionsData} columns={transactionsColumn} />
         </Col>
       </PageContentsLayout>
