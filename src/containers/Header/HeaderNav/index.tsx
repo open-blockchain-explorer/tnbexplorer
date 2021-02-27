@@ -1,23 +1,54 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Menu} from 'antd';
-import {Link} from 'react-router-dom';
+import {} from 'antd/es/menu/';
+import {NavLink} from 'react-router-dom';
 
 const HeaderNav = () => {
-  const url = window.location.href;
-  console.log(url);
+  const [selectedNavlink, setSelectedNavlink] = useState(['1']);
+
+  useEffect(() => {
+    const url = window.location.href;
+    const navLink = url.split('/', 4)[3];
+
+    switch (navLink) {
+      case 'transactions':
+        setSelectedNavlink(['transactions']);
+        break;
+      case 'nodes':
+        setSelectedNavlink(['nodes']);
+        break;
+      case 'charts':
+        setSelectedNavlink(['charts']);
+        break;
+      default:
+        setSelectedNavlink(['overview']);
+        break;
+    }
+  }, []);
+
+  const onChange = ({keyPath}: any) => {
+    // console.log(keyPath);
+    setSelectedNavlink(keyPath);
+  };
   return (
-    <Menu style={{lineHeight: '40px'}} theme="light" mode="horizontal" defaultSelectedKeys={['1']}>
-      <Menu.Item style={{marginLeft: '0px'}} key="1">
-        <Link to="/">Overview</Link>
+    <Menu
+      onClick={onChange}
+      style={{lineHeight: '40px'}}
+      theme="light"
+      mode="horizontal"
+      selectedKeys={selectedNavlink}
+    >
+      <Menu.Item style={{marginLeft: '0px'}} key="overview">
+        <NavLink to="/">Overview</NavLink>
       </Menu.Item>
-      <Menu.Item key="2">
-        <Link to="/transactions">Transactions</Link>
+      <Menu.Item key="transactions">
+        <NavLink to="/transactions">Transactions</NavLink>
       </Menu.Item>
-      <Menu.Item key="3">
-        <Link to="/nodes">Nodes</Link>
+      <Menu.Item key="nodes">
+        <NavLink to="/nodes">Nodes</NavLink>
       </Menu.Item>
-      <Menu.Item key="4">
-        <Link to="/charts">Charts</Link>
+      <Menu.Item key="charts">
+        <NavLink to="/charts">Charts</NavLink>
       </Menu.Item>
     </Menu>
   );

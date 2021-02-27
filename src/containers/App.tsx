@@ -5,6 +5,7 @@ import {Layout} from 'components';
 
 import Overview from './Overview';
 import Transactions from './Transactions';
+import Nodes from './Nodes';
 
 function App() {
   return (
@@ -13,7 +14,13 @@ function App() {
         <Layout>
           <Switch>
             <Route exact path="/" component={Overview} />
-            <Route exact path="/transactions" component={Transactions} />
+            <Route exact path="/transactions">
+              <Transactions section="transactions" />
+            </Route>
+            <Route exact path="/blocks">
+              <Transactions section="blocks" />
+            </Route>
+            <Route exact path="/nodes" component={Nodes} />
           </Switch>
         </Layout>
       </Router>
