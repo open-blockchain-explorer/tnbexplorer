@@ -1,121 +1,31 @@
-import React, {useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import {Col, Row, Radio, Table, Typography} from 'antd';
-import {ColumnsType, TableProps} from 'antd/es/table';
-import {formatDistance, subMinutes} from 'date-fns';
-import {finance, internet, time} from 'faker';
+import {Link} from 'react-router-dom';
 
 import {NetworkStats, PageContentsLayout} from 'components';
+import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
+import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
 
-const Transactions = () => {
-  const [section, setSection] = useState('transactions');
+const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
+  const transactions = transactionsData(500);
+  const blocks = blocksData(500);
 
-  const transactionsColumn: ColumnsType<any> = [
-    {
-      dataIndex: 'sender',
-      ellipsis: true,
-      render: (text) => (
-        <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
-          {text}
-        </Typography.Link>
-      ),
-      title: 'Sender',
-    },
-    {
-      dataIndex: 'recipient',
-      ellipsis: true,
-      render: (text) => (
-        <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
-          {text}
-        </Typography.Link>
-      ),
-      title: 'Recipient',
-    },
-    {
-      dataIndex: 'time',
-      key: 'time',
-      render: (timestamp) => (
-        <Typography.Text>
-          {formatDistance(subMinutes(new Date(timestamp), Math.floor(Math.random() * 100)), new Date())}
-        </Typography.Text>
-      ),
-      title: 'Time',
-    },
-    {
-      align: 'right',
-      dataIndex: 'coins',
-      render: (text) => <Typography.Text>{text}</Typography.Text>,
-      title: 'Coins',
-    },
-  ];
+  const [blockPagination, setBlockPagination] = useState({current: 1, pageSize: 10, total: blocks.length});
 
-  const transactionsData = [];
-
-  for (let i = 0; i < 500; i += 1) {
-    transactionsData.push({
-      coins: finance.amount(),
-      recipient: finance.litecoinAddress(),
-      sender: finance.ethereumAddress(),
-      time: time.recent(),
-    });
-  }
-
-  const blocksColumn: ColumnsType<any> = [
-    {
-      dataIndex: 'balanceLock',
-      ellipsis: true,
-      key: 'balanceLock',
-      render: (text) => (
-        <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
-          {text}
-        </Typography.Link>
-      ),
-      title: 'Balance Lock',
-    },
-    {
-      dataIndex: 'bank',
-      key: 'bank',
-      render: (text) => <Typography.Link href=".">{text}</Typography.Link>,
-      title: 'Bank',
-    },
-    {
-      dataIndex: 'time',
-      key: 'time',
-      render: (timestamp) => (
-        <Typography.Text>
-          {formatDistance(subMinutes(new Date(timestamp), Math.floor(Math.random() * 100)), new Date())}
-        </Typography.Text>
-      ),
-      title: 'Time',
-    },
-    {
-      align: 'right',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (text) => <Typography.Text>{`${text} coins`}</Typography.Text>,
-      title: 'Amount',
-    },
-  ];
-
-  const blocksData = [];
-
-  for (let i = 0; i < 10; i += 1) {
-    blocksData.push({
-      amount: finance.amount(),
-      balanceLock: finance.bitcoinAddress(),
-      bank: internet.ip(),
-      time: time.recent(),
-    });
-  }
-
-  const [pagination, setPagination] = useState({current: 1, pageSize: 10, total: 500});
+  const [transactionPagination, setTransactionPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: transactions.length,
+  });
 
   const handleTableChange = (pageDetails: any, filters: any, sorter: any) => {
-    setPagination(pageDetails);
-    console.log({filters, pageDetails, sorter});
-  };
-
-  const onSectionChange = (event: any) => {
-    setSection(event.target.value);
+    if (section === 'transactions') {
+      setTransactionPagination(pageDetails);
+      console.log('transaction table', {filters, pageDetails, sorter});
+    } else {
+      setBlockPagination(pageDetails);
+      console.log('block table', {filters, pageDetails, sorter});
+    }
   };
 
   return (
@@ -125,9 +35,13 @@ const Transactions = () => {
       </Col>
 
       <Col span={24}>
-        <Radio.Group buttonStyle="solid" defaultValue="transactions" onChange={onSectionChange}>
-          <Radio.Button value="transactions"> Transactions </Radio.Button>
-          <Radio.Button value="blocks"> Blocks </Radio.Button>
+        <Radio.Group buttonStyle="solid" value={section}>
+          <Radio.Button value="transactions">
+            <Link to="/transactions">Transactions</Link>
+          </Radio.Button>
+          <Radio.Button value="blocks">
+            <Link to="/blocks"> Blocks </Link>
+          </Radio.Button>
         </Radio.Group>
       </Col>
 
@@ -136,13 +50,13 @@ const Transactions = () => {
           <Table
             bordered
             columns={transactionsColumn}
-            dataSource={transactionsData}
+            dataSource={transactions}
             onChange={handleTableChange}
-            pagination={pagination}
+            pagination={transactionPagination}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Transactions</Typography.Text>
-                <Typography.Text type="secondary"> (Showing the last 500k records)</Typography.Text>
+                <Typography.Text type="secondary"> (Showing the last {transactions.length} records)</Typography.Text>
               </Row>
             )}
           />
@@ -150,13 +64,13 @@ const Transactions = () => {
           <Table
             bordered
             columns={blocksColumn}
-            dataSource={blocksData}
+            dataSource={blocks}
             onChange={handleTableChange}
-            pagination={pagination}
+            pagination={blockPagination}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Blocks</Typography.Text>
-                <Typography.Text type="secondary"> (Showing the last 500k records)</Typography.Text>
+                <Typography.Text type="secondary"> (Showing the last {blocks.length} records)</Typography.Text>
               </Row>
             )}
           />
