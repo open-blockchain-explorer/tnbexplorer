@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from 'react';
 import {Col, Row, Radio, Table, Typography} from 'antd';
 import {Link} from 'react-router-dom';
 
-import {NetworkStats, PageContentsLayout} from 'components';
+import {FeeSummary, NetworkStats, PageContentsLayout} from 'components';
 import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
 import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
 
@@ -36,11 +36,15 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
 
       <Col span={24}>
         <Radio.Group buttonStyle="solid" value={section}>
-          <Radio.Button value="transactions">
-            <Link to="/transactions">Transactions</Link>
+          <Radio.Button value="transactions" style={{margin: '0px', padding: '0px'}}>
+            <Link to="/transactions" style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}>
+              Transactions
+            </Link>
           </Radio.Button>
-          <Radio.Button value="blocks">
-            <Link to="/blocks"> Blocks </Link>
+          <Radio.Button value="blocks" style={{margin: '0px', padding: '0px'}}>
+            <Link to="/blocks" style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}>
+              Blocks
+            </Link>
           </Radio.Button>
         </Radio.Group>
       </Col>
@@ -75,6 +79,10 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             )}
           />
         )}
+      </Col>
+
+      <Col span={8}>
+        <FeeSummary bankFee={{current: 130, previous: 107}} primaryValidatorFee={{current: 172, previous: 170}} />
       </Col>
     </PageContentsLayout>
   );

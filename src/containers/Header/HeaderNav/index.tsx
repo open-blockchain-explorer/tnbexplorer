@@ -11,6 +11,7 @@ const HeaderNav = () => {
     const navLink = url.split('/', 4)[3];
 
     switch (navLink) {
+      case 'blocks':
       case 'transactions':
         setSelectedNavlink(['transactions']);
         break;
