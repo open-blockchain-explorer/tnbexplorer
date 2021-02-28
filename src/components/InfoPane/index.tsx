@@ -1,39 +1,42 @@
 import React, {CSSProperties, FC} from 'react';
 import clsx from 'clsx';
 
-import {Card, Col, Row, Space, Typography} from 'antd';
+import {Card, Col, Row, RowProps, Space, Typography} from 'antd';
 import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
 
 import {formatNumber} from 'utils/format';
 
-const {Title, Text} = Typography;
+interface Statistics {
+  previous: number;
+  current: number;
+}
 
 const InfoPane: FC<{
   title: string;
-  previousData: number;
-  currentData: number;
+  data: Statistics;
   showChangeAsPercent?: boolean;
   style?: CSSProperties;
-}> = ({title, previousData, currentData, showChangeAsPercent, ...otherProps}) => {
-  const change = currentData - previousData;
+}> = ({title, data, showChangeAsPercent, ...otherProps}) => {
+  const {current, previous} = data;
+  const change = current - previous;
   const isGain = change > 0;
 
   const formatGain = (n: number) => {};
 
   return (
     <div {...otherProps}>
-      <Row>
+      <Row style={{textAlign: 'center'}}>
         <Col span={24}>
-          <Text type="secondary"> {title.toUpperCase()}</Text>
+          <Typography.Text type="secondary"> {title.toUpperCase()}</Typography.Text>
         </Col>
         <Col span={24}>
-          <Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>{formatNumber(currentData)}</Text>
+          <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>{formatNumber(current)}</Typography.Text>
         </Col>
         <Col span={24}>
-          <Text type={change >= 0 ? 'success' : 'danger'}>
-            {showChangeAsPercent ? `${formatNumber((change / previousData) * 100)}%` : formatNumber(change)}
+          <Typography.Text type={change >= 0 ? 'success' : 'danger'}>
+            {showChangeAsPercent ? `${formatNumber((change / previous) * 100)}%` : formatNumber(change)}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
-          </Text>
+          </Typography.Text>
         </Col>
       </Row>
     </div>

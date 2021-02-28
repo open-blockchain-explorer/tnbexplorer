@@ -1,45 +1,18 @@
 import React, {FC, SVGProps} from 'react';
-import {ReactComponent as HologramLogo} from 'assets/hologram.svg';
 import tnbLogo from 'assets/tnb-logo.png';
 import {Col, Grid, Layout as AntLayout, Menu, Input, Row, Space, Typography} from 'antd';
 
+import Banner from './Banner';
 import HeaderNav from './HeaderNav';
 
 const {Header: AntDHeader} = AntLayout;
 const {Title} = Typography;
 const {Search} = Input;
 
-const Header: FC<{padding?: string}> = ({padding}) => {
+const Header: FC<{padding: string}> = ({padding}) => {
   return (
     <>
-      <AntDHeader
-        style={{
-          color: 'white',
-          height: 'auto',
-          padding: `5px ${padding}`,
-        }}
-      >
-        <Row gutter={10} align="middle">
-          <Col style={{lineHeight: '15px'}}>
-            <HologramLogo
-              style={{
-                background: 'white',
-                borderRadius: '2px',
-                height: '40px',
-                padding: '3px',
-                width: '40px',
-              }}
-            />
-          </Col>
-
-          <Col>
-            <Title style={{color: 'white', fontWeight: 'bold', margin: '0px'}} level={3}>
-              TNB Explorer
-            </Title>
-          </Col>
-        </Row>
-      </AntDHeader>
-
+      <Banner padding={padding} />
       <AntDHeader
         style={{
           background: 'white',

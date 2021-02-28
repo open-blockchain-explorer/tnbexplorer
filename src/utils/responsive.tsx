@@ -21,5 +21,5 @@ export const responsiveWidth = (
   }
 
   if (typeof size === 'number') return size.toString().concat('px');
-  return size;
+  return size || '50px';
 };
