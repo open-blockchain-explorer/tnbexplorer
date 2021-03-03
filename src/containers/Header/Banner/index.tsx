@@ -35,7 +35,7 @@ const Banner: FC<{padding: string}> = ({padding}) => {
         </Row>
         <Col style={{lineHeight: '15px'}}>
           <Space size="large">
-            <BannerLink iconColor="#1890ff" link="http://bank.centralindia.cloudapp.azure.com/faucet/" text="Faucet" />
+            <BannerLink iconColor="#1890ff" link="http://bank.tnbexplorer.com/faucet/" text="Faucet" />
             <BannerLink iconColor="red" link="." text="Sponsor us" />
           </Space>
         </Col>
