@@ -1,8 +1,8 @@
-import React, { FC } from "react";
-import { Card, Col, Row, Table, Typography } from "antd";
+import React, { FC } from 'react';
+import { Col, Row, Table, Typography } from 'antd';
 
-import { ButtonLink } from "components";
-import { TableProps } from "antd/es/table";
+import { TableProps } from 'antd/es/table';
+import { ButtonLink } from '..';
 
 type OverviewTableProps = TableProps<any> & { buttonLink: string };
 const index: FC<OverviewTableProps> = ({ buttonLink, ...tableProps }) => {
