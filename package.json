@@ -26,35 +26,16 @@
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "lint": "eslint --ignore-path .gitignore .",
+    "lint": "tsc --noEmit && eslint \"./src/**/*.{js,ts,tsx}\" && stylelint \"./src/**/*.{css,scss}\"",
     "prettier": "prettier --write \"{,!(node_modules)/**/}*.{ts,tsx,js,json,css,less,scss}\"",
     "start": "react-scripts start",
     "stylelint": "stylelint \"./src/**/*.{css,scss}\" --fix",
-    "test": "react-scripts test",
-    "format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|json|css|html|md)\""
+    "test": "react-scripts test"
   },
-  "eslintIgnore": [
-    "node_modules",
-    "coverage",
-    "dist",
-    "build",
-    "docs",
-    ".vscode",
-    ".github"
-  ],
-  "prettier": {
-    "printWidth": 80,
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "trailingComma": "es5",
-    "bracketSpacing": true,
-    "proseWrap": "always",
-    "jsxSingleQuote": false,
-    "jsxBracketSameLine": false,
-    "quoteProps": "as-needed",
-    "htmlWhitespaceSensitivity": "css",
-    "arrowParens": "avoid"
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -66,21 +47,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "**/*.+(js|ts|graphql|yml|yaml|vue|tsx)": [
-      "eslint --fix",
-      "prettier --write",
-      "jest --findRelatedTests"
-    ],
-    "**/*.+(css|sass|less|scss|json|html)": [
-      "prettier --write"
     ]
   },
   "devDependencies": {
@@ -102,6 +68,21 @@
     "prettier": "^2.2.1",
     "stylelint": "^13.8.0",
     "stylelint-order": "^4.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "{,!(node_modules)/**/}*.{ts,tsx,js}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
+    "{,!(node_modules)/**/}*.{css,scss}": [
+      "prettier --write",
+      "stylelint --cache --fix"
+    ]
   },
   "jest": {
     "transformIgnorePatterns": [
