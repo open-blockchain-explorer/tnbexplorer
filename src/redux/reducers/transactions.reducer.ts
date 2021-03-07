@@ -11,7 +11,7 @@ interface Actions {
 
 export default (state = initialState, action: Actions) => {
   switch (action.type) {
-    case transactionTypes.GET_ALL_TRANSACTIONA:
+    case transactionTypes.GET_ALL_TRANSACTIONS:
       return {
         ...state,
         allTransactions: action.payload,
