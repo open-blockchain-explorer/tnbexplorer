@@ -2,11 +2,18 @@ import React, {FC, useEffect, useState} from 'react';
 import {Col, Row, Radio, Table, Typography} from 'antd';
 import {Link} from 'react-router-dom';
 
-import {FeeSummary, NetworkStats, PageContentsLayout} from 'components';
+import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
 import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
 
-const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
+interface ComponentProps {
+  type?: 'mainnet' | 'testnet';
+}
+
+const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = ({section, type = 'mainnet'}) => {
+  const isMainnet = type === 'mainnet';
+  const path = isMainnet ? 'tnb' : 'testnet';
+
   const transactions = transactionsData(500);
   const blocks = blocksData(500);
 
@@ -30,19 +37,20 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
 
   return (
     <PageContentsLayout>
-      <Col span={24}>
-        <NetworkStats />
-      </Col>
+      <Col span={24}>{isMainnet ? <NetworkStats /> : <TestnetAlertMessage />}</Col>
 
       <Col span={24}>
         <Radio.Group buttonStyle="solid" value={section}>
           <Radio.Button value="transactions" style={{margin: '0px', padding: '0px'}}>
-            <Link to="/transactions" style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}>
+            <Link
+              to={`/${path}/transactions`}
+              style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}
+            >
               Transactions
             </Link>
           </Radio.Button>
           <Radio.Button value="blocks" style={{margin: '0px', padding: '0px'}}>
-            <Link to="/blocks" style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}>
+            <Link to={`/${path}/blocks`} style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}>
               Blocks
             </Link>
           </Radio.Button>

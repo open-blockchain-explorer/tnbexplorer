@@ -18,10 +18,12 @@ const FeeSummary: FC<{bankFee: Statistics; primaryValidatorFee: Statistics}> = (
         <Col>
           <Typography.Text style={{fontSize: 'xx-large', fontWeight: 'bold'}}>{total}</Typography.Text>
         </Col>
-        <Space split={<Divider type="vertical" style={{height: '90px'}} />}>
-          <InfoPane title="All Banks" data={bankFee} />
-          <InfoPane title="Primary Validator" data={primaryValidatorFee} />
-        </Space>
+        <Col span={24}>
+          <Space split={<Divider type="vertical" style={{height: '90px'}} />}>
+            <InfoPane title="All Banks" data={bankFee} />
+            <InfoPane title="Primary Validator" data={primaryValidatorFee} />
+          </Space>
+        </Col>
       </Row>
     </Card>
   );
