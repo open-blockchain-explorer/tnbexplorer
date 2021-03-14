@@ -55,6 +55,8 @@ function App() {
             <Route exact path="/testnet/nodes">
               <Nodes type="testnet" />
             </Route>
+
+            <Redirect to="/tnb/" />
           </LayoutPicker>
         </Switch>
       </Router>
