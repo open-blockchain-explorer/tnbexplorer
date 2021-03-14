@@ -7,7 +7,11 @@ const {useBreakpoint} = Grid;
 
 const {Footer, Content} = AntDLayout;
 
-const Layout: FC = ({children}) => {
+interface ComponentProps {
+  type?: 'mainnet' | 'testnet';
+}
+
+const Layout: FC<ComponentProps> = ({children, type = 'mainnet'}) => {
   const screens = useBreakpoint();
 
   /* eslint-disable sort-keys */
@@ -25,7 +29,7 @@ const Layout: FC = ({children}) => {
   return (
     <>
       <AntDLayout>
-        <Header padding={responsiveWidth(screens, width)} />
+        <Header padding={responsiveWidth(screens, width)} type={type} />
         <Content style={{padding: `50px ${responsiveWidth(screens, width)}`}}>{children}</Content>
         <Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</Footer>
       </AntDLayout>

@@ -16,7 +16,7 @@ export const transactionsColumn: ColumnsType<any> = [
     dataIndex: 'sender',
     ellipsis: true,
     render: (text) => (
-      <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Typography.Link href={`./account/${text}`} style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
       </Typography.Link>
     ),
@@ -26,7 +26,7 @@ export const transactionsColumn: ColumnsType<any> = [
     dataIndex: 'recipient',
     ellipsis: true,
     render: (text) => (
-      <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Typography.Link href={`./account/${text}`} style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
       </Typography.Link>
     ),

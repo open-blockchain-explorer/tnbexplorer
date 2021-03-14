@@ -4,19 +4,22 @@ import {ColumnsType, TableProps} from 'antd/es/table';
 import {formatDistance, subMinutes} from 'date-fns';
 import {finance, internet, time} from 'faker';
 
-import {NetworkStats, PageContentsLayout} from 'components';
+import {NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {validatorsColumn, validatorsData} from 'mocks/tableData/validators';
 import {banksColumn, banksData} from 'mocks/tableData/banks';
 
-const Nodes: FC = () => {
+interface ComponentProps {
+  type?: 'mainnet' | 'testnet';
+}
+
+const Nodes: FC<ComponentProps> = ({type = 'mainnet'}) => {
+  const isMainnet = type === 'mainnet';
   const banks = banksData(10);
   const validators = validatorsData(10);
 
   return (
     <PageContentsLayout>
-      <Col span={24}>
-        <NetworkStats />
-      </Col>
+      <Col span={24}>{isMainnet ? <NetworkStats /> : <TestnetAlertMessage />}</Col>
 
       <Col sm={24} md={12}>
         <Table

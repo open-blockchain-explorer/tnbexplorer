@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {Card, Col, Divider, Grid, Row, Space, Typography} from 'antd';
 import {ArrowRightOutlined} from '@ant-design/icons';
 
-import {ButtonLink, InfoPane, NetworkStats, PageContentsLayout, Table} from 'components';
+import {ButtonLink, InfoPane, NetworkStats, PageContentsLayout, Table, TestnetAlertMessage} from 'components';
 import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
 import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
 
@@ -12,7 +12,12 @@ const {useBreakpoint} = Grid;
 
 const {Link, Text} = Typography;
 
-const Overview = () => {
+interface ComponentProps {
+  type?: 'mainnet' | 'testnet';
+}
+
+const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
+  const isMainnet = type === 'mainnet';
   const screens = useBreakpoint();
 
   /* eslint-disable sort-keys */
@@ -28,9 +33,7 @@ const Overview = () => {
   return (
     <>
       <PageContentsLayout>
-        <Col span={24}>
-          <NetworkStats />
-        </Col>
+        <Col span={24}>{isMainnet ? <NetworkStats /> : <TestnetAlertMessage />}</Col>
 
         <Col sm={24} md={12}>
           <Row>
