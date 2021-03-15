@@ -45,7 +45,7 @@ const SponsorUs = () => {
               </Col>
               <Col span={24}>
                 <Typography.Text copyable ellipsis>
-                  fdcae93c70a143ed38a188389e8aa37b446d3ee244e96cae0ef758672860d8d2
+                  1AefJGT4JmJ4bYi91WpHn1aSmiQJyg3m9k
                 </Typography.Text>
               </Col>
               <Col>
@@ -62,7 +62,7 @@ const SponsorUs = () => {
               </Col>
               <Col span={24}>
                 <Typography.Text copyable ellipsis>
-                  fdcae93c70a143ed36a188389e6aa37b446d3ee244e96cae0ef758672860d8d2
+                  0x5Df197b20de86389A53577e21b5F22d492be6618
                 </Typography.Text>
               </Col>
               <Col>
