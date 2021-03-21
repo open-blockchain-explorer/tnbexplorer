@@ -1,5 +1,6 @@
-import React, {FC, useEffect, useState} from 'react';
-import {Col, Row, Radio, Table, Typography} from 'antd';
+import React, {FC, useEffect, useState, useCallback} from 'react';
+import {Col, Row, Radio, Table, Typography, TablePaginationConfig} from 'antd';
+import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
@@ -14,26 +15,67 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
   const isMainnet = type === 'mainnet';
   const path = isMainnet ? 'tnb' : 'testnet';
 
-  const transactions = transactionsData(500);
   const blocks = blocksData(500);
 
-  const [blockPagination, setBlockPagination] = useState({current: 1, pageSize: 10, total: blocks.length});
+  const [transactionData, setTransactionData] = useState<any[]>([]);
 
-  const [transactionPagination, setTransactionPagination] = useState({
+  const [blockPagination, setBlockPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
-    total: transactions.length,
+    total: blocks.length,
   });
 
-  const handleTableChange = (pageDetails: any, filters: any, sorter: any) => {
+  const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+
+  const handleTableChange = (pageDetails: TablePaginationConfig, filters: any, sorter: any) => {
+    const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
+    // console.log(pageDetails);
+    const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
+
     if (section === 'transactions') {
-      setTransactionPagination(pageDetails);
-      console.log('transaction table', {filters, pageDetails, sorter});
+      // setTransactionPagination(pageDetails);
+      getTransactions(limit, offset);
+      // console.log('transaction table', {filters, pageDetails, sorter});
     } else {
       setBlockPagination(pageDetails);
-      console.log('block table', {filters, pageDetails, sorter});
+      // console.log('block table', {filters, pageDetails, sorter});
     }
   };
+
+  const getTransactions = useCallback((limit = 10, offset = 0) => {
+    const bankUrl = 'http://13.57.215.62';
+    axios.get(`${bankUrl}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
+      console.log(res.data.results);
+      const data = res.data.results.map((transaction: any) => {
+        return {
+          coins: transaction.amount,
+          recipient: transaction.recipient,
+          sender: transaction.block.sender,
+          time: transaction.block.modified_date,
+        };
+      });
+
+      const pageSize = limit;
+      const currentPage = offset / limit + 1;
+
+      const pagination = {
+        current: currentPage,
+        pageSize,
+        total: res.data.count,
+      };
+      // console.log({pagination});
+      setTransactionData(data);
+      setTransactionPagination(pagination);
+    });
+  }, []);
+
+  useEffect(() => {
+    getTransactions();
+  }, [getTransactions]);
 
   return (
     <PageContentsLayout>
@@ -62,13 +104,16 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
           <Table
             bordered
             columns={transactionsColumn}
-            dataSource={transactions}
+            dataSource={transactionData}
             onChange={handleTableChange}
             pagination={transactionPagination}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Transactions</Typography.Text>
-                <Typography.Text type="secondary"> (Showing the last {transactions.length} records)</Typography.Text>
+                <Typography.Text type="secondary">
+                  {' '}
+                  (Showing the last {new Intl.NumberFormat().format(transactionPagination.total ?? 0)} records)
+                </Typography.Text>
               </Row>
             )}
           />

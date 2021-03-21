@@ -35,17 +35,13 @@ export const transactionsColumn: ColumnsType<any> = [
   {
     dataIndex: 'time',
     key: 'time',
-    render: (timestamp) => (
-      <Typography.Text>
-        {formatDistance(subMinutes(new Date(timestamp), Math.floor(Math.random() * 100)), new Date())}
-      </Typography.Text>
-    ),
+    render: (timestamp) => <Typography.Text>{formatDistance(new Date(timestamp), new Date())}</Typography.Text>,
     title: 'Time',
   },
   {
     align: 'right',
     dataIndex: 'coins',
-    render: (text) => <Typography.Text>{text}</Typography.Text>,
+    render: (coins) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
     title: 'Coins',
   },
 ];

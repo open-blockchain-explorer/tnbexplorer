@@ -27,7 +27,7 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
   const menu = (
     <Menu>
       <Menu.Item>
-        <Link to="/tnb">
+        <Link to="/tnb/">
           <Row align="bottom" gutter={[15, 0]}>
             <Col offset={1} style={{lineHeight: '20px'}}>
               <img src={tnbLogo} width={15} alt="thenewboston logo" />
@@ -41,7 +41,7 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
       </Menu.Item>
 
       <Menu.Item>
-        <Link to="/testnet">
+        <Link to="/testnet/">
           <Row align="bottom" gutter={[15, 0]}>
             <Col offset={1} style={{lineHeight: '20px'}}>
               <img src={tnbTestnetLogo} width={15} alt="thenewboston logo" />
