@@ -4,8 +4,9 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
+import {transactionsData} from 'mocks/tableData/transactions';
 import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
+import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
 interface ComponentProps {
   type?: 'mainnet' | 'testnet';
@@ -16,7 +17,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
   const path = isMainnet ? 'tnb' : 'testnet';
 
   const blocks = blocksData(500);
-
+  const transactionColumn = useTransactionColumn();
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
   const [blockPagination, setBlockPagination] = useState<TablePaginationConfig>({
@@ -103,7 +104,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
         {section === 'transactions' ? (
           <Table
             bordered
-            columns={transactionsColumn}
+            columns={transactionColumn}
             dataSource={transactionData}
             onChange={handleTableChange}
             pagination={transactionPagination}
