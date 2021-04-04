@@ -1,19 +1,37 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {Button, Card, Col, Divider, Grid, List, PageHeader, Row, Space, Table, Typography, TypographyProps} from 'antd';
+import {
+  Button,
+  Breadcrumb,
+  Card,
+  Col,
+  Divider,
+  Grid,
+  List,
+  PageHeader,
+  Row,
+  Statistic,
+  Table,
+  Typography,
+  TypographyProps,
+} from 'antd';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
+
+import {useAccount} from 'hooks';
 
 import qrCode from 'assets/qr.png';
 
 import {KeyValuePair, PageContentsLayout} from 'components';
-import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
+import {transactionsData} from 'mocks/tableData/transactions';
+import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
 const Account = ({location}: any) => {
   const screens = Grid.useBreakpoint();
 
-  const account = window.location.pathname.split('/')[3];
+  const account = useAccount();
+  const transactionColumn = useTransactionColumn(account);
 
-  const [accountBalance, setAccountBalance] = useState(0);
+  const [accountDetails, setAccountDetails] = useState<{balance?: number; balanceLock: string}>();
 
   const [transactions, setTransactions] = useState<any[]>([]);
 
@@ -57,10 +75,15 @@ const Account = ({location}: any) => {
 
   const getAccountDetails = useCallback(async (accountNumber: string) => {
     const PV = 'http://54.241.124.162';
-    let data = 0;
+    const data: any = {};
 
     await axios.get(`${PV}/accounts/${accountNumber}/balance`).then((res) => {
-      data = res.data.balance;
+      data.balance = res.data.balance;
+    });
+
+    await axios.get(`${PV}/accounts/${accountNumber}/balance_lock`).then((res) => {
+      console.log(res.data);
+      data.balanceLock = res.data.balance_lock;
     });
 
     return data;
@@ -70,13 +93,13 @@ const Account = ({location}: any) => {
     // console.log({account});
     // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
 
-    const fetchAccountBalance = async () => {
-      const balance = await getAccountDetails(account);
-      console.log({balance});
-      setAccountBalance(balance);
+    const fetchAccountDetails = async () => {
+      const details = await getAccountDetails(account);
+      console.log({details});
+      setAccountDetails(details);
     };
 
-    fetchAccountBalance();
+    fetchAccountDetails();
 
     const fetchTransactions = async () => {
       const txs = await getTransactions(account, {limit: 10, offset: 0});
@@ -106,6 +129,13 @@ const Account = ({location}: any) => {
       value: account.substring(0, 24).concat('...'),
     },
     {
+      copyable: {
+        text: account,
+      },
+      title: 'Balance Lock',
+      value: accountDetails?.balanceLock.substring(0, 24).concat('...') ?? 0,
+    },
+    {
       title: 'Transactions',
       value: transactionPagination.total,
     },
@@ -117,10 +147,7 @@ const Account = ({location}: any) => {
       title: 'Total Coins Sent',
       value: '-',
     },
-    {
-      title: 'Final Balance',
-      value: accountBalance,
-    },
+
     {
       title: 'Balance Outliers',
       value: '-',
@@ -130,66 +157,72 @@ const Account = ({location}: any) => {
   return (
     <PageContentsLayout>
       <Col span={24}>
-        <PageHeader
-          title={
-            <Typography.Title level={3} style={{margin: '0px'}}>
-              Account
-            </Typography.Title>
-          }
-          subTitle="This is an anonymous digital identity on thenewboston network where coins can be sent to and from."
-        />
+        <Breadcrumb>
+          <Breadcrumb.Item>Home</Breadcrumb.Item>
+
+          <Breadcrumb.Item>Account</Breadcrumb.Item>
+        </Breadcrumb>
         <Card>
-          <Row justify="space-between">
+          <Row justify="space-around" align="bottom">
             {screens.md ? (
               <Col flex="100px" md={8}>
-                <Row justify="start" align="middle">
-                  <Col>
-                    <img src={qrCode} width="250px" alt="" />
-                  </Col>
+                <div style={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+                  <img src={qrCode} width="200px" alt="" />
 
-                  <Col>
-                    <Button>
-                      <Link to="./trace-transaction">Trace Transaction</Link>
-                    </Button>
-                  </Col>
-                </Row>
+                  <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
+
+                  <Link to="./trace-transactions">
+                    <Button>Trace Transaction</Button>
+                  </Link>
+                </div>
               </Col>
             ) : (
               <></>
             )}
             <Col md={16}>
-              <List
-                itemLayout="horizontal"
-                dataSource={data}
-                renderItem={({title, value, ...properties}) => (
-                  <List.Item>
-                    {title === 'Account Number' && screens.md === false ? (
-                      <Row>
-                        <Col span={24}>
-                          <KeyValuePair title={title} value={value} {...properties} />
-                        </Col>
-                        <Col>
-                          <Row justify="end" align="middle">
-                            <Col>
-                              <img src={qrCode} width="250px" alt="" />
-                            </Col>
+              <Row gutter={[0, 20]} justify="space-between">
+                <Col>
+                  <Typography.Text type="secondary">
+                    Account is an anonymous digital identity on thenewboston network where coins can be sent to and
+                    from.
+                  </Typography.Text>
+                </Col>
 
+                <Col span={24}>
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={data}
+                    renderItem={({title, value, ...properties}) => (
+                      <List.Item>
+                        {title === 'Account Number' && screens.md === false ? (
+                          <Row>
+                            <Col span={24}>
+                              <KeyValuePair title={title} value={value} {...properties} />
+                            </Col>
                             <Col>
-                              <Button>
-                                <Link to="./trace-transaction">Trace Transaction</Link>
-                              </Button>
+                              <Row justify="end" align="middle">
+                                <Col>
+                                  <img src={qrCode} width="250px" alt="" />
+                                </Col>
+
+                                <Col>
+                                  <Button>
+                                    <Link to="./trace-transaction">Trace Transaction</Link>
+                                  </Button>
+                                </Col>
+                              </Row>
                             </Col>
                           </Row>
-                        </Col>
-                      </Row>
-                    ) : (
-                      <KeyValuePair title={title} value={value} {...properties} />
+                        ) : (
+                          <KeyValuePair title={title} value={value} {...properties} />
+                        )}
+                      </List.Item>
                     )}
-                  </List.Item>
-                )}
-              >
-                <Divider type="horizontal" style={{margin: '0px'}} />
-              </List>
+                  >
+                    <Divider type="horizontal" style={{margin: '0px'}} />
+                  </List>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Card>
@@ -198,7 +231,7 @@ const Account = ({location}: any) => {
       <Col>
         <Table
           bordered
-          columns={transactionsColumn}
+          columns={transactionColumn}
           dataSource={transactions}
           onChange={handleTableChange}
           pagination={transactionPagination}

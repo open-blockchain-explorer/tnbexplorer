@@ -3,9 +3,9 @@ import {Card, Col, Divider, Grid, Row, Space, Table, Typography} from 'antd';
 import axios from 'axios';
 
 import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from 'components';
-import {transactionsColumn} from 'mocks/tableData/transactions';
 import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
 import {responsiveWidth} from 'utils/responsive';
+import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
 const {useBreakpoint} = Grid;
 
@@ -14,6 +14,7 @@ interface ComponentProps {
 }
 
 const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
+  const transactionColumn = useTransactionColumn();
   const [blockData, setBlockData] = useState<any[]>([]);
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
@@ -74,7 +75,7 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
           <Table
             bordered
             dataSource={transactionData}
-            columns={transactionsColumn}
+            columns={transactionColumn}
             pagination={false}
             title={() => <TableHeader title="Latest Transactions" buttonLink={''} />}
           />

@@ -1,17 +1,9 @@
 import React from 'react';
 import {Tag, Typography} from 'antd';
-import {ColumnGroupType, ColumnsType, TableProps} from 'antd/es/table';
+import {ColumnsType} from 'antd/es/table';
 import {formatDistance, subMinutes} from 'date-fns';
-import {finance, internet, time} from 'faker';
 
-interface TransactionsColumnType {
-  coins: number;
-  recipient: string;
-  sender: string;
-  time: number;
-}
-
-export const transactionColumn = (accountNumber?: string): ColumnsType<any> => {
+export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> => {
   const formatColumnAccount = (text: string) => {
     if (accountNumber && accountNumber === text) {
       return text;
@@ -87,19 +79,4 @@ export const transactionColumn = (accountNumber?: string): ColumnsType<any> => {
     ];
   }
   return columns;
-};
-
-export const transactionsData = (total: number) => {
-  const data: TransactionsColumnType[] = [];
-
-  for (let i = 0; i < total; i += 1) {
-    data.push({
-      coins: parseFloat(finance.amount()),
-      recipient: finance.litecoinAddress(),
-      sender: finance.ethereumAddress(),
-      time: time.recent(),
-    });
-  }
-
-  return data;
 };
