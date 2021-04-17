@@ -3,6 +3,7 @@ import tnbLogo from 'assets/tnb-logo.png';
 import tnbTestnetLogo from 'assets/tnb-testnet-logo.png';
 
 import {Button, Col, Dropdown, Grid, Layout as AntLayout, Menu, Input, Row, Space, Typography} from 'antd';
+import {CaretDownOutlined} from '@ant-design/icons';
 import {Link} from 'react-router-dom';
 
 import Banner from './Banner';
@@ -82,8 +83,8 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
                 }}
               >
                 <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
-                  <Row align="bottom" gutter={[15, 0]}>
-                    <Col style={{lineHeight: '20px'}}>
+                  <Row align="bottom" gutter={[10, 0]} style={{lineHeight: '20px'}}>
+                    <Col>
                       <img src={logo} alt="thenewboston logo" />
                     </Col>
                     <Col>
@@ -96,6 +97,9 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
                           {logoText}
                         </Typography.Title>
                       )}
+                    </Col>
+                    <Col>
+                      <CaretDownOutlined style={{fontSize: 'large', paddingBottom: '5px'}} />
                     </Col>
                   </Row>
                 </Dropdown>

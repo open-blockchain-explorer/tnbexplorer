@@ -6,5 +6,6 @@ export {default as Layout} from './Layout';
 export {default as InfoPane} from './InfoPane';
 export {default as NetworkStats} from './NetworkStats';
 export {default as PageContentsLayout} from './PageContentsLayout';
+export {default as Qr} from './Qr';
 export {default as TableHeader} from './TableHeader';
 export {default as TestnetAlertMessage} from './TestnetAlertMessage';

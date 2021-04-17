@@ -1,29 +1,13 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {
-  Button,
-  Breadcrumb,
-  Card,
-  Col,
-  Divider,
-  Grid,
-  List,
-  PageHeader,
-  Row,
-  Statistic,
-  Table,
-  Typography,
-  TypographyProps,
-} from 'antd';
+import {Button, Breadcrumb, Card, Col, Divider, Grid, List, Row, Statistic, Table, Typography} from 'antd';
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {useAccount} from 'hooks';
 
-import qrCode from 'assets/qr.png';
-
-import {KeyValuePair, PageContentsLayout} from 'components';
-import {transactionsData} from 'mocks/tableData/transactions';
+import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
+import {BANK_URL} from 'constants/url';
 
 const Account = ({location}: any) => {
   const screens = Grid.useBreakpoint();
@@ -42,10 +26,9 @@ const Account = ({location}: any) => {
   });
 
   const getTransactions = useCallback(async (accountNumber: string, {limit, offset}) => {
-    const bankUrl = 'http://13.57.215.62';
     let data: any[] = [];
     await axios
-      .get(`${bankUrl}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`)
+      .get(`${BANK_URL}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`)
       .then((res: any) => {
         console.log(res.data.results);
         const result = res.data.results.map((transaction: any) => {
@@ -133,7 +116,7 @@ const Account = ({location}: any) => {
         text: account,
       },
       title: 'Balance Lock',
-      value: accountDetails?.balanceLock.substring(0, 24).concat('...') ?? 0,
+      value: accountDetails?.balanceLock.substring(0, 24).concat('...') ?? '-',
     },
     {
       title: 'Transactions',
@@ -145,11 +128,6 @@ const Account = ({location}: any) => {
     },
     {
       title: 'Total Coins Sent',
-      value: '-',
-    },
-
-    {
-      title: 'Balance Outliers',
       value: '-',
     },
   ];
@@ -167,7 +145,7 @@ const Account = ({location}: any) => {
             {screens.md ? (
               <Col flex="100px" md={8}>
                 <div style={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
-                  <img src={qrCode} width="200px" alt="" />
+                  <Qr text={account} width={160} />
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
@@ -199,12 +177,14 @@ const Account = ({location}: any) => {
                             <Col span={24}>
                               <KeyValuePair title={title} value={value} {...properties} />
                             </Col>
-                            <Col>
-                              <Row justify="end" align="middle">
-                                <Col>
-                                  <img src={qrCode} width="250px" alt="" />
+                            <Col span={24}>
+                              <Row justify="end" align="middle" gutter={[0, 10]}>
+                                <Col span={12}>
+                                  <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
                                 </Col>
-
+                                <Col span={12}>
+                                  <Qr text={account} />
+                                </Col>
                                 <Col>
                                   <Button>
                                     <Link to="./trace-transaction">Trace Transaction</Link>

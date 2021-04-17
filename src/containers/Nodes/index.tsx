@@ -5,8 +5,8 @@ import {formatDistance, subMinutes} from 'date-fns';
 import {finance, internet, time} from 'faker';
 
 import {NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {validatorsColumn, validatorsData} from 'mocks/tableData/validators';
-import {banksColumn, banksData} from 'mocks/tableData/banks';
+import {validatorsColumn, validatorsData} from 'data/tableData/validators';
+import {banksColumn, banksData} from 'data/tableData/banks';
 
 interface ComponentProps {
   type?: 'mainnet' | 'testnet';
