@@ -33,14 +33,8 @@ const config = {
     },
 
     date: {
-      formatter: function formatter(rawDate: string) {
-        // from: 2020-11-29-00_52_42
-        // to: "2021-04-17T21:42:05.240Z"
-        const date = rawDate.slice(0, rawDate.lastIndexOf('-'));
-        const time = rawDate.split('-')[3].split('_').join(':');
-
-        const dateTime = `${date}T${time}Z`;
-        return formatDate(new Date(dateTime), 'MM/dd/yy');
+      formatter: function formatter(date: string) {
+        return formatDate(new Date(date), 'MM/dd/yy');
       },
       nice: true,
       tickCount: 10,
