@@ -4,8 +4,8 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {transactionsData} from 'mocks/tableData/transactions';
-import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
+import {BANK_URL} from 'constants/url';
+import {blocksColumn, blocksData} from 'data/tableData/blocks';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
 interface ComponentProps {
@@ -48,8 +48,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
   };
 
   const getTransactions = useCallback((limit = 10, offset = 0) => {
-    const bankUrl = 'http://13.57.215.62';
-    axios.get(`${bankUrl}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
+    axios.get(`${BANK_URL}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
       console.log(res.data.results);
       const data = res.data.results.map((transaction: any) => {
         return {
