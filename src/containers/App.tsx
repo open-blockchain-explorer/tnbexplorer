@@ -5,6 +5,7 @@ import {Layout} from 'components';
 
 import Account from './Account';
 import Overview from './Overview';
+import Stats from './Stats';
 import Transactions from './Transactions';
 import Nodes from './Nodes';
 import SponsorUs from './SponsorUs';
@@ -47,6 +48,8 @@ function App() {
             <Transactions section="blocks" />
           </Route>
           <Route exact path="/tnb/nodes/" component={Nodes} />
+
+          <Route exact path="/tnb/stats/" component={Stats} />
 
           {/* Testnet  Routes */}
           <Route exact path="/testnet/">
