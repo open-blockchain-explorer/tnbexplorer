@@ -141,7 +141,7 @@ const dailyChangeInCoinsConfig = {
 const ownershipPercentage: any[] = [];
 
 stats.forEach((record) => {
-  const {top_5: top5, top_10: top10, top_25: top25, top_50: top50} = record.ownership_percent;
+  const {top5, top10, top25, top50} = record.ownership_percent;
 
   ownershipPercentage.push({
     date: record.date,
@@ -209,7 +209,7 @@ const ownershipConfig = {
   xField: 'date',
   yAxis: {
     title: {
-      offset: 50,
+      offset: 70,
       text: 'Ownership Percent',
       visible: true,
     },
