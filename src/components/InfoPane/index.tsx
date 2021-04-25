@@ -19,8 +19,13 @@ const InfoPane: FC<{
 }> = ({title, data, showChangeAsPercent, ...otherProps}) => {
   const {current, previous} = data;
   const change = current - previous;
-  const isGain = change > 0;
-
+  const isGain = change >= 0;
+  let textColour: any;
+  if (change === 0) {
+    textColour = 'secondary';
+  } else {
+    textColour = change > 0 ? 'success' : 'danger';
+  }
   const formatGain = (n: number) => {};
 
   return (
@@ -33,7 +38,7 @@ const InfoPane: FC<{
           <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>{formatNumber(current)}</Typography.Text>
         </Col>
         <Col span={24}>
-          <Typography.Text type={change >= 0 ? 'success' : 'danger'}>
+          <Typography.Text type={textColour}>
             {showChangeAsPercent ? `${formatNumber((change / previous) * 100)}%` : formatNumber(change)}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
           </Typography.Text>

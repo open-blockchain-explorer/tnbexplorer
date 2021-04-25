@@ -24,9 +24,9 @@ const NetworkStats = () => {
                   title="Accounts"
                   data={{current: Number(latestStats.accounts), previous: Number(previousStats.accounts)}}
                 />
-                <InfoPane title="Transactions" data={{current: 23566453, previous: 32566453}} showChangeAsPercent />
-                <InfoPane title="Active banks" data={{current: 72, previous: 74}} />
-                <InfoPane title="Active Validators" data={{current: 104, previous: 94}} />
+                <InfoPane title="Transactions" data={{current: 8492, previous: 8212}} showChangeAsPercent />
+                <InfoPane title="Active banks" data={{current: 1, previous: 1}} />
+                <InfoPane title="Active Validators" data={{current: 2, previous: 2}} />
               </Space>
             </Col>
           </Row>
