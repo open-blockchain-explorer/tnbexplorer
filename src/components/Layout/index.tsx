@@ -30,7 +30,7 @@ const Layout: FC<ComponentProps> = ({children, type = 'mainnet'}) => {
     <>
       <AntDLayout>
         <Header padding={responsiveWidth(screens, width)} type={type} />
-        <Content style={{padding: `50px ${responsiveWidth(screens, width)}`}}>{children}</Content>
+        <Content style={{padding: `0px ${responsiveWidth(screens, width)}`}}>{children}</Content>
         <Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</Footer>
       </AntDLayout>
     </>
