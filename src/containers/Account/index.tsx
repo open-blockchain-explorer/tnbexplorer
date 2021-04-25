@@ -135,11 +135,6 @@ const Account = ({location}: any) => {
   return (
     <PageContentsLayout>
       <Col span={24}>
-        <Breadcrumb>
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-
-          <Breadcrumb.Item>Account</Breadcrumb.Item>
-        </Breadcrumb>
         <Card>
           <Row justify="space-around" align="bottom">
             {screens.md ? (

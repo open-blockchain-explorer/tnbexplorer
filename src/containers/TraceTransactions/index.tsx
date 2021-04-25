@@ -1,5 +1,8 @@
 import React, {useState, useRef} from 'react';
+import {Card, Col} from 'antd';
 import {DagreGraph} from '@ant-design/charts';
+
+import {ChartsCard, PageContentsLayout} from 'components';
 
 const TraceTransactions = () => {
   const userAccount = '8928526805de48e4bf2ed2a9b4b839e6b2603018ecdfbf4cffdb2065e01a3ed1';
@@ -493,23 +496,32 @@ const TraceTransactions = () => {
   };
 
   return (
-    <DagreGraph
-      nodeStyle={nodeStyle}
-      layout={layoutCfg}
-      height={850}
-      nodeAnchorPoints={anchorPoints}
-      nodeType={nodeType}
-      nodeLabelCfg={nodeLabelCfg}
-      minimapCfg={minimapCfg}
-      behaviors={behaviors}
-      data={data}
-      handleEdgeClick={handleEdgeClick}
-      handleCanvasClick={handleCanvasClick}
-      edgeStateStyles={edgeStateStyles}
-      nodeStateStyles={nodeStateStyles}
-      handleNodeClick={handleNodeClick}
-      graphId="dagreFirst"
-    />
+    <PageContentsLayout>
+      <Col span={24}>
+        <ChartsCard
+          title="Map Of Account Transactions"
+          description="The graph shows all the accounts interactions and the total sum of coins sent between them"
+        >
+          <DagreGraph
+            nodeStyle={nodeStyle}
+            layout={layoutCfg}
+            height={850}
+            nodeAnchorPoints={anchorPoints}
+            nodeType={nodeType}
+            nodeLabelCfg={nodeLabelCfg}
+            minimapCfg={minimapCfg}
+            behaviors={behaviors}
+            data={data}
+            handleEdgeClick={handleEdgeClick}
+            handleCanvasClick={handleCanvasClick}
+            edgeStateStyles={edgeStateStyles}
+            nodeStateStyles={nodeStateStyles}
+            handleNodeClick={handleNodeClick}
+            graphId="dagreFirst"
+          />
+        </ChartsCard>
+      </Col>
+    </PageContentsLayout>
   );
 };
 
