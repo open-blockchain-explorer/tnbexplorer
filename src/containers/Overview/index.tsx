@@ -1,22 +1,24 @@
-import React, {FC} from 'react';
-import {Card, Col, Divider, Grid, Row, Space, Typography} from 'antd';
-import {ArrowRightOutlined} from '@ant-design/icons';
+import React, {FC, useEffect, useState} from 'react';
+import {Card, Col, Divider, Grid, Row, Space, Table, Typography} from 'antd';
+import axios from 'axios';
 
-import {ButtonLink, InfoPane, NetworkStats, PageContentsLayout, Table, TestnetAlertMessage} from 'components';
-import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
-import {blocksColumn, blocksData} from 'mocks/tableData/blocks';
-
+import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from 'components';
+import {BANK_URL} from 'constants/url';
+import {blocksColumn, blocksData} from 'data/tableData/blocks';
 import {responsiveWidth} from 'utils/responsive';
+import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
 const {useBreakpoint} = Grid;
-
-const {Link, Text} = Typography;
 
 interface ComponentProps {
   type?: 'mainnet' | 'testnet';
 }
 
 const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
+  const transactionColumn = useTransactionColumn();
+  const [blockData, setBlockData] = useState<any[]>([]);
+  const [transactionData, setTransactionData] = useState<any[]>([]);
+
   const isMainnet = type === 'mainnet';
   const screens = useBreakpoint();
 
@@ -30,6 +32,28 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
     xs: '50px',
   });
 
+  const defaultOptions = {limit: 10, offset: 0};
+  useEffect(() => {
+    axios.get(`${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
+      console.log(res.data.results);
+
+      const data = res.data.results.map((transaction: any) => {
+        return {
+          coins: transaction.amount,
+          recipient: transaction.recipient,
+          sender: transaction.block.sender,
+          time: transaction.block.modified_date,
+        };
+      });
+
+      setTransactionData(data);
+    });
+
+    // axios.get(`${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
+
+    // });
+  }, []);
+
   return (
     <>
       <PageContentsLayout>
@@ -37,12 +61,24 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
 
         <Col sm={24} md={12}>
           <Row>
-            <Table buttonLink="" pagination={false} dataSource={blocksData(10)} columns={blocksColumn} />
+            <Table
+              bordered
+              dataSource={blocksData(10)}
+              columns={blocksColumn}
+              pagination={false}
+              title={() => <TableHeader title="Latest Blocks" buttonLink={''} />}
+            />
           </Row>
         </Col>
 
         <Col sm={24} md={12}>
-          <Table buttonLink="" pagination={false} dataSource={transactionsData(10)} columns={transactionsColumn} />
+          <Table
+            bordered
+            dataSource={transactionData}
+            columns={transactionColumn}
+            pagination={false}
+            title={() => <TableHeader title="Latest Transactions" buttonLink={''} />}
+          />
         </Col>
       </PageContentsLayout>
     </>

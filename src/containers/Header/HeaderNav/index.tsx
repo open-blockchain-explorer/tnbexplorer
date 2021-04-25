@@ -26,8 +26,8 @@ const HeaderNav: FC<ComponentProps> = ({type = 'mainnet'}) => {
       case 'nodes':
         setSelectedNavlink(['nodes']);
         break;
-      case 'charts':
-        setSelectedNavlink(['charts']);
+      case 'stats':
+        setSelectedNavlink(['stats']);
         break;
       default:
         setSelectedNavlink(['overview']);
@@ -58,8 +58,8 @@ const HeaderNav: FC<ComponentProps> = ({type = 'mainnet'}) => {
         <NavLink to={`/${path}/nodes`}>Nodes</NavLink>
       </Menu.Item>
       {isMainnet ? (
-        <Menu.Item key="charts">
-          <NavLink to="/tnb/charts">Charts</NavLink>
+        <Menu.Item key="stats">
+          <NavLink to="/tnb/stats">Stats</NavLink>
         </Menu.Item>
       ) : (
         <></>

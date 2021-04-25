@@ -1,14 +1,23 @@
-import React, {FC, useState} from 'react';
-import {Button, Card, Col, Divider, PageHeader, Row, Space, Table, Typography, TypographyProps} from 'antd';
+import React, {FC, useCallback, useEffect, useState} from 'react';
+import {Button, Breadcrumb, Card, Col, Divider, Grid, List, Row, Statistic, Table, Typography} from 'antd';
+import axios from 'axios';
 import {Link} from 'react-router-dom';
 
-import qrCode from 'assets/qr.png';
+import {useAccount} from 'hooks';
 
-import {PageContentsLayout} from 'components';
-import {transactionsColumn, transactionsData} from 'mocks/tableData/transactions';
+import {KeyValuePair, PageContentsLayout, Qr} from 'components';
+import {useTransactionColumn} from 'hooks/useTransactionColumn';
+import {BANK_URL} from 'constants/url';
 
 const Account = ({location}: any) => {
-  const transactions = transactionsData(500);
+  const screens = Grid.useBreakpoint();
+
+  const account = useAccount();
+  const transactionColumn = useTransactionColumn(account);
+
+  const [accountDetails, setAccountDetails] = useState<{balance?: number; balanceLock: string}>();
+
+  const [transactions, setTransactions] = useState<any[]>([]);
 
   const [transactionPagination, setTransactionPagination] = useState({
     current: 1,
@@ -16,101 +25,198 @@ const Account = ({location}: any) => {
     total: transactions.length,
   });
 
-  const handleTableChange = (pageDetails: any, filters: any, sorter: any) => {
+  const getTransactions = useCallback(async (accountNumber: string, {limit, offset}) => {
+    let data: any[] = [];
+    await axios
+      .get(`${BANK_URL}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`)
+      .then((res: any) => {
+        console.log(res.data.results);
+        const result = res.data.results.map((transaction: any) => {
+          return {
+            coins: transaction.amount,
+            recipient: transaction.recipient,
+            sender: transaction.block.sender,
+            time: transaction.block.modified_date,
+          };
+        });
+
+        const pageSize = limit;
+        const currentPage = offset / limit + 1;
+
+        const pagination = {
+          current: currentPage,
+          pageSize,
+          total: res.data.count,
+        };
+
+        data = result;
+        setTransactionPagination(pagination);
+      });
+
+    return data;
+  }, []);
+
+  const getAccountDetails = useCallback(async (accountNumber: string) => {
+    const PV = 'http://54.241.124.162';
+    const data: any = {};
+
+    await axios.get(`${PV}/accounts/${accountNumber}/balance`).then((res) => {
+      data.balance = res.data.balance;
+    });
+
+    await axios.get(`${PV}/accounts/${accountNumber}/balance_lock`).then((res) => {
+      console.log(res.data);
+      data.balanceLock = res.data.balance_lock;
+    });
+
+    return data;
+  }, []);
+
+  useEffect(() => {
+    // console.log({account});
+    // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
+
+    const fetchAccountDetails = async () => {
+      const details = await getAccountDetails(account);
+      console.log({details});
+      setAccountDetails(details);
+    };
+
+    fetchAccountDetails();
+
+    const fetchTransactions = async () => {
+      const txs = await getTransactions(account, {limit: 10, offset: 0});
+
+      setTransactions(txs);
+    };
+    fetchTransactions();
+  }, [account, getAccountDetails, getTransactions]);
+
+  const handleTableChange = async (pageDetails: any, filters: any, sorter: any) => {
+    const limit = pageDetails.pageSize ?? 10;
+    const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
+
     setTransactionPagination(pageDetails);
+    const tsx = await getTransactions(account, {limit, offset});
+
+    setTransactions(tsx);
     console.log('transaction table', {filters, pageDetails, sorter});
   };
 
-  const KeyValuePair: FC<{title: string; text: string; copyable?: boolean}> = ({
-    title,
-    text,
-    copyable = false,
-    ...others
-  }) => (
-    <Row>
-      <Col span={8}>
-        <Typography.Text strong type="secondary">
-          {title}
-        </Typography.Text>
-      </Col>
-      <Col span={16}>
-        <Typography.Text strong copyable={copyable}>
-          {text}
-        </Typography.Text>
-      </Col>
-    </Row>
-  );
+  const data = [
+    {
+      copyable: {
+        text: account,
+      },
+      title: 'Account Number',
+      value: account.substring(0, 24).concat('...'),
+    },
+    {
+      copyable: {
+        text: account,
+      },
+      title: 'Balance Lock',
+      value: accountDetails?.balanceLock.substring(0, 24).concat('...') ?? '-',
+    },
+    {
+      title: 'Transactions',
+      value: transactionPagination.total,
+    },
+    {
+      title: 'Total Coins Received',
+      value: '-',
+    },
+    {
+      title: 'Total Coins Sent',
+      value: '-',
+    },
+  ];
+
   return (
     <PageContentsLayout>
-      <PageHeader
-        title="Account"
-        subTitle="This is an anonymous digital identity on thenewboston network where coins can be sent to and from."
-      />
+      <Col span={24}>
+        <Card>
+          <Row justify="space-around" align="bottom">
+            {screens.md ? (
+              <Col flex="100px" md={8}>
+                <div style={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+                  <Qr text={account} width={160} />
 
-      <Card>
-        <Row>
-          <Col span={8}>
-            <img src={qrCode} alt="" />
-            <Button>
-              <Link to="./trace-transaction">Trace Transaction</Link>
-            </Button>
-          </Col>
+                  <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
-          <Col span={16}>
-            <Row>
-              <Col span={24}>
-                <KeyValuePair title="Account Number" text="FTEDTRFYUH^TR%DiutyfiytfyRFTVYUFRTVI" copyable />
+                  <Link to="./trace-transactions">
+                    <Button>Trace Transaction</Button>
+                  </Link>
+                </div>
               </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-              <Col span={24}>
-                <KeyValuePair title="Transactions" text="234" />
-              </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-              <Col span={24}>
-                <KeyValuePair title="Total Coins Received" text="223,345" />
-              </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-              <Col span={24}>
-                <KeyValuePair title="Total Coins Sent" text="345,234" />
-              </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-              <Col span={24}>
-                <KeyValuePair title="Final Balance" text="34,000" />
-              </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-              <Col span={24}>
-                <KeyValuePair title="Balance Outliers" text="-98,000" />
-              </Col>
-              <Col span={24}>
-                <Divider type="horizontal" />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-      </Card>
+            ) : (
+              <></>
+            )}
+            <Col md={16}>
+              <Row gutter={[0, 20]} justify="space-between">
+                <Col>
+                  <Typography.Text type="secondary">
+                    Account is an anonymous digital identity on thenewboston network where coins can be sent to and
+                    from.
+                  </Typography.Text>
+                </Col>
 
-      <Table
-        bordered
-        columns={transactionsColumn}
-        dataSource={transactions}
-        onChange={handleTableChange}
-        pagination={transactionPagination}
-        title={() => (
-          <Row justify="space-between" align="middle">
-            <Typography.Text> Transactions</Typography.Text>
+                <Col span={24}>
+                  <List
+                    itemLayout="horizontal"
+                    dataSource={data}
+                    renderItem={({title, value, ...properties}) => (
+                      <List.Item>
+                        {title === 'Account Number' && screens.md === false ? (
+                          <Row>
+                            <Col span={24}>
+                              <KeyValuePair title={title} value={value} {...properties} />
+                            </Col>
+                            <Col span={24}>
+                              <Row justify="end" align="middle" gutter={[0, 10]}>
+                                <Col span={12}>
+                                  <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
+                                </Col>
+                                <Col span={12}>
+                                  <Qr text={account} />
+                                </Col>
+                                <Col>
+                                  <Button>
+                                    <Link to="./trace-transaction">Trace Transaction</Link>
+                                  </Button>
+                                </Col>
+                              </Row>
+                            </Col>
+                          </Row>
+                        ) : (
+                          <KeyValuePair title={title} value={value} {...properties} />
+                        )}
+                      </List.Item>
+                    )}
+                  >
+                    <Divider type="horizontal" style={{margin: '0px'}} />
+                  </List>
+                </Col>
+              </Row>
+            </Col>
           </Row>
-        )}
-      />
+        </Card>
+      </Col>
+
+      <Col>
+        <Table
+          bordered
+          columns={transactionColumn}
+          dataSource={transactions}
+          onChange={handleTableChange}
+          pagination={transactionPagination}
+          title={() => (
+            <Row justify="space-between" align="middle">
+              <Typography.Text> Transactions</Typography.Text>
+            </Row>
+          )}
+        />
+      </Col>
     </PageContentsLayout>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Card, Col, Row, Typography} from 'antd';
 
-import qrCode from 'assets/qr.png';
+import {Qr} from 'components';
 
 const SponsorUs = () => {
   return (
@@ -31,7 +31,7 @@ const SponsorUs = () => {
                 </Typography.Text>
               </Col>
               <Col>
-                <img src={qrCode} width="120px" alt="thenewboston" />
+                <Qr text={'1dfb0e7dd672032da0d8c29385ba6d22ec9d1134a115cc5596c5e4b69e6fc9a5'} />
               </Col>
             </Row>
           </Card>
@@ -49,7 +49,7 @@ const SponsorUs = () => {
                 </Typography.Text>
               </Col>
               <Col>
-                <img src={qrCode} width="120px" alt="thenewboston" />
+                <Qr text="1AefJGT4JmJ4bYi91WpHn1aSmiQJyg3m9k" />
               </Col>
             </Row>
           </Card>
@@ -66,7 +66,7 @@ const SponsorUs = () => {
                 </Typography.Text>
               </Col>
               <Col>
-                <img src={qrCode} width="120px" alt="thenewboston" />
+                <Qr text="0x5Df197b20de86389A53577e21b5F22d492be6618" />
               </Col>
             </Row>
           </Card>
