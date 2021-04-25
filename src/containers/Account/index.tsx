@@ -7,7 +7,7 @@ import {useAccount} from 'hooks';
 
 import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
-import {BANK_URL} from 'constants/url';
+import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
 
 const Account = ({location}: any) => {
   const screens = Grid.useBreakpoint();
@@ -28,7 +28,9 @@ const Account = ({location}: any) => {
   const getTransactions = useCallback(async (accountNumber: string, {limit, offset}) => {
     let data: any[] = [];
     await axios
-      .get(`${BANK_URL}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`)
+      .get(
+        `${CORS_BRIDGE}/${BANK_URL}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`,
+      )
       .then((res: any) => {
         console.log(res.data.results);
         const result = res.data.results.map((transaction: any) => {
@@ -57,14 +59,13 @@ const Account = ({location}: any) => {
   }, []);
 
   const getAccountDetails = useCallback(async (accountNumber: string) => {
-    const PV = 'http://54.241.124.162';
     const data: any = {};
 
-    await axios.get(`${PV}/accounts/${accountNumber}/balance`).then((res) => {
+    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance`).then((res) => {
       data.balance = res.data.balance;
     });
 
-    await axios.get(`${PV}/accounts/${accountNumber}/balance_lock`).then((res) => {
+    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance_lock`).then((res) => {
       console.log(res.data);
       data.balanceLock = res.data.balance_lock;
     });

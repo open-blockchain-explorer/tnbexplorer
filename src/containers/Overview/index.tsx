@@ -3,7 +3,7 @@ import {Card, Col, Divider, Grid, Row, Space, Table, Typography} from 'antd';
 import axios from 'axios';
 
 import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from 'components';
-import {BANK_URL} from 'constants/url';
+import {BANK_URL, CORS_BRIDGE} from 'constants/url';
 import {blocksColumn, blocksData} from 'data/tableData/blocks';
 import {responsiveWidth} from 'utils/responsive';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
@@ -34,7 +34,7 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
 
   const defaultOptions = {limit: 10, offset: 0};
   useEffect(() => {
-    axios.get(`${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
+    axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
       console.log(res.data.results);
 
       const data = res.data.results.map((transaction: any) => {
@@ -49,7 +49,7 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
       setTransactionData(data);
     });
 
-    // axios.get(`${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
+    // axios.get(`${CORS_BRIDGE}/${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
 
     // });
   }, []);

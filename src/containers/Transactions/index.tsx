@@ -4,7 +4,7 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {BANK_URL} from 'constants/url';
+import {BANK_URL, CORS_BRIDGE} from 'constants/url';
 import {blocksColumn, blocksData} from 'data/tableData/blocks';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 
@@ -48,7 +48,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
   };
 
   const getTransactions = useCallback((limit = 10, offset = 0) => {
-    axios.get(`${BANK_URL}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
+    axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
       console.log(res.data.results);
       const data = res.data.results.map((transaction: any) => {
         return {
