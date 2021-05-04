@@ -1,8 +1,9 @@
 import React from 'react';
-import {Typography} from 'antd';
-import {ColumnsType, TableProps} from 'antd/es/table';
+import Typography from 'antd/es/typography';
+import {ColumnsType} from 'antd/es/table';
 import {formatDistance, subMinutes} from 'date-fns';
 import {finance, internet, time} from 'faker';
+import {Link} from 'react-router-dom';
 
 export interface BlocksColumnType {
   amount: number;
@@ -17,16 +18,16 @@ export const blocksColumn: ColumnsType<any> = [
     ellipsis: true,
     key: 'balanceLock',
     render: (text) => (
-      <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Link to="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
-      </Typography.Link>
+      </Link>
     ),
     title: 'Balance Lock',
   },
   {
     dataIndex: 'bank',
     key: 'bank',
-    render: (text) => <Typography.Link href=".">{text}</Typography.Link>,
+    render: (text) => <Link to=".">{text}</Link>,
     title: 'Bank',
   },
   {

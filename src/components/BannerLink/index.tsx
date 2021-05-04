@@ -1,5 +1,6 @@
 import React, {FC} from 'react';
-import {Space, Typography} from 'antd';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
 
 const BannerLink: FC<{iconColor: string; link: string; text: string}> = ({iconColor, link, text}) => {
   return (
