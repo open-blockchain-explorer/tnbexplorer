@@ -1,8 +1,8 @@
 import React, {FC, ReactNode, useCallback, useEffect, useState} from 'react';
-import {useLocation} from 'react-router-dom';
-import {Breadcrumb, Layout as AntDLayout, Row} from 'antd';
-import {HomeFilled} from '@ant-design/icons';
-import {isElementAccessExpression} from 'typescript';
+import Breadcrumb from 'antd/es/breadcrumb';
+import Row from 'antd/es/row';
+
+import HomeFilled from '@ant-design/icons/HomeFilled';
 
 const PageContentsLayout: FC = ({children}) => {
   const [breadCrumb, setBreadCrumb] = useState<ReactNode[]>();
@@ -18,24 +18,26 @@ const PageContentsLayout: FC = ({children}) => {
         .concat('/');
 
     const breadCrumbItems: ReactNode[] = [
-      <Breadcrumb.Item href={getHref(0)}>
+      <Breadcrumb.Item key={0} href={getHref(0)}>
         <HomeFilled />
       </Breadcrumb.Item>,
     ];
 
     const validUrls = ['account', 'trace-transactions'];
 
-    console.log({url});
+    // console.log({url});
     if (url.length > 2) {
       for (let i = 1; i < url.length; i += 1) {
         if (url[i].length > 0) {
           if (validUrls.includes(url[i])) {
             breadCrumbItems.push(
-              <Breadcrumb.Item href={getHref(i)}>{url[i].charAt(0).toUpperCase() + url[i].slice(1)}</Breadcrumb.Item>,
+              <Breadcrumb.Item key={i} href={getHref(i)}>
+                {url[i].charAt(0).toUpperCase() + url[i].slice(1)}
+              </Breadcrumb.Item>,
             );
           } else {
             breadCrumbItems[breadCrumbItems.length - 1] = (
-              <Breadcrumb.Item href={getHref(i)}>
+              <Breadcrumb.Item key={i} href={getHref(i)}>
                 {url[i - 1].charAt(0).toUpperCase() + url[i - 1].slice(1)}
               </Breadcrumb.Item>
             );
@@ -48,7 +50,7 @@ const PageContentsLayout: FC = ({children}) => {
 
   useEffect(() => {
     const breadCrumbs = getBreadCrumbItems();
-    console.log(breadCrumbs.length);
+    // console.log(breadCrumbs.length);
     if (breadCrumbs.length > 1) setBreadCrumb(breadCrumbs);
   }, [getBreadCrumbItems]);
 

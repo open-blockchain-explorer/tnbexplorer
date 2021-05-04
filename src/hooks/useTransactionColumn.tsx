@@ -1,17 +1,21 @@
 import React from 'react';
-import {Tag, Typography} from 'antd';
+import Tag from 'antd/es/tag';
+import Typography from 'antd/es/typography';
+import {Link} from 'react-router-dom';
 import {ColumnsType} from 'antd/es/table';
-import {formatDistance, subMinutes} from 'date-fns';
+import {formatDistance} from 'date-fns';
+import {useChainPath} from 'hooks';
 
 export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> => {
+  const currentPath = useChainPath();
   const formatColumnAccount = (text: string) => {
     if (accountNumber && accountNumber === text) {
       return text;
     }
     return (
-      <Typography.Link href={`./account/${text}/`} style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Link to={`${currentPath}/account/${text}/`} style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
-      </Typography.Link>
+      </Link>
     );
   };
 
@@ -19,7 +23,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
     {
       dataIndex: 'sender',
       ellipsis: true,
-      key: 'sender',
+      key: 'recipient',
       render: (text) => formatColumnAccount(text),
       title: 'Sender',
     },
@@ -41,7 +45,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
     {
       align: 'right',
       dataIndex: 'coins',
-      render: (coins, row) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
+      render: (coins) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
       title: 'Coins',
     },
   ];

@@ -1,5 +1,8 @@
 import React, {FC} from 'react';
-import {Button, Col, Row} from 'antd';
+import Button from 'antd/es/button';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+
 import {ArrowRightOutlined} from '@ant-design/icons';
 
 const BannerLink: FC<{link: string; text?: string}> = ({link, text = 'View All'}) => {

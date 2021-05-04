@@ -1,8 +1,8 @@
 import React, {FC, useState} from 'react';
-import {Col, Row, Radio, Table, Typography} from 'antd';
-import {ColumnsType, TableProps} from 'antd/es/table';
-import {formatDistance, subMinutes} from 'date-fns';
-import {finance, internet, time} from 'faker';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+import Table from 'antd/es/table';
+import Typography from 'antd/es/typography';
 
 import {NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {validatorsColumn, validatorsData} from 'data/tableData/validators';

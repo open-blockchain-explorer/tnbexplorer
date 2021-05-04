@@ -1,12 +1,16 @@
 import React, {FC} from 'react';
-import {Col, Layout as AntLayout, Row, Space, Typography} from 'antd';
+import Col from 'antd/es/col';
+import AntDLayout from 'antd/es/layout';
+import Row from 'antd/es/row';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
 
 import {ReactComponent as HologramLogo} from 'assets/hologram.svg';
 import {BannerLink} from 'components';
 
 const Banner: FC<{padding: string}> = ({padding}) => {
   return (
-    <AntLayout.Header
+    <AntDLayout.Header
       style={{
         color: 'white',
         height: 'auto',
@@ -40,7 +44,7 @@ const Banner: FC<{padding: string}> = ({padding}) => {
           </Space>
         </Col>
       </Row>
-    </AntLayout.Header>
+    </AntDLayout.Header>
   );
 };
 

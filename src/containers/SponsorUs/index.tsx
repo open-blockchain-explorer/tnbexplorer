@@ -1,5 +1,8 @@
 import React from 'react';
-import {Card, Col, Row, Typography} from 'antd';
+import Card from 'antd/es/card';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+import Typography from 'antd/es/typography';
 
 import {Qr} from 'components';
 

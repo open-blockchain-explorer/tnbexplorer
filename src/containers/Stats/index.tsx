@@ -1,5 +1,9 @@
 import React, {FC} from 'react';
-import {Card, Col, Space, Typography} from 'antd';
+import Card from 'antd/es/card';
+import Col from 'antd/es/col';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
+
 import {Area, Bar, Line, Pie} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 

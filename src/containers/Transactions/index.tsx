@@ -1,5 +1,10 @@
 import React, {FC, useEffect, useState, useCallback} from 'react';
-import {Col, Row, Radio, Table, Typography, TablePaginationConfig} from 'antd';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+import Radio from 'antd/es/radio';
+import Table, {TablePaginationConfig} from 'antd/es/table';
+import Typography from 'antd/es/typography';
+
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 
@@ -32,18 +37,15 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
     total: 0,
   });
 
-  const handleTableChange = (pageDetails: TablePaginationConfig, filters: any, sorter: any) => {
+  const handleTableChange = (pageDetails: TablePaginationConfig) => {
     const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
     // console.log(pageDetails);
     const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
     if (section === 'transactions') {
-      // setTransactionPagination(pageDetails);
       getTransactions(limit, offset);
-      // console.log('transaction table', {filters, pageDetails, sorter});
     } else {
       setBlockPagination(pageDetails);
-      // console.log('block table', {filters, pageDetails, sorter});
     }
   };
 
@@ -99,7 +101,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
         </Radio.Group>
       </Col>
 
-      <Col span={16}>
+      <Col sm={24} md={16} xl={17}>
         {section === 'transactions' ? (
           <Table
             bordered
@@ -134,7 +136,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
         )}
       </Col>
 
-      <Col span={8}>
+      <Col sm={10} md={8} xl={7}>
         <FeeSummary bankFee={{current: 130, previous: 107}} primaryValidatorFee={{current: 172, previous: 170}} />
       </Col>
     </PageContentsLayout>

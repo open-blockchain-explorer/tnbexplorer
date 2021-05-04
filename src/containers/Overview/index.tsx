@@ -1,6 +1,9 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Card, Col, Divider, Grid, Row, Space, Table, Typography} from 'antd';
 import axios from 'axios';
+import Col from 'antd/es/col';
+import Grid from 'antd/es/grid';
+import Row from 'antd/es/row';
+import Table from 'antd/es/table';
 
 import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from 'components';
 import {BANK_URL, CORS_BRIDGE} from 'constants/url';

@@ -1,15 +1,22 @@
-import React, {FC, SVGProps, useState} from 'react';
+import React, {FC, useState} from 'react';
 import tnbLogo from 'assets/tnb-logo.png';
 import tnbTestnetLogo from 'assets/tnb-testnet-logo.png';
 
-import {Button, Col, Dropdown, Grid, Layout as AntLayout, Menu, Input, Row, Space, Typography} from 'antd';
-import {CaretDownOutlined} from '@ant-design/icons';
+import Col from 'antd/es/col';
+import Dropdown from 'antd/es/dropdown';
+import AntDLayout from 'antd/es/layout';
+import Menu from 'antd/es/menu';
+import Input from 'antd/es/input';
+import Row from 'antd/es/row';
+import Typography from 'antd/es/typography';
+
+import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import {Link} from 'react-router-dom';
 
 import Banner from './Banner';
 import HeaderNav from './HeaderNav';
 
-const {Header: AntDHeader} = AntLayout;
+const {Header: AntDHeader} = AntDLayout;
 const {Search} = Input;
 
 interface ComponentProps {

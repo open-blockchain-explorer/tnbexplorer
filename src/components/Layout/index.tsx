@@ -1,11 +1,11 @@
 import React, {FC} from 'react';
-import {Grid, Layout as AntDLayout} from 'antd';
+import Grid from 'antd/es/grid';
+import AntDLayout from 'antd/es/layout';
+
 import {responsiveWidth} from 'utils/responsive';
 import Header from 'containers/Header';
 
 const {useBreakpoint} = Grid;
-
-const {Footer, Content} = AntDLayout;
 
 interface ComponentProps {
   type?: 'mainnet' | 'testnet';
@@ -30,8 +30,8 @@ const Layout: FC<ComponentProps> = ({children, type = 'mainnet'}) => {
     <>
       <AntDLayout>
         <Header padding={responsiveWidth(screens, width)} type={type} />
-        <Content style={{padding: `0px ${responsiveWidth(screens, width)}`}}>{children}</Content>
-        <Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</Footer>
+        <AntDLayout.Content style={{padding: `0px ${responsiveWidth(screens, width)}`}}>{children}</AntDLayout.Content>
+        <AntDLayout.Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</AntDLayout.Footer>
       </AntDLayout>
     </>
   );

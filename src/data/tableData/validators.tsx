@@ -1,8 +1,8 @@
 import React from 'react';
-import {Typography} from 'antd';
-import {ColumnsType, TableProps} from 'antd/es/table';
-import {formatDistance, subMinutes} from 'date-fns';
-import {finance, internet, random, time} from 'faker';
+import {ColumnsType} from 'antd/es/table';
+import Typography from 'antd/es/typography';
+import {finance, internet, random} from 'faker';
+import {Link} from 'react-router-dom';
 
 export interface ValidatorsColumnType {
   account: string;
@@ -16,9 +16,9 @@ export const validatorsColumn: ColumnsType<any> = [
     dataIndex: 'account',
     ellipsis: true,
     render: (text) => (
-      <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Link to="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
-      </Typography.Link>
+      </Link>
     ),
     title: 'Account',
   },
@@ -27,16 +27,16 @@ export const validatorsColumn: ColumnsType<any> = [
     ellipsis: true,
     key: 'networkId',
     render: (text) => (
-      <Typography.Link href="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+      <Link to="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
         {text}
-      </Typography.Link>
+      </Link>
     ),
     title: 'Network ID',
   },
   {
     dataIndex: 'ipAddress',
     key: 'ipAddress',
-    render: (text) => <Typography.Link href=".">{text}</Typography.Link>,
+    render: (text) => <Link to=".">{text}</Link>,
     title: 'Ip Address / URL',
   },
   {

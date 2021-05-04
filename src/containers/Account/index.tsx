@@ -1,5 +1,15 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {Button, Breadcrumb, Card, Col, Divider, Grid, List, Row, Statistic, Table, Typography} from 'antd';
+import Button from 'antd/es/button';
+import Card from 'antd/es/card';
+import Col from 'antd/es/col';
+import Divider from 'antd/es/divider';
+import Grid from 'antd/es/grid';
+import List from 'antd/es/list';
+import Row from 'antd/es/row';
+import Statistic from 'antd/es/statistic';
+import Table from 'antd/es/table';
+import Typography from 'antd/es/typography';
+
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 
@@ -9,7 +19,7 @@ import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
 
-const Account = ({location}: any) => {
+const Account: FC = () => {
   const screens = Grid.useBreakpoint();
 
   const account = useAccount();
