@@ -1,5 +1,6 @@
 import React, {useState, useRef} from 'react';
-import {Card, Col} from 'antd';
+import Card from 'antd/es/card';
+import Col from 'antd/es/col';
 import {DagreGraph} from '@ant-design/charts';
 
 import {ChartsCard, PageContentsLayout} from 'components';

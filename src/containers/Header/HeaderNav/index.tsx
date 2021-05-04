@@ -1,7 +1,6 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Menu} from 'antd';
-import {} from 'antd/es/menu/';
-import {NavLink, useRouteMatch} from 'react-router-dom';
+import Menu from 'antd/es/menu';
+import {NavLink} from 'react-router-dom';
 
 interface ComponentProps {
   type?: 'mainnet' | 'testnet';

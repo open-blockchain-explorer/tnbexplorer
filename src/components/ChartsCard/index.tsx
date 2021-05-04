@@ -1,5 +1,7 @@
 import React, {FC} from 'react';
-import {Card, Space, Typography} from 'antd';
+import Card from 'antd/es/card';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
 
 const ChartsCard: FC<{title?: string; description?: string}> = ({children, title, description}) => {
   return (

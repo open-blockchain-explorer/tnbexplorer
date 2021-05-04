@@ -1,8 +1,10 @@
 import React, {CSSProperties, FC} from 'react';
-import clsx from 'clsx';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+import Typography from 'antd/es/typography';
 
-import {Card, Col, Row, RowProps, Space, Typography} from 'antd';
-import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
+import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
+import CaretUpOutlined from '@ant-design/icons/CaretUpOutlined';
 
 import {formatNumber} from 'utils/format';
 

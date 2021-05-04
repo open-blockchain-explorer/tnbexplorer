@@ -1,5 +1,7 @@
 import React, {FC} from 'react';
-import {Col, Row, Typography} from 'antd';
+import Col from 'antd/es/col';
+import Row from 'antd/es/row';
+import Typography from 'antd/es/typography';
 
 import {ButtonLink} from 'components';
 

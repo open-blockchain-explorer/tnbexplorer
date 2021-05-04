@@ -1,6 +1,11 @@
 import React from 'react';
 
-import {Card, Col, Divider, Row, Space, Typography} from 'antd';
+import Card from 'antd/es/card';
+import Col from 'antd/es/col';
+import Divider from 'antd/es/divider';
+import Row from 'antd/es/row';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
 
 import {InfoPane} from 'components';
 import stats from 'data/stats.json';
