@@ -16,9 +16,10 @@ interface Statistics {
 const InfoPane: FC<{
   title: string;
   data: Statistics;
+  align?: 'left' | 'center' | 'right';
   showChangeAsPercent?: boolean;
   style?: CSSProperties;
-}> = ({title, data, showChangeAsPercent, ...otherProps}) => {
+}> = ({title, data, align = 'center', showChangeAsPercent, ...otherProps}) => {
   const {current, previous} = data;
   const change = current - previous;
   const isGain = change >= 0;
@@ -32,7 +33,7 @@ const InfoPane: FC<{
 
   return (
     <div {...otherProps}>
-      <Row style={{textAlign: 'center'}}>
+      <Row style={{textAlign: align}}>
         <Col span={24}>
           <Typography.Text type="secondary"> {title.toUpperCase()}</Typography.Text>
         </Col>
