@@ -23,7 +23,7 @@ function App() {
         <Switch>{children}</Switch>
       </Layout>
     ) : (
-      <Layout type="testnet">
+      <Layout>
         <Switch>{children}</Switch>
       </Layout>
     );
@@ -32,41 +32,39 @@ function App() {
   return (
     <div className="">
       <Router>
-        <LayoutPicker>
-          {/* TNB Routes */}
-          <Route exact path="/sponsor-us/" component={SponsorUs} />
+        <Layout>
+          <Switch>
+            {/* TNB Routes */}
+            <Route exact path="/sponsor-us/" component={SponsorUs} />
 
-          <Route exact path="/tnb/" component={Overview} />
-          <Route exact path="/tnb/account/:accountNumber/" component={Account} />
-          <Route exact path="/tnb/account/:accountNumber/trace-transactions" component={TraceTransactions} />
+            <Route exact path="/tnb/" component={Overview} />
+            <Route exact path="/tnb/account/:accountNumber/" component={Account} />
+            <Route exact path="/tnb/account/:accountNumber/trace-transactions" component={TraceTransactions} />
 
-          <Route exact path="/tnb/transactions/">
-            <Transactions section="transactions" />
-          </Route>
+            <Route exact path="/tnb/transactions/">
+              <Transactions section="transactions" />
+            </Route>
 
-          <Route exact path="/tnb/blocks">
-            <Transactions section="blocks" />
-          </Route>
-          <Route exact path="/tnb/nodes/" component={Nodes} />
+            <Route exact path="/tnb/blocks">
+              <Transactions section="blocks" />
+            </Route>
+            <Route exact path="/tnb/nodes/" component={Nodes} />
 
-          <Route exact path="/tnb/stats/" component={Stats} />
+            <Route exact path="/tnb/stats/" component={Stats} />
 
-          {/* Testnet  Routes */}
-          <Route exact path="/testnet/">
-            <Overview type="testnet" />
-          </Route>
-          <Route exact path="/testnet/account/:accountNumber/" component={Account} />
-          <Route exact path="/testnet/transactions/">
-            <Transactions section="transactions" type="testnet" />
-          </Route>
-          <Route exact path="/testnet/blocks/">
-            <Transactions section="blocks" type="testnet" />
-          </Route>
-          <Route exact path="/testnet/nodes/">
-            <Nodes type="testnet" />
-          </Route>
-          <Redirect from="/" to="/tnb/" />
-        </LayoutPicker>
+            {/* Testnet  Routes */}
+            <Route exact path="/testnet/" component={Overview} />
+            <Route exact path="/testnet/account/:accountNumber/" component={Account} />
+            <Route exact path="/testnet/transactions/">
+              <Transactions section="transactions" />
+            </Route>
+            <Route exact path="/testnet/blocks/">
+              <Transactions section="blocks" />
+            </Route>
+            <Route exact path="/testnet/nodes/" component={Nodes} />
+            <Redirect from="/" to="/tnb/" />
+          </Switch>
+        </Layout>
       </Router>
     </div>
   );

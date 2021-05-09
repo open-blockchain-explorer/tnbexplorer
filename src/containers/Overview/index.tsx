@@ -9,20 +9,19 @@ import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from
 import {BANK_URL, CORS_BRIDGE} from 'constants/url';
 import {blocksColumn, blocksData} from 'data/tableData/blocks';
 import {responsiveWidth} from 'utils/responsive';
-import {useTransactionColumn} from 'hooks/useTransactionColumn';
+import {useChainPath, useTransactionColumn} from 'hooks';
 
 const {useBreakpoint} = Grid;
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
+// interface ComponentProps {}
 
-const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
+const Overview: FC = () => {
   const transactionColumn = useTransactionColumn();
   const [blockData, setBlockData] = useState<any[]>([]);
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
-  const isMainnet = type === 'mainnet';
+  const currentChain = useChainPath();
+  const isMainnet = currentChain === '/tnb';
   const screens = useBreakpoint();
 
   /* eslint-disable sort-keys */
@@ -37,25 +36,27 @@ const Overview: FC<ComponentProps> = ({type = 'mainnet'}) => {
 
   const defaultOptions = {limit: 10, offset: 0};
   useEffect(() => {
-    axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
-      console.log(res.data.results);
+    if (isMainnet) {
+      axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
+        console.log(res.data.results);
 
-      const data = res.data.results.map((transaction: any) => {
-        return {
-          coins: transaction.amount,
-          recipient: transaction.recipient,
-          sender: transaction.block.sender,
-          time: transaction.block.modified_date,
-        };
+        const data = res.data.results.map((transaction: any) => {
+          return {
+            coins: transaction.amount,
+            recipient: transaction.recipient,
+            sender: transaction.block.sender,
+            time: transaction.block.modified_date,
+          };
+        });
+
+        setTransactionData(data);
       });
 
-      setTransactionData(data);
-    });
+      // axios.get(`${CORS_BRIDGE}/${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
 
-    // axios.get(`${CORS_BRIDGE}/${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
-
-    // });
-  }, []);
+      // });
+    }
+  }, [isMainnet]);
 
   return (
     <>
