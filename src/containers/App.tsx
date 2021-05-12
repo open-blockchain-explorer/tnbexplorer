@@ -9,6 +9,7 @@ import Stats from './Stats';
 import Transactions from './Transactions';
 import Nodes from './Nodes';
 import SponsorUs from './SponsorUs';
+import PaymentRequest from './PaymentRequest';
 import TraceTransactions from './TraceTransactions';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
             <Route exact path="/tnb/nodes/" component={Nodes} />
 
             <Route exact path="/tnb/stats/" component={Stats} />
+            <Route exact path="/tnb/payment-request/" component={PaymentRequest} />
 
             {/* Testnet  Routes */}
             <Route exact path="/testnet/" component={Overview} />
