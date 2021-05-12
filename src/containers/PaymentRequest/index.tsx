@@ -180,6 +180,16 @@ const PaymentRequest = () => {
         required: true,
         message: 'Account Number is required',
       },
+      {
+        validator: (_, value) => {
+          const duplicate = paymentData.find((payment) => value === payment.accountNumber);
+          console.log(value, duplicate);
+          if (duplicate) {
+            return Promise.reject(new Error('Account Number Must be Unique'));
+          }
+          return Promise.resolve();
+        },
+      },
     ],
     amount: [
       {
