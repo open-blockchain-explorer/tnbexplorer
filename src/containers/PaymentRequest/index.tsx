@@ -238,7 +238,7 @@ const PaymentRequest = () => {
       if (accountNumber) {
         accountNumbers += accountNumber.concat(',');
         amounts += `${amount},`;
-        memos += memo.concat(',');
+        memos += memo.trim().replaceAll(' ', '%20').concat(',');
       }
     });
 

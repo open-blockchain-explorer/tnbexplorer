@@ -14,7 +14,7 @@ export const usePaymentParams = () => {
   const [accountNumberString, amountString, memoString] = [
     query.get('accountNumber'),
     query.get('amount'),
-    query.get('memo'),
+    query.get('memo')?.replaceAll('%20', ' '),
   ];
 
   // console.log({accountNumberString, amountString, memoString});
