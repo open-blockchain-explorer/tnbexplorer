@@ -226,8 +226,7 @@ const PaymentRequest = () => {
     };
   });
 
-  const PAYMENT_REQUEST_ADDRESS =
-    'http:localhost:3000/tnb/payment-request' || 'https://tnbexplorer.com/tnb/payment-request';
+  const PAYMENT_REQUEST_ADDRESS = 'https://tnbexplorer.com/tnb/payment-request';
 
   const stringifyPayments = (payments: Payment[]) => {
     let accountNumbers = '';
