@@ -1,21 +1,20 @@
 import React, {FC, useEffect, useState} from 'react';
 import Menu from 'antd/es/menu';
-import {NavLink} from 'react-router-dom';
+import {NavLink, useLocation} from 'react-router-dom';
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
+import {useChainPath} from 'hooks';
 
-const HeaderNav: FC<ComponentProps> = ({type = 'mainnet'}) => {
-  const isMainnet = type === 'mainnet';
+const HeaderNav: FC = () => {
+  const currentChain = useChainPath();
 
-  const path = isMainnet ? 'tnb' : 'testnet';
+  const url = useLocation().pathname;
+
+  const isMainnet = currentChain === '/tnb';
 
   const [selectedNavlink, setSelectedNavlink] = useState(['overview']);
 
   useEffect(() => {
-    const url = window.location.href;
-    const navLink = url.split('/', 5)[4];
+    const navLink = url.split('/')[2];
     console.log({navLink});
     switch (navLink) {
       case 'blocks':
@@ -32,7 +31,7 @@ const HeaderNav: FC<ComponentProps> = ({type = 'mainnet'}) => {
         setSelectedNavlink(['overview']);
         break;
     }
-  }, []);
+  }, [url]);
 
   const onChange = ({keyPath}: any) => {
     console.log(keyPath);
@@ -48,21 +47,19 @@ const HeaderNav: FC<ComponentProps> = ({type = 'mainnet'}) => {
       selectedKeys={selectedNavlink}
     >
       <Menu.Item style={{marginLeft: '0px'}} key="overview">
-        <NavLink to={`/${path}/`}>Overview</NavLink>
+        <NavLink to={`${currentChain}/`}>Overview</NavLink>
       </Menu.Item>
       <Menu.Item key="transactions">
-        <NavLink to={`/${path}/transactions`}>Transactions</NavLink>
+        <NavLink to={`${currentChain}/transactions`}>Transactions</NavLink>
       </Menu.Item>
       <Menu.Item key="nodes">
-        <NavLink to={`/${path}/nodes`}>Nodes</NavLink>
+        <NavLink to={`${currentChain}/nodes`}>Nodes</NavLink>
       </Menu.Item>
       {isMainnet ? (
         <Menu.Item key="stats">
           <NavLink to="/tnb/stats">Stats</NavLink>
         </Menu.Item>
-      ) : (
-        <></>
-      )}
+      ) : null}
     </Menu>
   );
 };

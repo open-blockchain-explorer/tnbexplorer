@@ -19,13 +19,21 @@ import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
 
+interface AccountDetails {
+  balance?: number;
+  balanceLock: string;
+}
+
 const Account: FC = () => {
   const screens = Grid.useBreakpoint();
 
   const account = useAccount();
   const transactionColumn = useTransactionColumn(account);
 
-  const [accountDetails, setAccountDetails] = useState<{balance?: number; balanceLock: string}>();
+  const [accountDetails, setAccountDetails] = useState<AccountDetails>({
+    balance: 0,
+    balanceLock: '-',
+  });
 
   const [transactions, setTransactions] = useState<any[]>([]);
 
@@ -69,16 +77,17 @@ const Account: FC = () => {
   }, []);
 
   const getAccountDetails = useCallback(async (accountNumber: string) => {
-    const data: any = {};
+    const data: AccountDetails = {balance: 0, balanceLock: ''};
 
     await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance`).then((res) => {
-      data.balance = res.data.balance;
+      data.balance = res.data.balance ?? 0;
     });
 
     await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance_lock`).then((res) => {
       console.log(res.data);
-      data.balanceLock = res.data.balance_lock;
+      data.balanceLock = res.data.balance_lock ?? '';
     });
+    console.log({data});
 
     return data;
   }, []);
@@ -123,11 +132,13 @@ const Account: FC = () => {
       value: account.substring(0, 24).concat('...'),
     },
     {
-      copyable: {
-        text: account,
-      },
+      copyable: accountDetails?.balanceLock
+        ? {
+            text: account,
+          }
+        : false,
       title: 'Balance Lock',
-      value: accountDetails?.balanceLock.substring(0, 24).concat('...') ?? '-',
+      value: accountDetails?.balanceLock ? accountDetails?.balanceLock.substring(0, 24).concat('...') : '-',
     },
     {
       title: 'Transactions',
@@ -155,6 +166,9 @@ const Account: FC = () => {
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
+                  <Link to="/tnb/payment-request">
+                    <Button>Payment Request</Button>
+                  </Link>
                   <Link to="./trace-transactions">
                     <Button>Trace Transaction</Button>
                   </Link>
@@ -164,7 +178,7 @@ const Account: FC = () => {
               <></>
             )}
             <Col md={16}>
-              <Row gutter={[0, 20]} justify="space-between">
+              <Row gutter={[0, 10]} justify="space-between">
                 <Col>
                   <Typography.Text type="secondary">
                     Account is an anonymous digital identity on thenewboston network where coins can be sent to and
@@ -172,6 +186,13 @@ const Account: FC = () => {
                   </Typography.Text>
                 </Col>
 
+                {!accountDetails?.balanceLock ? (
+                  <Col>
+                    <Typography.Text type="danger" strong>
+                      Note: This account is probably not owned by anyone as it has not sent or received any coins
+                    </Typography.Text>
+                  </Col>
+                ) : null}
                 <Col span={24}>
                   <List
                     itemLayout="horizontal"
