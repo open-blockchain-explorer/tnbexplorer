@@ -26,7 +26,7 @@ const PageContentsLayout: FC = ({children}) => {
     const validUrls = ['account', 'trace-transactions', 'payment-request'];
 
     // console.log({url});
-    if (url.length > 2) {
+    if (url.length > 1) {
       for (let i = 1; i < url.length; i += 1) {
         if (url[i].length > 0) {
           if (validUrls.includes(url[i])) {
@@ -60,10 +60,12 @@ const PageContentsLayout: FC = ({children}) => {
         <>
           <Breadcrumb style={{padding: '20px 0px'}}>{breadCrumb}</Breadcrumb>
 
-          <Row gutter={[20, 30]}>{children}</Row>
+          <Row gutter={[20, 30]} style={{paddingBottom: '50px'}}>
+            {children}
+          </Row>
         </>
       ) : (
-        <Row style={{paddingTop: '50px'}} gutter={[20, 30]}>
+        <Row style={{paddingTop: '50px', paddingBottom: '50px'}} gutter={[20, 30]}>
           {children}
         </Row>
       )}

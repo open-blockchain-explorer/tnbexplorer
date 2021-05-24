@@ -4,6 +4,7 @@ import AntDLayout from 'antd/es/layout';
 
 import {responsiveWidth} from 'utils/responsive';
 import Header from 'containers/Header';
+import Footer from 'containers/Footer';
 
 const {useBreakpoint} = Grid;
 
@@ -27,7 +28,7 @@ const Layout: FC = ({children}) => {
       <AntDLayout>
         <Header padding={responsiveWidth(screens, width)} />
         <AntDLayout.Content style={{padding: `0px ${responsiveWidth(screens, width)}`}}>{children}</AntDLayout.Content>
-        <AntDLayout.Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</AntDLayout.Footer>
+        <Footer padding={responsiveWidth(screens, width)} />
       </AntDLayout>
     </>
   );

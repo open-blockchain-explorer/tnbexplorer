@@ -30,7 +30,10 @@ const Account: FC = () => {
   const account = useAccount();
   const transactionColumn = useTransactionColumn(account);
 
-  const [accountDetails, setAccountDetails] = useState<AccountDetails>();
+  const [accountDetails, setAccountDetails] = useState<AccountDetails>({
+    balance: 0,
+    balanceLock: '-',
+  });
 
   const [transactions, setTransactions] = useState<any[]>([]);
 
@@ -163,6 +166,9 @@ const Account: FC = () => {
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
+                  <Link to="/tnb/payment-request">
+                    <Button>Payment Request</Button>
+                  </Link>
                   <Link to="./trace-transactions">
                     <Button>Trace Transaction</Button>
                   </Link>

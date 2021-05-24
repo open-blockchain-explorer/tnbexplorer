@@ -1,25 +1,40 @@
-import React, {FC, useEffect, useState, useRef} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
-import Form, {FormInstance} from 'antd/es/form';
+import Form from 'antd/es/form';
 import Grid from 'antd/es/grid';
 import Input from 'antd/es/input';
+import InputNumber from 'antd/es/input-number';
+import Modal from 'antd/es/modal';
 import Row from 'antd/es/row';
-import Space from 'antd/es/space';
 import Popconfirm from 'antd/es/popconfirm';
-import Table, {ColumnsType} from 'antd/es/table';
+import Popover from 'antd/es/popover';
+import Space from 'antd/es/space';
+import Table from 'antd/es/table';
+import Statistic from 'antd/es/statistic';
 import Typography from 'antd/es/typography';
 import {Rule} from 'rc-field-form/lib/interface';
 import {nanoid} from 'nanoid';
 
+import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
 import {PageContentsLayout, Qr} from 'components';
 import {usePaymentParams} from 'hooks';
-import EditableRow from './EditableRow';
 import {EditableCell} from './EditableCell';
 // import { responsiveWidth } from 'utils/responsive';
+
+// declare let tnb_keysign: {
+//   requestTransfer: (
+//     to: string,
+//     amount: number,
+//     memo?: string,
+//     callback?: (res: any) => any,
+//     bank?: string,
+//     code?: string,
+//   ) => any;
+// };
 
 interface Payment {
   key: string;
@@ -37,19 +52,12 @@ const PaymentRequest = () => {
   const [copied, setCopied] = useState(false);
   const {useBreakpoint} = Grid;
   const screens = useBreakpoint();
-  const tabList = [
-    {
-      key: 'payment-request',
-      tab: 'Payment request',
-    },
-    {
-      key: 'make-payment',
-      tab: 'Make Payment',
-    },
-  ];
 
-  const [activeTabKey, setActiveTabKey] = useState<string>('payment-request');
+  // xs screen
+  const [showEditModal, setShowEditModal] = useState(false);
 
+  const paymentsTotal = paymentData.reduce((acc, payment) => payment.amount + acc, 0);
+  const isMakingPayment = initialPayments.length > 0;
   useEffect(() => {
     setCopied(false);
   }, [paymentData]);
@@ -57,17 +65,31 @@ const PaymentRequest = () => {
   const isEditing = (record: Payment) => record.key === editingKey;
 
   const edit = (record: Partial<Payment> & {key: React.Key}) => {
+    if (screens.xs) {
+      setShowEditModal(true);
+    }
     form.setFieldsValue({accountNumber: '', amount: '', memo: '', ...record});
     setEditingKey(record.key);
   };
 
+  const editByModal = (record: Partial<Payment> & {key: React.Key}) => {
+    form.setFieldsValue({accountNumber: '', amount: '', memo: '', ...record});
+    setEditingKey(record.key);
+    setShowEditModal(true);
+  };
+
   const cancel = () => {
-    if (paymentData[paymentData.length - 1].accountNumber === '') {
-      const dataCpy = [...paymentData];
-      dataCpy.pop();
-      setPaymentData(dataCpy);
+    if (paymentData.length) {
+      if (paymentData[paymentData.length - 1].accountNumber === '') {
+        const dataCpy = [...paymentData];
+        dataCpy.pop();
+        setPaymentData(dataCpy);
+      }
     }
+
     setEditingKey('');
+
+    if (showEditModal) setShowEditModal(false);
   };
 
   const handleDelete = (recordKey: string) => {
@@ -87,13 +109,13 @@ const PaymentRequest = () => {
           ...item,
           ...row,
         });
-        setPaymentData(() => newData);
-        setEditingKey(() => '');
       } else {
         newData.push(row);
-        setPaymentData(() => newData);
-        setEditingKey(() => '');
       }
+
+      setPaymentData(() => newData);
+      setEditingKey(() => '');
+      if (screens.xs) setShowEditModal(false);
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
@@ -107,23 +129,68 @@ const PaymentRequest = () => {
       memo: 'Processed By Tnb Explorer',
     };
 
-    if (paymentData.length > 0) {
-      if (paymentData[paymentData.length - 1].accountNumber === '') return;
-      const prevData = paymentData[paymentData.length - 1];
-      newData = {...prevData, key: nanoid(), accountNumber: ''};
+    if (!screens.xs) {
+      if (paymentData.length > 0) {
+        if (paymentData[paymentData.length - 1].accountNumber === '') return;
+        const prevData = paymentData[paymentData.length - 1];
+        newData = {...prevData, key: nanoid(), accountNumber: ''};
+      }
+      setPaymentData([...paymentData, {...newData, amount: 0, memo: ''}]);
+      edit(newData);
+    } else {
+      editByModal(newData);
     }
-    setPaymentData([...paymentData, {...newData, amount: 0, memo: ''}]);
-    edit(newData);
   };
 
   const columns: any[] = [
     {
+      title: '',
+      dataIndex: '',
+      width: '20px',
+      render: (_: any, record: Payment) => {
+        const beingEditedInTable = isEditing(record) && !screens.xs;
+        return beingEditedInTable ? (
+          <Space direction="vertical">
+            <Button onClick={() => save(record.key)} style={{marginRight: 8}}>
+              Save
+            </Button>
+
+            <Button onClick={cancel}>Cancel</Button>
+          </Space>
+        ) : (
+          <>
+            <Popover
+              placement="right"
+              trigger="focus"
+              content={
+                <>
+                  <Button block type="text" disabled={editingKey !== ''} onClick={() => edit(record)}>
+                    Edit
+                  </Button>
+
+                  <Popconfirm title="Sure you want to delete?" onConfirm={() => handleDelete(record.key)}>
+                    <Button type="text" block disabled={editingKey !== ''}>
+                      Delete
+                    </Button>
+                  </Popconfirm>
+                </>
+              }
+            >
+              <Button type="text" shape="circle" icon={<MoreOutlined />} />
+            </Popover>
+          </>
+        );
+      },
+    },
+    {
       dataIndex: 'accountNumber',
-      title: 'Account Number',
+      title: 'Recipient Address',
       width: '40%',
       editable: true,
       render: (text: string) => (
-        <Typography.Text style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>{text}</Typography.Text>
+        <Typography.Text copyable style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
+          {text}
+        </Typography.Text>
       ),
     },
     {
@@ -132,42 +199,15 @@ const PaymentRequest = () => {
       title: 'Amount (TNBC)',
       width: '20%',
       editable: true,
-      render: (coins: number) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
+      render: (coins: number) => <Typography.Text>{coins.toLocaleString()}</Typography.Text>,
     },
     {
       dataIndex: 'memo',
       title: 'Memo',
-      width: '40%',
       editable: true,
       render: (text: string) => (
         <Typography.Text style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>{text}</Typography.Text>
       ),
-    },
-    {
-      title: 'operation',
-      dataIndex: 'operation',
-      render: (_: any, record: Payment) => {
-        const beingEdited = isEditing(record);
-        return beingEdited ? (
-          <span>
-            <Button onClick={() => save(record.key)} style={{marginRight: 8}}>
-              Save
-            </Button>
-
-            <Button onClick={cancel}>Cancel</Button>
-          </span>
-        ) : (
-          <>
-            <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-              Edit
-            </Typography.Link>
-            {'   '}
-            <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-              <Typography.Link disabled={editingKey !== ''}>Delete</Typography.Link>
-            </Popconfirm>
-          </>
-        );
-      },
     },
   ];
 
@@ -182,8 +222,10 @@ const PaymentRequest = () => {
       },
       {
         validator: (_, value) => {
-          const duplicate = paymentData.find((payment) => value === payment.accountNumber);
-          console.log(value, duplicate);
+          const duplicate = paymentData.find(
+            (payment) => value === payment.accountNumber && payment.key !== editingKey,
+          );
+          console.log({recipient: value, duplicate});
           if (duplicate) {
             return Promise.reject(new Error('Account Number Must be Unique'));
           }
@@ -220,7 +262,7 @@ const PaymentRequest = () => {
         dataIndex: col.dataIndex,
         focusIndex: columns[0].dataIndex,
         title: col.title,
-        editing: isEditing(record),
+        editing: isEditing(record) && !screens.xs,
         rules: validationRules[col.dataIndex],
       }),
     };
@@ -250,96 +292,187 @@ const PaymentRequest = () => {
   return (
     <PageContentsLayout>
       <Col span={24}>
-        <Card
-          tabList={tabList}
-          activeTabKey={activeTabKey}
-          onTabChange={(key) => {
-            setActiveTabKey(key);
-          }}
-        >
-          <Form form={form} component={false}>
-            <Table
-              components={{
-                body: {
-                  cell: EditableCell,
-                },
-              }}
-              bordered
-              dataSource={paymentData}
-              columns={mergedColumns}
-              rowClassName="editable-row"
-              pagination={false}
-              footer={() => (
-                <Row justify="space-between">
-                  <Col>
+        <Card>
+          <Row gutter={[30, 30]} justify="center" align="bottom" style={{padding: '10px'}}>
+            {isMakingPayment && (
+              <>
+                {Boolean((window as any).keysign) && (
+                  <Col span={24}>
+                    <Typography.Text strong type="danger">
+                      You Don't have Keysign installed
+                    </Typography.Text>
+                    <br />
+                    Install keysign to complete this payment:
+                    <br />
                     <Button
-                      onClick={handleAdd}
-                      type="primary"
-                      disabled={paymentData.length === 10}
-                      ghost={paymentData.length === 10}
-                      icon={<PlusOutlined />}
+                      type="link"
+                      target="blank"
+                      href="https://chrome.google.com/webstore/detail/keysign/icgabofdocpmhlcamjijifghkijnccbo"
                     >
-                      Add Payment Address
+                      On Google Chrome (or Chromium Based Browsers):
+                    </Button>
+                    <br />
+                    <Button type="link" target="blank" href="https://addons.mozilla.org/en-US/firefox/addon/keysign">
+                      On Firefox{' '}
                     </Button>
                   </Col>
-                  <Col>
-                    Total:
-                    <Typography.Text strong>
-                      {' '}
-                      {paymentData.reduce((acc, payment) => payment.amount + acc, 0)}
-                    </Typography.Text>
-                  </Col>
-                  <Col>
-                    <Typography.Text>Limit: 10</Typography.Text>
-                  </Col>
-                </Row>
-              )}
-            />
-          </Form>
-          <br />
+                )}
 
-          {activeTabKey === 'payment-request' ? (
-            <>
-              <Typography.Title level={5}>
-                {' '}
-                Share the customized link or QR code below with others to complete the payment.
-              </Typography.Title>
-              <Row justify="center">
-                <Col span={8} sm={24} md={8}>
-                  <Qr width={250} text={stringifyPayments(paymentData)} />
+                <Col>
+                  <Statistic title="Recipients" value={paymentData.length} />
                 </Col>
-                <Col sm={24} md={16}>
-                  <Row>
-                    <Col span={24}>
-                      <Input.TextArea autoSize disabled value={stringifyPayments(paymentData)} />
+                <Col>
+                  <Statistic title="Payments Total" value={paymentsTotal} />
+                </Col>
+                <Col>
+                  <Button
+                    shape="round"
+                    size="large"
+                    disabled={Boolean((window as any).keysign)}
+                    onClick={() => {
+                      const keysign = (window as any).tnb_keysign;
+                      if (keysign) {
+                        keysign.requestHandshake((res: any) => console.log('Keysign is installed!', res));
+                        keysign.requestTransfer(
+                          'e91f8cb818171455b3a0077fe770b291f2fc83a42c38f239fbf39795aa87e9b6',
+                          10,
+                          'Processed by Yung TJ',
+                          (res: any) => console.log(res),
+                          ' http://54.177.121.3',
+                          'randomly generated one time code',
+                        );
+                      }
+                    }}
+                  >
+                    Pay with
+                    <img
+                      alt="Keysign"
+                      width="100px"
+                      src="https://camo.githubusercontent.com/a7cbb9ebdc8f2ae3f48b2ec69403d5f8658829cec0a7428b7b9c5dcbff456011/68747470733a2f2f692e696d6775722e636f6d2f485748553250742e706e67"
+                    />
+                  </Button>
+                </Col>
+              </>
+            )}
+
+            <Col span={24}>
+              <Typography.Title level={5}>
+                {isMakingPayment ? 'Detailed view of payments' : 'Set up and share payment request'}
+              </Typography.Title>
+
+              <Form form={form} component={false}>
+                <Modal
+                  title="Basic Modal"
+                  centered
+                  visible={showEditModal}
+                  okText="Save"
+                  onOk={() => save(editingKey)}
+                  onCancel={cancel}
+                >
+                  <Form.Item
+                    name={'accountNumber'}
+                    label="Recipient Address"
+                    validateStatus="success"
+                    style={{margin: 0}}
+                    rules={validationRules.accountNumber}
+                  >
+                    <Input />
+                  </Form.Item>
+                  <Form.Item
+                    name={'amount'}
+                    label="Amount"
+                    validateStatus="success"
+                    style={{margin: 0}}
+                    rules={validationRules.amount}
+                  >
+                    <InputNumber />
+                  </Form.Item>
+                  <Form.Item
+                    name={'memo'}
+                    label="Memo"
+                    validateStatus="success"
+                    style={{margin: 0}}
+                    rules={validationRules.memo}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Modal>
+                <Table
+                  components={{
+                    body: {
+                      cell: EditableCell,
+                    },
+                  }}
+                  style={{padding: '0px'}}
+                  bordered
+                  dataSource={paymentData}
+                  columns={mergedColumns}
+                  rowClassName="editable-row"
+                  pagination={false}
+                  footer={() => (
+                    <Row justify="space-between">
+                      <Col>
+                        <Button
+                          onClick={handleAdd}
+                          type="primary"
+                          disabled={paymentData.length === 10}
+                          ghost={paymentData.length === 10}
+                          icon={<PlusOutlined />}
+                        >
+                          Add Payment Address
+                        </Button>
+                      </Col>
+
+                      <Col>
+                        <Typography.Text>Limit: 10</Typography.Text>
+                      </Col>
+                    </Row>
+                  )}
+                />
+              </Form>
+            </Col>
+
+            {!isMakingPayment && (
+              <>
+                <Col>
+                  <Statistic title="Recipients" value={paymentData.length} />
+                </Col>
+                <Col>
+                  <Statistic title="Payments Total" value={paymentsTotal} />
+                </Col>
+
+                <Col span={24}>
+                  <Typography.Title level={5}>
+                    {' '}
+                    Share the customized link or QR code below with others to complete the payment.
+                  </Typography.Title>
+                  <Row justify="center">
+                    <Col md={8}>
+                      <Qr width={250} text={stringifyPayments(paymentData)} />
                     </Col>
-                    <Col span={24}>
-                      <Button
-                        block
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(stringifyPayments(paymentData));
-                          setCopied(true);
-                        }}
-                      >
-                        {copied ? 'Copied' : 'Copy'}
-                      </Button>
+                    <Col span={24} md={16}>
+                      <Row>
+                        <Col span={24}>
+                          <Input.TextArea autoSize disabled value={stringifyPayments(paymentData)} />
+                        </Col>
+                        <Col span={24}>
+                          <Button
+                            block
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(stringifyPayments(paymentData));
+                              setCopied(true);
+                            }}
+                          >
+                            {copied ? 'Copied' : 'Copy'}
+                          </Button>
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
                 </Col>
-              </Row>
-            </>
-          ) : (
-            <>
-              <Space direction="vertical">
-                <Typography.Text>Enter your Private Key to Send Coins</Typography.Text>
-                <Typography.Text strong mark type="warning">
-                  This website does not Store your Private Key
-                </Typography.Text>
-              </Space>
-              <Input placeholder={'Enter your Private Key to Send Coins'} />
-              <Button>Enter Key</Button>
-            </>
-          )}
+              </>
+            )}
+          </Row>
         </Card>
       </Col>
     </PageContentsLayout>
