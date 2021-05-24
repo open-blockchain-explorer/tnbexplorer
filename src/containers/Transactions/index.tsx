@@ -11,15 +11,11 @@ import {Link} from 'react-router-dom';
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {BANK_URL, CORS_BRIDGE} from 'constants/url';
 import {blocksColumn, blocksData} from 'data/tableData/blocks';
-import {useTransactionColumn} from 'hooks/useTransactionColumn';
+import {useChainPath, useTransactionColumn} from 'hooks';
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
-
-const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = ({section, type = 'mainnet'}) => {
-  const isMainnet = type === 'mainnet';
-  const path = isMainnet ? 'tnb' : 'testnet';
+const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
+  const currentPath = useChainPath();
+  const isMainnet = currentPath === '/tnb';
 
   const blocks = blocksData(500);
   const transactionColumn = useTransactionColumn();
@@ -76,8 +72,10 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
   }, []);
 
   useEffect(() => {
-    getTransactions();
-  }, [getTransactions]);
+    if (isMainnet) {
+      getTransactions();
+    }
+  }, [getTransactions, isMainnet]);
 
   return (
     <PageContentsLayout>
@@ -87,14 +85,17 @@ const Transactions: FC<{section: 'transactions' | 'blocks'} & ComponentProps> = 
         <Radio.Group buttonStyle="solid" value={section}>
           <Radio.Button value="transactions" style={{margin: '0px', padding: '0px'}}>
             <Link
-              to={`/${path}/transactions`}
+              to={`${currentPath}/transactions`}
               style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}
             >
               Transactions
             </Link>
           </Radio.Button>
           <Radio.Button value="blocks" style={{margin: '0px', padding: '0px'}}>
-            <Link to={`/${path}/blocks`} style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}>
+            <Link
+              to={`${currentPath}/blocks`}
+              style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}
+            >
               Blocks
             </Link>
           </Radio.Button>

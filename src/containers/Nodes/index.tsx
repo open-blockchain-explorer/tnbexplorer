@@ -8,12 +8,11 @@ import {NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components'
 import {validatorsColumn, validatorsData} from 'data/tableData/validators';
 import {banksColumn, banksData} from 'data/tableData/banks';
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
+import {useChainPath} from 'hooks';
 
-const Nodes: FC<ComponentProps> = ({type = 'mainnet'}) => {
-  const isMainnet = type === 'mainnet';
+const Nodes: FC = () => {
+  const currentPath = useChainPath();
+  const isMainnet = currentPath === '/tnb';
   const banks = banksData(10);
   const validators = validatorsData(10);
 

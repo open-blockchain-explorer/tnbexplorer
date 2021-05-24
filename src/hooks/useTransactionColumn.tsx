@@ -6,6 +6,14 @@ import {ColumnsType} from 'antd/es/table';
 import {formatDistance} from 'date-fns';
 import {useChainPath} from 'hooks';
 
+export interface TransactionColumnType {
+  amount: number;
+  coins: number;
+  recipient: string;
+  sender: string;
+  time: number;
+}
+
 export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> => {
   const currentPath = useChainPath();
   const formatColumnAccount = (text: string) => {
@@ -19,7 +27,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
     );
   };
 
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<TransactionColumnType> = [
     {
       dataIndex: 'sender',
       ellipsis: true,

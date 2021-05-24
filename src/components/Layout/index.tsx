@@ -4,14 +4,11 @@ import AntDLayout from 'antd/es/layout';
 
 import {responsiveWidth} from 'utils/responsive';
 import Header from 'containers/Header';
+import Footer from 'containers/Footer';
 
 const {useBreakpoint} = Grid;
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
-
-const Layout: FC<ComponentProps> = ({children, type = 'mainnet'}) => {
+const Layout: FC = ({children}) => {
   const screens = useBreakpoint();
 
   /* eslint-disable sort-keys */
@@ -29,9 +26,9 @@ const Layout: FC<ComponentProps> = ({children, type = 'mainnet'}) => {
   return (
     <>
       <AntDLayout>
-        <Header padding={responsiveWidth(screens, width)} type={type} />
+        <Header padding={responsiveWidth(screens, width)} />
         <AntDLayout.Content style={{padding: `0px ${responsiveWidth(screens, width)}`}}>{children}</AntDLayout.Content>
-        <AntDLayout.Footer style={{paddingLeft: responsiveWidth(screens, width)}}>Footer</AntDLayout.Footer>
+        <Footer padding={responsiveWidth(screens, width)} />
       </AntDLayout>
     </>
   );

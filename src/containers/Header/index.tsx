@@ -13,18 +13,18 @@ import Typography from 'antd/es/typography';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import {Link} from 'react-router-dom';
 
+import {useChainPath} from 'hooks';
 import Banner from './Banner';
 import HeaderNav from './HeaderNav';
 
 const {Header: AntDHeader} = AntDLayout;
 const {Search} = Input;
 
-interface ComponentProps {
-  type?: 'mainnet' | 'testnet';
-}
+// interface ComponentProps {}
 
-const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainnet'}) => {
-  const isMainnet = type === 'mainnet';
+const Header: FC<{padding: string}> = ({padding}) => {
+  const currentPath = useChainPath();
+  const isMainnet = currentPath === '/tnb';
 
   const logo = isMainnet ? tnbLogo : tnbTestnetLogo;
 
@@ -90,7 +90,7 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
                 }}
               >
                 <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
-                  <Row align="bottom" gutter={[10, 0]} style={{lineHeight: '20px'}}>
+                  <Row align="bottom" gutter={[10, 0]} style={{cursor: 'pointer', lineHeight: '20px'}}>
                     <Col>
                       <img src={logo} alt="thenewboston logo" />
                     </Col>
@@ -100,7 +100,12 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
                           {logoText}
                         </Typography.Title>
                       ) : (
-                        <Typography.Title underline={underlineTNB} style={{margin: '0px'}} level={3} type="secondary">
+                        <Typography.Title
+                          underline={underlineTNB}
+                          style={{cursor: 'pointer', margin: '0px'}}
+                          level={3}
+                          type="secondary"
+                        >
                           {logoText}
                         </Typography.Title>
                       )}
@@ -112,7 +117,7 @@ const Header: FC<{padding: string} & ComponentProps> = ({padding, type = 'mainne
                 </Dropdown>
               </Col>
               <Col>
-                <HeaderNav type={type} />
+                <HeaderNav />
               </Col>
             </Row>
           </Col>
