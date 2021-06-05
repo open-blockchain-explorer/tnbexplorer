@@ -9,10 +9,9 @@ export const ImgWithFallback: FC<ComponentProps & HTMLProps<HTMLImageElement>> =
   fallback,
   type = 'image/webp',
   alt,
-  ...otherProps
 }) => (
   <picture>
     <source srcSet={src} type={type} />
-    <img src={fallback} alt={alt} {...otherProps} />
+    <img src={fallback} alt={alt} />
   </picture>
 );
