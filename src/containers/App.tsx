@@ -1,5 +1,5 @@
-import React, {FC, useState} from 'react';
-import {BrowserRouter as Router, Redirect, Route, NavLink, Switch} from 'react-router-dom';
+import React from 'react';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 
 import {Layout} from 'components';
 
@@ -10,26 +10,10 @@ import Transactions from './Transactions';
 import Nodes from './Nodes';
 import SponsorUs from './SponsorUs';
 import PaymentRequest from './PaymentRequest';
+import TestnetFaucet from './TestnetFaucet';
 import TraceTransactions from './TraceTransactions';
 
 function App() {
-  const LayoutPicker: FC = ({location, children}: any) => {
-    const parentPath = window.location.pathname.split('/', 2)[1];
-    console.log(parentPath);
-    const isMainnet = parentPath !== 'testnet';
-    console.log(isMainnet);
-
-    return isMainnet ? (
-      <Layout>
-        <Switch>{children}</Switch>
-      </Layout>
-    ) : (
-      <Layout>
-        <Switch>{children}</Switch>
-      </Layout>
-    );
-  };
-
   return (
     <div className="">
       <Router>
@@ -64,6 +48,8 @@ function App() {
               <Transactions section="blocks" />
             </Route>
             <Route exact path="/testnet/nodes/" component={Nodes} />
+            <Route exact path="/testnet/faucet/" component={TestnetFaucet} />
+
             <Redirect from="/" to="/tnb/" />
           </Switch>
         </Layout>

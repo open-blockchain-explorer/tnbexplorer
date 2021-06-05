@@ -10,3 +10,4 @@ export {default as PageContentsLayout} from './PageContentsLayout';
 export {default as Qr} from './Qr';
 export {default as TableHeader} from './TableHeader';
 export {default as TestnetAlertMessage} from './TestnetAlertMessage';
+export {ImgWithFallback} from './ImgWithFallback';

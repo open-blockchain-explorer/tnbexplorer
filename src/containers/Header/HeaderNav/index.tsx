@@ -27,6 +27,9 @@ const HeaderNav: FC = () => {
       case 'stats':
         setSelectedNavlink(['stats']);
         break;
+      case 'faucet':
+        setSelectedNavlink(['faucet']);
+        break;
       default:
         setSelectedNavlink(['overview']);
         break;
@@ -59,7 +62,11 @@ const HeaderNav: FC = () => {
         <Menu.Item key="stats">
           <NavLink to="/tnb/stats">Stats</NavLink>
         </Menu.Item>
-      ) : null}
+      ) : (
+        <Menu.Item key="stats">
+          <NavLink to="/testnet/faucet">Faucet</NavLink>
+        </Menu.Item>
+      )}
     </Menu>
   );
 };

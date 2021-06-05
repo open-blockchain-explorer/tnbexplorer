@@ -21,6 +21,7 @@ const Footer: FC<{padding: string}> = ({padding}) => {
   const services = [
     {title: 'Payment Request', link: '/tnb/payment-request'},
     {title: 'Testnet Faucet', link: '/testnet/faucet'},
+    {title: 'Trace Transactions'},
   ];
   const resources = [
     {title: 'API'},
@@ -31,21 +32,33 @@ const Footer: FC<{padding: string}> = ({padding}) => {
   return (
     <AntDLayout.Footer style={{padding: `40px ${padding}`, backgroundColor: 'white'}}>
       <Row justify="space-between" gutter={[30, 30]}>
-        <Col span={24} md={6} style={{marginTop: '-10px'}}>
+        <Col span={24} md={6} lg={5} style={{marginTop: '-10px'}}>
           <Space direction="horizontal">
             <HologramLogo width="40px" height="40px" />
 
-            <Typography.Title type="secondary" style={{color: '#D6DFEA', fontWeight: 'bold'}} level={3}>
+            <Typography.Title type="secondary" style={{color: '#D6DFEA', fontWeight: 'bold', width: '200px'}} level={3}>
               TNB Explorer
             </Typography.Title>
           </Space>
           <Col push={3} span={24}>
             <Row gutter={[20, 20]} align="middle">
               <Col>
-                <Button type="text" shape="circle" icon={<TwitterLogo width="25px" height="25px" />} />
+                <Button
+                  type="text"
+                  target="_blank"
+                  href="https://twitter.com/ExplorerTnb"
+                  shape="circle"
+                  icon={<TwitterLogo width="25px" height="25px" />}
+                />
               </Col>
               <Col>
-                <Button type="text" shape="circle" icon={<InstagramLogo width="25px" height="25px" />} />
+                <Button
+                  type="text"
+                  target="_blank"
+                  shape="circle"
+                  href="https://www.instagram.com/tnbexplorer/"
+                  icon={<InstagramLogo width="25px" height="25px" />}
+                />
               </Col>
             </Row>
           </Col>
@@ -66,9 +79,12 @@ const Footer: FC<{padding: string}> = ({padding}) => {
                   <br />
                 </a>
               ) : (
-                <Typography.Text>
-                  {item.title} <br />
-                </Typography.Text>
+                <>
+                  <Button type="ghost" style={{padding: '0px', border: '0px'}}>
+                    {item.title}
+                  </Button>
+                  <br />
+                </>
               )
             }
           />
@@ -89,9 +105,12 @@ const Footer: FC<{padding: string}> = ({padding}) => {
                   <br />
                 </a>
               ) : (
-                <Typography.Text>
-                  {item.title} <br />
-                </Typography.Text>
+                <>
+                  <Button type="ghost" style={{padding: '0px', border: '0px'}}>
+                    {item.title}
+                  </Button>
+                  <br />
+                </>
               )
             }
           />
@@ -113,9 +132,12 @@ const Footer: FC<{padding: string}> = ({padding}) => {
                   <br />
                 </a>
               ) : (
-                <Typography.Text>
-                  {item.title} <br />
-                </Typography.Text>
+                <>
+                  <Button type="ghost" style={{padding: '0px', border: '0px'}}>
+                    {item.title}
+                  </Button>
+                  <br />
+                </>
               )
             }
           />

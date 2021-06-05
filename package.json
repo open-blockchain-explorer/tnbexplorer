@@ -1,5 +1,5 @@
 {
-  "name": "website",
+  "name": "tnb-explorer",
   "version": "0.1.0",
   "private": false,
   "dependencies": {
@@ -49,16 +49,8 @@
     "extends": "eslint:recommended"
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7",
@@ -85,30 +77,14 @@
       "pre-commit": "lint-staged"
     }
   },
-  "eslintIgnore": [
-    "node_modules",
-    "coverage",
-    "dist",
-    "build",
-    "docs",
-    ".vscode",
-    ".github",
-    ".idea",
-    ".storybook"
-  ],
+  "eslintIgnore": ["node_modules", "coverage", "dist", "build", "docs", ".vscode", ".github", ".idea", ".storybook"],
   "lint-staged": {
-    "{,!(node_modules)/**/}*.{ts,tsx,js}": [
-      "eslint --cache --fix",
-      "prettier --write"
-    ],
-    "{,!(node_modules)/**/}*.{css,scss}": [
-      "prettier --write",
-      "stylelint --cache --fix"
-    ]
+    "{,!(node_modules)/**/}*.{ts,tsx,js}": ["eslint --cache --fix", "prettier --write"],
+    "{,!(node_modules)/**/}*.{css,scss}": ["prettier --write", "stylelint --cache --fix"]
   },
   "jest": {
-    "transformIgnorePatterns": [
-      "node_modules/(?!react-syntax-highlighter)/"
-    ]
-  }
+    "transformIgnorePatterns": ["node_modules/(?!react-syntax-highlighter)/"]
+  },
+  "keywords": [],
+  "description": ""
 }
