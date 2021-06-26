@@ -17,14 +17,13 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const currentPath = useChainPath();
   const isMainnet = currentPath === '/tnb';
 
-  const blocks = blocksData(500);
   const transactionColumn = useTransactionColumn();
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
   const [blockPagination, setBlockPagination] = useState<TablePaginationConfig>({
     current: 1,
     pageSize: 10,
-    total: blocks.length,
+    total: 0,
   });
 
   const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>({
@@ -47,10 +46,12 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
 
   const getTransactions = useCallback((limit = 10, offset = 0) => {
     axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
-      console.log(res.data.results);
+      // console.log(res.data.results);
       const data = res.data.results.map((transaction: any) => {
         return {
+          id: transaction.id,
           coins: transaction.amount,
+          memo: transaction.memo,
           recipient: transaction.recipient,
           sender: transaction.block.sender,
           time: transaction.block.modified_date,
@@ -110,6 +111,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             dataSource={transactionData}
             onChange={handleTableChange}
             pagination={transactionPagination}
+            style={{overflowX: 'auto'}}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Transactions</Typography.Text>
@@ -124,13 +126,13 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
           <Table
             bordered
             columns={blocksColumn}
-            dataSource={blocks}
+            dataSource={[]}
             onChange={handleTableChange}
             pagination={blockPagination}
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Blocks</Typography.Text>
-                <Typography.Text type="secondary"> (Showing the last {blocks.length} records)</Typography.Text>
+                <Typography.Text type="secondary"> (Showing the last {0} records)</Typography.Text>
               </Row>
             )}
           />

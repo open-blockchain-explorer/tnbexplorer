@@ -43,13 +43,19 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       render: (text) => formatColumnAccount(text),
       title: 'Recipient',
     },
-
+    {
+      dataIndex: 'memo',
+      ellipsis: false,
+      key: 'id',
+      title: 'Memo',
+    },
     {
       dataIndex: 'time',
       key: 'time',
       render: (timestamp) => <Typography.Text>{formatDistance(new Date(timestamp), new Date())}</Typography.Text>,
       title: 'Time',
     },
+
     {
       align: 'right',
       dataIndex: 'coins',

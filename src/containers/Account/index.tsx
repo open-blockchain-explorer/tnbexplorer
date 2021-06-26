@@ -53,7 +53,9 @@ const Account: FC = () => {
         console.log(res.data.results);
         const result = res.data.results.map((transaction: any) => {
           return {
+            id: transaction.id,
             coins: transaction.amount,
+            memo: transaction.memo,
             recipient: transaction.recipient,
             sender: transaction.block.sender,
             time: transaction.block.modified_date,
@@ -242,6 +244,7 @@ const Account: FC = () => {
           dataSource={transactions}
           onChange={handleTableChange}
           pagination={transactionPagination}
+          style={{overflowX: 'auto'}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text> Transactions</Typography.Text>

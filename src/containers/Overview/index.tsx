@@ -44,6 +44,7 @@ const Overview: FC = () => {
           return {
             coins: transaction.amount,
             recipient: transaction.recipient,
+            memo: transaction.memo,
             sender: transaction.block.sender,
             time: transaction.block.modified_date,
           };
@@ -51,10 +52,6 @@ const Overview: FC = () => {
 
         setTransactionData(data);
       });
-
-      // axios.get(`${CORS_BRIDGE}/${BANK_URL}/blocks?limit=10&offset=0`).then((res: any) => {
-
-      // });
     }
   }, [isMainnet]);
 
@@ -67,7 +64,7 @@ const Overview: FC = () => {
           <Row>
             <Table
               bordered
-              dataSource={blocksData(10)}
+              dataSource={[]}
               columns={blocksColumn}
               pagination={false}
               title={() => <TableHeader title="Latest Blocks" buttonLink={''} />}
