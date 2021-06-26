@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useLocation} from 'react-router-dom';
-// import {nanoid} from 'nanoid';
+import {nanoid} from 'nanoid';
 
 interface QueryParams {
   accountNumber: string;
@@ -33,7 +33,7 @@ export const usePaymentParams = () => {
   for (let i = 0; i < accountNumbers.length; i += 1) {
     if (accountNumbers[i]) {
       payments.push({
-        // key: nanoid(),
+        key: nanoid(),
         accountNumber: accountNumbers[i],
         amount: Number(amounts[i]),
         memo: memos[i],

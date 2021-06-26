@@ -15,7 +15,7 @@ import Table from 'antd/es/table';
 import Statistic from 'antd/es/statistic';
 import Typography from 'antd/es/typography';
 import {Rule} from 'rc-field-form/lib/interface';
-// import {nanoid} from 'nanoid';
+import {nanoid} from 'nanoid';
 
 import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
@@ -123,7 +123,7 @@ const PaymentRequest = () => {
 
   const handleAdd = async () => {
     let newData: Payment = {
-      key: 'nanoid()',
+      key: nanoid(),
       accountNumber: '',
       amount: 0,
       memo: 'Processed By Tnb Explorer',
