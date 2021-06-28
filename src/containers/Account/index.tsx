@@ -244,7 +244,6 @@ const Account: FC = () => {
           dataSource={transactions}
           onChange={handleTableChange}
           pagination={transactionPagination}
-          style={{overflowX: 'auto'}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text> Transactions</Typography.Text>

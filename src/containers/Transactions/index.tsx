@@ -103,7 +103,14 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
         </Radio.Group>
       </Col>
 
-      <Col sm={24} md={16} xl={17}>
+      <Col
+        sm={24}
+        md={16}
+        xl={17}
+        style={{
+          overflowX: 'hidden',
+        }}
+      >
         {section === 'transactions' ? (
           <Table
             bordered

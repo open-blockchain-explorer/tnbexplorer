@@ -39,7 +39,6 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       dataIndex: 'recipient',
       ellipsis: true,
       key: 'recipient',
-
       render: (text) => formatColumnAccount(text),
       title: 'Recipient',
     },
