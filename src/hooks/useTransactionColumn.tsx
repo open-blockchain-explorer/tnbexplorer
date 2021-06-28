@@ -32,34 +32,48 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       dataIndex: 'sender',
       ellipsis: true,
       key: 'recipient',
-      render: (text) => formatColumnAccount(text),
+      render: (text: string) => formatColumnAccount(text),
       title: 'Sender',
     },
     {
       dataIndex: 'recipient',
       ellipsis: true,
       key: 'recipient',
-      render: (text) => formatColumnAccount(text),
+      render: (text: string) => formatColumnAccount(text),
       title: 'Recipient',
     },
     {
       dataIndex: 'memo',
       ellipsis: false,
       key: 'id',
+      render: (_, {memo, fee}: any) => {
+        if (fee) {
+          if (fee === 'PRIMARY_VALIDATOR') {
+            return <Tag>PV-Fee</Tag>;
+          } else {
+            return <Tag>Bank-Fee</Tag>;
+          }
+        }
+
+        return memo;
+      },
       title: 'Memo',
     },
     {
       dataIndex: 'time',
       key: 'time',
-      render: (timestamp) => <Typography.Text>{formatDistance(new Date(timestamp), new Date())}</Typography.Text>,
+      render: (timestamp: string) => {
+        return formatDistance(new Date(timestamp), new Date()).replace('about', '~');
+      },
       title: 'Time',
     },
 
     {
       align: 'right',
       dataIndex: 'coins',
-      render: (coins) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
+      render: (coins: number) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
       title: 'Coins',
+      width: '90px',
     },
   ];
 

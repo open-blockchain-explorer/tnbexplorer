@@ -1,13 +1,13 @@
 import React, {FC, useEffect, useState} from 'react';
-import axios from 'axios';
 import Col from 'antd/es/col';
 import Grid from 'antd/es/grid';
 import Row from 'antd/es/row';
 import Table from 'antd/es/table';
 
+import {getTransactions} from 'api/bank';
 import {NetworkStats, PageContentsLayout, TableHeader, TestnetAlertMessage} from 'components';
-import {BANK_URL, CORS_BRIDGE} from 'constants/url';
-import {blocksColumn, blocksData} from 'data/tableData/blocks';
+import {BANK_URL} from 'constants/url';
+import {blocksColumn} from 'data/tableData/blocks';
 import {responsiveWidth} from 'utils/responsive';
 import {useChainPath, useTransactionColumn} from 'hooks';
 
@@ -34,25 +34,15 @@ const Overview: FC = () => {
     xs: '50px',
   });
 
-  const defaultOptions = {limit: 10, offset: 0};
   useEffect(() => {
-    if (isMainnet) {
-      axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=10&offset=0`).then((res: any) => {
-        console.log(res.data.results);
+    const load = async () => {
+      if (isMainnet) {
+        const [txs] = await getTransactions(BANK_URL);
+        setTransactionData(txs);
+      }
+    };
 
-        const data = res.data.results.map((transaction: any) => {
-          return {
-            coins: transaction.amount,
-            recipient: transaction.recipient,
-            memo: transaction.memo,
-            sender: transaction.block.sender,
-            time: transaction.block.modified_date,
-          };
-        });
-
-        setTransactionData(data);
-      });
-    }
+    load();
   }, [isMainnet]);
 
   return (
@@ -64,7 +54,7 @@ const Overview: FC = () => {
           <Row>
             <Table
               bordered
-              dataSource={[]}
+              dataSource={blockData}
               columns={blocksColumn}
               pagination={false}
               title={() => <TableHeader title="Latest Blocks" buttonLink={''} />}
