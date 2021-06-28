@@ -67,6 +67,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       },
       title: 'Time',
     },
+
     {
       align: 'right',
       dataIndex: 'coins',
