@@ -53,7 +53,9 @@ const Account: FC = () => {
         console.log(res.data.results);
         const result = res.data.results.map((transaction: any) => {
           return {
+            id: transaction.id,
             coins: transaction.amount,
+            memo: transaction.memo,
             recipient: transaction.recipient,
             sender: transaction.block.sender,
             time: transaction.block.modified_date,
