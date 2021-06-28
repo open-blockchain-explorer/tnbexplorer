@@ -22,13 +22,13 @@ export const banksColumn: ColumnsType<any> = [
         {text}
       </Link>
     ),
-    title: 'Network ID',
+    title: 'Node ID',
   },
   {
     dataIndex: 'ipAddress',
     key: 'ipAddress',
     render: (text) => <Link to=".">{text}</Link>,
-    title: 'Ip Address / URL',
+    title: 'IP Address',
   },
   {
     dataIndex: 'transactions',

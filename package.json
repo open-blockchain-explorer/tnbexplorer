@@ -30,7 +30,7 @@
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
-    "thenewboston": "^1.1.0-alpha.3",
+    "thenewboston": "1.1.0-alpha.4",
     "typescript": "^4.1.5",
     "web-vitals": "^1.1.0"
   },
@@ -83,7 +83,9 @@
     "{,!(node_modules)/**/}*.{css,scss}": ["prettier --write", "stylelint --cache --fix"]
   },
   "jest": {
-    "transformIgnorePatterns": ["node_modules/(?!react-syntax-highlighter)/"]
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-syntax-highlighter)/"
+    ]
   },
   "keywords": [],
   "description": ""

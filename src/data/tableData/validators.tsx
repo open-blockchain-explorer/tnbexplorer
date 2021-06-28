@@ -13,16 +13,6 @@ export interface ValidatorsColumnType {
 
 export const validatorsColumn: ColumnsType<any> = [
   {
-    dataIndex: 'account',
-    ellipsis: true,
-    render: (text) => (
-      <Link to="." style={{wordBreak: 'break-word', wordWrap: 'break-word'}}>
-        {text}
-      </Link>
-    ),
-    title: 'Account',
-  },
-  {
     dataIndex: 'networkId',
     ellipsis: true,
     key: 'networkId',
@@ -31,21 +21,29 @@ export const validatorsColumn: ColumnsType<any> = [
         {text}
       </Link>
     ),
-    title: 'Network ID',
+    title: 'Node ID',
   },
   {
     dataIndex: 'ipAddress',
-    key: 'ipAddress',
+    key: 'networkId',
     render: (text) => <Link to=".">{text}</Link>,
-    title: 'Ip Address / URL',
+    title: 'IP Address',
   },
   {
     align: 'right',
     dataIndex: 'txnFee',
-    key: 'txnFee',
+    key: 'networkId',
     render: (text) => <Typography.Text>{text}</Typography.Text>,
     title: 'Txn Fee',
     width: '90px',
+  },
+  {
+    align: 'right',
+    dataIndex: 'confirmationRate',
+    key: 'networkId',
+    render: (text) => <Typography.Text>{text}</Typography.Text>,
+    title: 'Confirmation Rate',
+    width: '120px',
   },
 ];
 

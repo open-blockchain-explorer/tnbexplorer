@@ -14,7 +14,6 @@ import TestnetFaucet from './TestnetFaucet';
 import TraceTransactions from './TraceTransactions';
 
 function App() {
-
   return (
     <div className="">
       <Router>
@@ -50,8 +49,7 @@ function App() {
             </Route>
             <Route exact path="/testnet/nodes/" component={Nodes} />
             <Route exact path="/testnet/faucet/" component={TestnetFaucet} />
-            
-            
+
             <Redirect from="/" to="/tnb/" />
           </Switch>
         </Layout>
