@@ -42,3 +42,35 @@ export const getBanks = async (
   console.log({rawBanks: banks});
   return banks;
 };
+
+export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
+  const defaultOptions = {
+    limit: 10,
+    offset: 0,
+    accountNumber: '',
+    sender: '',
+    recipient: '',
+  };
+  // console.log({queryParams});
+  const {limit, offset, accountNumber, sender, recipient} = {...defaultOptions, ...queryParams};
+
+  const {data} = await axios.get(
+    `${CORS_BRIDGE}/${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${accountNumber}&block__sender=${sender}&recipient=${recipient}`,
+  );
+
+  const transactions = await data.results.map((tx: any) => {
+    return {
+      id: tx.id,
+      coins: tx.amount,
+      fee: tx.fee,
+      memo: tx.memo,
+      recipient: tx.recipient,
+      sender: tx.block.sender,
+      time: tx.block.modified_date,
+    };
+  });
+  // console.log({transactions});
+
+  const totalTransactions = data.count;
+  return [transactions, totalTransactions];
+};
