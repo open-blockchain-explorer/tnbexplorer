@@ -1,16 +1,16 @@
-import React, {FC, useEffect, useState, useCallback} from 'react';
+import React, {FC, useEffect, useState, useCallback, useMemo} from 'react';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
 import Radio from 'antd/es/radio';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 
-import axios from 'axios';
 import {Link} from 'react-router-dom';
 
+import {getTransactions} from 'api/bank';
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {BANK_URL, CORS_BRIDGE} from 'constants/url';
-import {blocksColumn, blocksData} from 'data/tableData/blocks';
+import {BANK_URL} from 'constants/url';
+import {blocksColumn} from 'data/tableData/blocks';
 import {useChainPath, useTransactionColumn} from 'hooks';
 
 const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
@@ -20,63 +20,54 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const transactionColumn = useTransactionColumn();
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
-  const [blockPagination, setBlockPagination] = useState<TablePaginationConfig>({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
+  const initialPagination = useMemo(
+    () => ({
+      current: 1,
+      pageSize: 10,
+      total: 0,
+    }),
+    [],
+  );
 
-  const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
+  const [blockPagination, setBlockPagination] = useState<TablePaginationConfig>(initialPagination);
+  const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>(initialPagination);
 
-  const handleTableChange = (pageDetails: TablePaginationConfig) => {
-    const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
-    // console.log(pageDetails);
-    const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
+  const handleTableChange = useCallback(
+    (pageDetails: TablePaginationConfig) => {
+      const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
+      // console.log(pageDetails);
+      const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-    if (section === 'transactions') {
-      getTransactions(limit, offset);
-    } else {
-      setBlockPagination(pageDetails);
-    }
-  };
+      if (section === 'transactions') {
+        getTransactions(BANK_URL, {limit, offset}).then(([txs, totalTxs]) => {
+          setTransactionData(txs);
+          const pageSize = limit;
+          const currentPage = offset / limit + 1;
 
-  const getTransactions = useCallback((limit = 10, offset = 0) => {
-    axios.get(`${CORS_BRIDGE}/${BANK_URL}/bank_transactions?limit=${limit}&offset=${offset}`).then((res: any) => {
-      // console.log(res.data.results);
-      const data = res.data.results.map((transaction: any) => {
-        return {
-          id: transaction.id,
-          coins: transaction.amount,
-          memo: transaction.memo,
-          recipient: transaction.recipient,
-          sender: transaction.block.sender,
-          time: transaction.block.modified_date,
-        };
-      });
-
-      const pageSize = limit;
-      const currentPage = offset / limit + 1;
-
-      const pagination = {
-        current: currentPage,
-        pageSize,
-        total: res.data.count,
-      };
-      // console.log({pagination});
-      setTransactionData(data);
-      setTransactionPagination(pagination);
-    });
-  }, []);
+          const pagination = {
+            current: currentPage,
+            pageSize,
+            total: totalTxs,
+          };
+          // console.log({pagination});
+          setTransactionPagination(pagination);
+        });
+      } else {
+        setBlockPagination(pageDetails);
+      }
+    },
+    [section, setTransactionData, setBlockPagination, setTransactionPagination],
+  );
 
   useEffect(() => {
-    if (isMainnet) {
-      getTransactions();
-    }
-  }, [getTransactions, isMainnet]);
+    const load = () => {
+      if (isMainnet) {
+        handleTableChange(initialPagination);
+      }
+    };
+
+    load();
+  }, [isMainnet, handleTableChange, initialPagination]);
 
   return (
     <PageContentsLayout>

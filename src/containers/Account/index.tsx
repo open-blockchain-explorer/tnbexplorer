@@ -7,14 +7,14 @@ import Grid from 'antd/es/grid';
 import List from 'antd/es/list';
 import Row from 'antd/es/row';
 import Statistic from 'antd/es/statistic';
-import Table from 'antd/es/table';
+import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {useAccount} from 'hooks';
-
+import {getTransactions, getAccountDetails} from 'api/bank';
 import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
@@ -27,8 +27,8 @@ interface AccountDetails {
 const Account: FC = () => {
   const screens = Grid.useBreakpoint();
 
-  const account = useAccount();
-  const transactionColumn = useTransactionColumn(account);
+  const accountNumber = useAccount();
+  const transactionColumn = useTransactionColumn(accountNumber);
 
   const [accountDetails, setAccountDetails] = useState<AccountDetails>({
     balance: 0,
@@ -43,100 +43,61 @@ const Account: FC = () => {
     total: transactions.length,
   });
 
-  const getTransactions = useCallback(async (accountNumber: string, {limit, offset}) => {
-    let data: any[] = [];
-    await axios
-      .get(
-        `${CORS_BRIDGE}/${BANK_URL}/bank_transactions?account_number=${accountNumber}&limit=${limit}&offset=${offset}`,
-      )
-      .then((res: any) => {
-        console.log(res.data.results);
-        const result = res.data.results.map((transaction: any) => {
-          return {
-            id: transaction.id,
-            coins: transaction.amount,
-            memo: transaction.memo,
-            recipient: transaction.recipient,
-            sender: transaction.block.sender,
-            time: transaction.block.modified_date,
-          };
-        });
+  const handleTableChange = useCallback(
+    (pageDetails: TablePaginationConfig) => {
+      const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
+      // console.log(pageDetails);
+      const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
+      getTransactions(BANK_URL, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
+        console.log(txs);
+        setTransactions(txs);
         const pageSize = limit;
         const currentPage = offset / limit + 1;
 
         const pagination = {
           current: currentPage,
           pageSize,
-          total: res.data.count,
+          total: totalTxs,
         };
-
-        data = result;
+        // console.log({pagination});
         setTransactionPagination(pagination);
       });
-
-    return data;
-  }, []);
-
-  const getAccountDetails = useCallback(async (accountNumber: string) => {
-    const data: AccountDetails = {balance: 0, balanceLock: ''};
-
-    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance`).then((res) => {
-      data.balance = res.data.balance ?? 0;
-    });
-
-    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance_lock`).then((res) => {
-      console.log(res.data);
-      data.balanceLock = res.data.balance_lock ?? '';
-    });
-    console.log({data});
-
-    return data;
-  }, []);
+    },
+    [accountNumber, setTransactions, setTransactionPagination],
+  );
 
   useEffect(() => {
-    // console.log({account});
+    // console.log({accountNumber});
     // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
 
-    const fetchAccountDetails = async () => {
-      const details = await getAccountDetails(account);
-      console.log({details});
-      setAccountDetails(details);
+    const load = () => {
+      getAccountDetails(PV_URL, accountNumber).then((details) => {
+        setAccountDetails(details);
+      });
+
+      handleTableChange({
+        current: 1,
+        pageSize: 10,
+        total: 0,
+      });
     };
 
-    fetchAccountDetails();
+    load();
+  }, [accountNumber, handleTableChange]);
 
-    const fetchTransactions = async () => {
-      const txs = await getTransactions(account, {limit: 10, offset: 0});
-
-      setTransactions(txs);
-    };
-    fetchTransactions();
-  }, [account, getAccountDetails, getTransactions]);
-
-  const handleTableChange = async (pageDetails: any, filters: any, sorter: any) => {
-    const limit = pageDetails.pageSize ?? 10;
-    const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
-
-    setTransactionPagination(pageDetails);
-    const tsx = await getTransactions(account, {limit, offset});
-
-    setTransactions(tsx);
-    console.log('transaction table', {filters, pageDetails, sorter});
-  };
-
-  const data = [
+  const accountInfo = [
     {
       copyable: {
-        text: account,
+        text: accountNumber,
       },
       title: 'Account Number',
-      value: account.substring(0, 24).concat('...'),
+      value: accountNumber.substring(0, 24).concat('...'),
     },
     {
       copyable: accountDetails?.balanceLock
         ? {
-            text: account,
+            text: accountNumber,
           }
         : false,
       title: 'Balance Lock',
@@ -164,7 +125,7 @@ const Account: FC = () => {
             {screens.md ? (
               <Col flex="100px" md={8}>
                 <div style={{alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
-                  <Qr text={account} width={160} />
+                  <Qr text={accountNumber} width={160} />
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
@@ -198,7 +159,7 @@ const Account: FC = () => {
                 <Col span={24}>
                   <List
                     itemLayout="horizontal"
-                    dataSource={data}
+                    dataSource={accountInfo}
                     renderItem={({title, value, ...properties}) => (
                       <List.Item>
                         {title === 'Account Number' && screens.md === false ? (
@@ -212,7 +173,7 @@ const Account: FC = () => {
                                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
                                 </Col>
                                 <Col span={12}>
-                                  <Qr text={account} />
+                                  <Qr text={accountNumber} />
                                 </Col>
                                 <Col>
                                   <Button>

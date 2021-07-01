@@ -20,21 +20,12 @@ import {nanoid} from 'nanoid';
 import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 
+import {getConfirmationBlocks} from 'api/bank';
 import {PageContentsLayout, Qr} from 'components';
+import {BANK_URL} from 'constants/url';
 import {usePaymentParams} from 'hooks';
 import {EditableCell} from './EditableCell';
 // import { responsiveWidth } from 'utils/responsive';
-
-// declare let tnb_keysign: {
-//   requestTransfer: (
-//     to: string,
-//     amount: number,
-//     memo?: string,
-//     callback?: (res: any) => any,
-//     bank?: string,
-//     code?: string,
-//   ) => any;
-// };
 
 interface Payment {
   key: string;
@@ -42,6 +33,8 @@ interface Payment {
   amount: number;
   memo: string;
 }
+
+const keysign = (window as any).tnb_keysign;
 
 const PaymentRequest = () => {
   const initialPayments = usePaymentParams();
@@ -53,7 +46,7 @@ const PaymentRequest = () => {
   const {useBreakpoint} = Grid;
   const screens = useBreakpoint();
 
-  // xs screen
+  // for xs screen
   const [showEditModal, setShowEditModal] = useState(false);
 
   const paymentsTotal = paymentData.reduce((acc, payment) => payment.amount + acc, 0);
@@ -296,7 +289,7 @@ const PaymentRequest = () => {
           <Row gutter={[30, 30]} justify="center" align="bottom" style={{padding: '10px'}}>
             {isMakingPayment && (
               <>
-                {Boolean((window as any).keysign) && (
+                {!keysign && (
                   <Col span={24}>
                     <Typography.Text strong type="danger">
                       You Don't have Keysign installed
@@ -328,18 +321,33 @@ const PaymentRequest = () => {
                   <Button
                     shape="round"
                     size="large"
-                    disabled={Boolean((window as any).keysign)}
+                    disabled={!keysign}
                     onClick={() => {
-                      const keysign = (window as any).tnb_keysign;
                       if (keysign) {
-                        keysign.requestHandshake((res: any) => console.log('Keysign is installed!', res));
+                        console.log(keysign);
+
                         keysign.requestTransfer(
-                          'e91f8cb818171455b3a0077fe770b291f2fc83a42c38f239fbf39795aa87e9b6',
-                          10,
-                          'Processed by Yung TJ',
-                          (res: any) => console.log(res),
-                          ' http://54.177.121.3',
-                          'randomly generated one time code',
+                          paymentData.map(({accountNumber, amount, memo}) => ({to: accountNumber, amount, memo})),
+                          (res: any) => {
+                            console.log(res);
+
+                            const {result: keysignBlock} = res;
+
+                            getConfirmationBlocks(BANK_URL, {limit: 20}).then(([confirmationBlocks]) => {
+                              console.log(confirmationBlocks);
+
+                              const paymenIsSuccessful = confirmationBlocks.some((cb: any) => {
+                                return keysignBlock.id === cb.block;
+                              });
+
+                              if (paymenIsSuccessful) {
+                                console.log('Successs!!!!');
+                              } else {
+                                console.log('Payment Failed!');
+                              }
+                            });
+                          },
+                          BANK_URL,
                         );
                       }
                     }}
