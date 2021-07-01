@@ -57,7 +57,7 @@ const Overview: FC = () => {
               dataSource={blockData}
               columns={blocksColumn}
               pagination={false}
-              title={() => <TableHeader title="Latest Blocks" buttonLink={''} />}
+              title={() => <TableHeader title="Latest Blocks" buttonLink={'./blocks'} />}
             />
           </Row>
         </Col>
@@ -68,7 +68,7 @@ const Overview: FC = () => {
             dataSource={transactionData}
             columns={transactionColumn}
             pagination={false}
-            title={() => <TableHeader title="Latest Transactions" buttonLink={''} />}
+            title={() => <TableHeader title="Latest Transactions" buttonLink={'./transactions'} />}
           />
         </Col>
       </PageContentsLayout>

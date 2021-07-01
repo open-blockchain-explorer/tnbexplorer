@@ -50,9 +50,8 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
         if (fee) {
           if (fee === 'PRIMARY_VALIDATOR') {
             return <Tag>PV-Fee</Tag>;
-          } else {
-            return <Tag>Bank-Fee</Tag>;
           }
+          return <Tag>Bank-Fee</Tag>;
         }
 
         return memo;
@@ -67,7 +66,6 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       },
       title: 'Time',
     },
-
     {
       align: 'right',
       dataIndex: 'coins',

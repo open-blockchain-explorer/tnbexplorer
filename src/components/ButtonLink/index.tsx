@@ -5,12 +5,13 @@ import Row from 'antd/es/row';
 
 import {ArrowRightOutlined} from '@ant-design/icons';
 
-const BannerLink: FC<{link: string; text?: string}> = ({link, text = 'View All'}) => {
+const ButtonLink: FC<{link: string; text?: string}> = ({link, text = 'View All'}) => {
+  console.log({link});
   return (
-    <Button type="primary">
+    <Button type="primary" href={link}>
       <Row gutter={[10, 0]}>
-        <Col span={'auto'}>View All</Col>
-        <Col span={'auto'}>
+        <Col>View All</Col>
+        <Col>
           <ArrowRightOutlined
             style={{
               background: 'white',
@@ -23,4 +24,4 @@ const BannerLink: FC<{link: string; text?: string}> = ({link, text = 'View All'}
   );
 };
 
-export default BannerLink;
+export default ButtonLink;
