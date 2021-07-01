@@ -79,7 +79,7 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
 interface ConfirmationBlocksQueryParams {
   limit?: number;
   offset?: number;
-  ordering?: `${''|'+'|'-'}${'created_date' | 'modified_date' | 'id' | 'block' | 'validator' |'block_identifier'}`;
+  ordering?: `${'' | '+' | '-'}${'created_date' | 'modified_date' | 'id' | 'block' | 'validator' | 'block_identifier'}`;
 }
 
 export const getConfirmationBlocks = async (nodeUrl: string, queryParams: ConfirmationBlocksQueryParams = {}) => {

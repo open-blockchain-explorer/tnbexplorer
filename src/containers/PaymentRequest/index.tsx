@@ -46,7 +46,7 @@ const PaymentRequest = () => {
   const {useBreakpoint} = Grid;
   const screens = useBreakpoint();
 
-  //for xs screen
+  // for xs screen
   const [showEditModal, setShowEditModal] = useState(false);
 
   const paymentsTotal = paymentData.reduce((acc, payment) => payment.amount + acc, 0);
