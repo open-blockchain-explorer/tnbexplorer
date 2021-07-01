@@ -335,11 +335,15 @@ const PaymentRequest = () => {
 
                             getConfirmationBlocks(BANK_URL, {limit: 20}).then(([confirmationBlocks]) => {
                               console.log(confirmationBlocks);
-                              for (const cb of confirmationBlocks) {
-                                if (keysignBlock.id === cb.block) {
-                                  console.log('SUCCESSSS!!!!!!!!!');
-                                  break;
-                                }
+
+                              const paymenIsSuccessful = confirmationBlocks.some((cb: any) => {
+                                return keysignBlock.id === cb.block;
+                              });
+
+                              if (paymenIsSuccessful) {
+                                console.log('Successs!!!!');
+                              } else {
+                                console.log('Payment Failed!');
                               }
                             });
                           },

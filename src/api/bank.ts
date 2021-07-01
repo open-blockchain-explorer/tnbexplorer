@@ -2,7 +2,8 @@ import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
 
-const getData = async (url:string)=> (await axios.get(`${CORS_BRIDGE}/${url}`)).data
+const getData = async (url: string) => (await axios.get(`${CORS_BRIDGE}/${url}`)).data;
+
 interface BanksColumnType {
   confirmations: number;
   fee: number;
@@ -15,18 +16,18 @@ export const getBanks = async (
   nodeUrl: string,
   {limit, offset} = {limit: 10, offset: 0},
 ): Promise<BanksColumnType[]> => {
-  const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`
+  const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`;
   const rawBanks = (await getData(url)).results;
 
   const formattedBanks = rawBanks.map(
     async ({protocol, ip_address, port, node_identifier}: any): Promise<BanksColumnType> => {
-      const url = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
+      const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
-      const {data: confirmation}: any = await axios.get(`${CORS_BRIDGE}/${url}/confirmation_blocks?limit=1`);
+      const {data: confirmation}: any = await axios.get(`${CORS_BRIDGE}/${bankIp}/confirmation_blocks?limit=1`);
 
-      const {data: txs}: any = await axios.get(`${CORS_BRIDGE}/${url}/bank_transactions?limit=1`);
+      const {data: txs}: any = await axios.get(`${CORS_BRIDGE}/${bankIp}/bank_transactions?limit=1`);
 
-      const {data: config}: any = await axios.get(`${CORS_BRIDGE}/${url}/config`);
+      const {data: config}: any = await axios.get(`${CORS_BRIDGE}/${bankIp}/config`);
 
       console.log({confirmation, txs, config});
 
@@ -56,8 +57,8 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
   // console.log({queryParams});
   const {limit, offset, accountNumber, sender, recipient} = {...defaultOptions, ...queryParams};
 
-  const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${accountNumber}&block__sender=${sender}&recipient=${recipient}`
-  const data = await getData(url)
+  const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${accountNumber}&block__sender=${sender}&recipient=${recipient}`;
+  const data = await getData(url);
 
   const transactions = await data.results.map((tx: any) => {
     return {
@@ -75,10 +76,10 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
   return [transactions, totalTransactions];
 };
 
-interface ConfirmationBlocksQueryParams{
+interface ConfirmationBlocksQueryParams {
   limit?: number;
   offset?: number;
-  ordering?:`${""|"+"|"-"}${"created_date" | "modified_date" | "id" | "block" | "validator" |"block_identifier"}`;
+  ordering?: `${''|'+'|'-'}${'created_date' | 'modified_date' | 'id' | 'block' | 'validator' |'block_identifier'}`;
 }
 
 export const getConfirmationBlocks = async (nodeUrl: string, queryParams: ConfirmationBlocksQueryParams = {}) => {
@@ -89,10 +90,10 @@ export const getConfirmationBlocks = async (nodeUrl: string, queryParams: Confir
   };
   const {limit, offset, ordering} = {...defaultOptions, ...queryParams};
 
-  const url = `${nodeUrl}/confirmation_blocks?limit=${limit}&offset=${offset}&ordering=${ordering}`
-  const {results: confirmationBlocks, count: total} = await getData(url)
+  const url = `${nodeUrl}/confirmation_blocks?limit=${limit}&offset=${offset}&ordering=${ordering}`;
+  const {results: confirmationBlocks, count: total} = await getData(url);
 
-  return [confirmationBlocks, total ]
+  return [confirmationBlocks, total];
 };
 
 interface AccountDetails {
@@ -100,7 +101,7 @@ interface AccountDetails {
   balanceLock: string;
 }
 
-export const getAccountDetails = async (nodeUrl:string, accountNumber: string) => {
+export const getAccountDetails = async (nodeUrl: string, accountNumber: string) => {
   const data: AccountDetails = {balance: 0, balanceLock: ''};
 
   await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance`).then((res) => {
