@@ -1,4 +1,4 @@
-export const BANK_URL = 'http://54.177.121.3';
+export const BANK_URL = 'http://54.183.16.194';
 
 export const CORS_BRIDGE = 'https://cors.bridged.cc';
 
