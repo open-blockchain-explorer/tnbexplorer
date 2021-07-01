@@ -94,3 +94,24 @@ export const getConfirmationBlocks = async (nodeUrl: string, queryParams: Confir
 
   return [confirmationBlocks, total ]
 };
+
+interface AccountDetails {
+  balance?: number;
+  balanceLock: string;
+}
+
+export const getAccountDetails = async (nodeUrl:string, accountNumber: string) => {
+  const data: AccountDetails = {balance: 0, balanceLock: ''};
+
+  await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance`).then((res) => {
+    data.balance = res.data.balance ?? 0;
+  });
+
+  await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance_lock`).then((res) => {
+    console.log(res.data);
+    data.balanceLock = res.data.balance_lock ?? '';
+  });
+  console.log({data});
+
+  return data;
+};

@@ -14,7 +14,7 @@ import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {useAccount} from 'hooks';
-import {getTransactions} from 'api/bank';
+import {getTransactions, getAccountDetails} from 'api/bank';
 import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
@@ -67,28 +67,12 @@ const Account: FC = () => {
     [accountNumber, setTransactions, setTransactionPagination],
   );
 
-  const getAccountDetails = useCallback(async (accountNumber: string) => {
-    const data: AccountDetails = {balance: 0, balanceLock: ''};
-
-    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance`).then((res) => {
-      data.balance = res.data.balance ?? 0;
-    });
-
-    await axios.get(`${CORS_BRIDGE}/${PV_URL}/accounts/${accountNumber}/balance_lock`).then((res) => {
-      console.log(res.data);
-      data.balanceLock = res.data.balance_lock ?? '';
-    });
-    console.log({data});
-
-    return data;
-  }, []);
-
   useEffect(() => {
     // console.log({accountNumber});
     // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
 
     const load = () => {
-      getAccountDetails(accountNumber).then((details) => {
+      getAccountDetails(PV_URL, accountNumber).then((details) => {
         setAccountDetails(details);
       });
 
@@ -100,7 +84,7 @@ const Account: FC = () => {
     };
 
     load();
-  }, [accountNumber, getAccountDetails, handleTableChange]);
+  }, [accountNumber, handleTableChange]);
 
   const accountInfo = [
     {
