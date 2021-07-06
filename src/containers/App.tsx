@@ -1,7 +1,10 @@
 import React from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 
+import {useDispatch} from 'react-redux';
+
 import {Layout} from 'components';
+import {setNetworkStats} from 'store/app';
 
 import Account from './Account';
 import Overview from './Overview';
@@ -14,6 +17,17 @@ import TestnetFaucet from './TestnetFaucet';
 import TraceTransactions from './TraceTransactions';
 
 function App() {
+  const dispatch = useDispatch();
+
+  dispatch(
+    setNetworkStats({
+      accounts: 12345,
+      distributedCoins: 22492,
+      activeBanks: 32,
+      activeValidators: 82,
+      transactions: 3456789,
+    }),
+  );
   return (
     <div className="">
       <Router>

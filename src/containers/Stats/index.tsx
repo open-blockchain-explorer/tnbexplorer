@@ -128,7 +128,6 @@ const dailyChangeInCoinsConfig = {
 
   yAxis: {
     title: {
-      offset: 80,
       text: 'Coins',
       visible: true,
     },
