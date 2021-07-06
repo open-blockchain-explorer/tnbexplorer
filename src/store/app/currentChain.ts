@@ -3,7 +3,6 @@ import {BANK_URL, PV_URL} from 'constants/url';
 import {setObjectsReducer} from 'utils/store';
 
 interface CurrentChainData {
-  [key: string]: any;
   isMainnet: boolean;
   bankUrl: string;
   pvUrl: string;
