@@ -24,7 +24,7 @@ export const getBanks = async (
 
       console.log({bankIp});
 
-      const [_, totalConfirmations] = await getConfirmationBlocks(bankIp);
+      const [unusedObj, totalConfirmations] = await getConfirmationBlocks(bankIp);
 
       return {
         confirmationBlocks: totalConfirmations as number,

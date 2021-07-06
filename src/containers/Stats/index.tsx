@@ -1,8 +1,5 @@
 import React, {FC} from 'react';
-import Card from 'antd/es/card';
 import Col from 'antd/es/col';
-import Space from 'antd/es/space';
-import Typography from 'antd/es/typography';
 
 import {Area, Bar, Line, Pie} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
@@ -12,7 +9,7 @@ import stats from 'data/stats.json';
 import {formatNumber, formatPercent} from 'utils/format';
 
 const dailyChange: {coins: number; date: string}[] = [];
-const data = stats.reduce((acc, record) => {
+stats.reduce((acc, record) => {
   dailyChange.push({
     coins: record.total - acc,
     date: record.date,

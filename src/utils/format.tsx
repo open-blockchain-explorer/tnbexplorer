@@ -1,4 +1,4 @@
-export const formatNumber = (num: number, decimals: number = 2) => {
+export const formatNumber = (num: number, decimals = 2) => {
   const si = [
     {value: 1, symbol: ''},
     {value: 1e3, symbol: 'k'},
@@ -10,7 +10,7 @@ export const formatNumber = (num: number, decimals: number = 2) => {
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   let i;
-  for (i = si.length - 1; i > 0; i--) {
+  for (i = si.length - 1; i > 0; i -= 1) {
     if (Math.abs(num) >= si[i].value) {
       break;
     }
@@ -18,6 +18,6 @@ export const formatNumber = (num: number, decimals: number = 2) => {
   return (num / si[i].value).toFixed(decimals).replace(rx, '$1').concat(si[i].symbol);
 };
 
-export const formatPercent = (num: number, decimals: number = 2) => {
+export const formatPercent = (num: number, decimals = 2) => {
   return num.toFixed(decimals).concat('%');
 };
