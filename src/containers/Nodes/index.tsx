@@ -54,6 +54,7 @@ const Nodes: FC = () => {
           dataSource={banks}
           pagination={false}
           scroll={{x: 500}}
+          sticky
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text>Banks</Typography.Text>
@@ -69,6 +70,7 @@ const Nodes: FC = () => {
           dataSource={validators}
           pagination={false}
           scroll={{x: 500}}
+          sticky
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text>Validators</Typography.Text>

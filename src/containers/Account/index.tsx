@@ -204,9 +204,8 @@ const Account: FC = () => {
           dataSource={transactions}
           onChange={handleTableChange}
           pagination={transactionPagination}
-          scroll={{x: 700, y: 700}}
+          scroll={{x: 700}}
           sticky
-          style={{overflowX: 'scroll'}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text> Transactions</Typography.Text>

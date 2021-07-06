@@ -121,6 +121,8 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             dataSource={[]}
             onChange={handleTableChange}
             pagination={blockPagination}
+            scroll={{x: 700}}
+            sticky
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Blocks</Typography.Text>
