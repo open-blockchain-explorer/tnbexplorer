@@ -7,11 +7,11 @@ import Space from 'antd/es/space';
 import Row from 'antd/es/row';
 import Typography from 'antd/es/typography';
 
-import {Link} from 'react-router-dom';
-
 import {ReactComponent as HologramLogo} from 'assets/hologram.svg';
 import {ReactComponent as TwitterLogo} from 'assets/twitter.svg';
 import {ReactComponent as InstagramLogo} from 'assets/instagram.svg';
+
+import {A} from 'components';
 
 const Footer: FC<{padding: string}> = ({padding}) => {
   const explorer = [
@@ -72,12 +72,12 @@ const Footer: FC<{padding: string}> = ({padding}) => {
             dataSource={explorer}
             renderItem={(item) =>
               item.link ? (
-                <a href={item.link}>
+                <A href={item.link}>
                   <Button type="ghost" style={{padding: '0px', border: '0px'}}>
                     {item.title}
                   </Button>
                   <br />
-                </a>
+                </A>
               ) : (
                 <>
                   <Button type="ghost" style={{padding: '0px', border: '0px'}}>
@@ -98,12 +98,12 @@ const Footer: FC<{padding: string}> = ({padding}) => {
             dataSource={services}
             renderItem={(item) =>
               item.link ? (
-                <a href={item.link}>
+                <A href={item.link}>
                   <Button type="ghost" style={{padding: '0px', border: '0px'}}>
                     {item.title}
                   </Button>
                   <br />
-                </a>
+                </A>
               ) : (
                 <>
                   <Button type="ghost" style={{padding: '0px', border: '0px'}}>

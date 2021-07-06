@@ -94,14 +94,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
         </Radio.Group>
       </Col>
 
-      <Col
-        sm={24}
-        md={16}
-        xl={17}
-        style={{
-          overflowX: 'hidden',
-        }}
-      >
+      <Col sm={24} md={16} xl={17}>
         {section === 'transactions' ? (
           <Table
             bordered
@@ -109,7 +102,8 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             dataSource={transactionData}
             onChange={handleTableChange}
             pagination={transactionPagination}
-            style={{overflowX: 'auto'}}
+            scroll={{x: 700}}
+            sticky
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Transactions</Typography.Text>
@@ -127,6 +121,8 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             dataSource={[]}
             onChange={handleTableChange}
             pagination={blockPagination}
+            scroll={{x: 700}}
+            sticky
             title={() => (
               <Row justify="space-between" align="middle">
                 <Typography.Text> Latest Blocks</Typography.Text>

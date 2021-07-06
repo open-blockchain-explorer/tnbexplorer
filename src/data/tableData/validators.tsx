@@ -1,7 +1,6 @@
 import React from 'react';
 import {ColumnsType} from 'antd/es/table';
 import Typography from 'antd/es/typography';
-import {finance, internet, random} from 'faker';
 import {Link} from 'react-router-dom';
 
 export interface ValidatorsColumnType {
@@ -43,20 +42,5 @@ export const validatorsColumn: ColumnsType<any> = [
     key: 'networkId',
     render: (text) => <Typography.Text>{text}</Typography.Text>,
     title: 'Confirmation Rate',
-    width: '120px',
   },
 ];
-
-export const validatorsData = (total: number) => {
-  const data: ValidatorsColumnType[] = [];
-  for (let i = 0; i < total; i += 1) {
-    data.push({
-      account: finance.bitcoinAddress(),
-      ipAddress: internet.ip(),
-      networkId: finance.bitcoinAddress(),
-      txnFee: random.number(3),
-    });
-  }
-
-  return data;
-};

@@ -1,15 +1,13 @@
 import React from 'react';
 import Typography from 'antd/es/typography';
 import {ColumnsType} from 'antd/es/table';
-import {finance, internet, random} from 'faker';
 import {Link} from 'react-router-dom';
 
 export interface BanksColumnType {
-  confirmations: number;
+  confirmationBlocks: number;
   fee: number;
   networkId: string;
   ipAddress: string;
-  transactions: number;
 }
 
 export const banksColumn: ColumnsType<any> = [
@@ -26,43 +24,24 @@ export const banksColumn: ColumnsType<any> = [
   },
   {
     dataIndex: 'ipAddress',
-    key: 'ipAddress',
+    key: 'networkId',
     render: (text) => <Link to=".">{text}</Link>,
     title: 'IP Address',
   },
   {
-    dataIndex: 'transactions',
-    key: 'transactions',
+    align: 'right',
+    dataIndex: 'confirmationBlocks',
+    key: 'networkId',
     render: (text) => <Typography.Text>{text}</Typography.Text>,
-    title: 'Transactions',
-  },
-  {
-    dataIndex: 'confirmations',
-    key: 'confirmations',
-    render: (text) => <Typography.Text>{text}</Typography.Text>,
-    title: 'Confirmations',
+    title: 'Blocks',
+    width: '90px',
   },
   {
     align: 'right',
     dataIndex: 'fee',
-    key: 'fee',
+    key: 'networkId',
     render: (text) => <Typography.Text>{text}</Typography.Text>,
     title: 'Fee',
-    width: '70px',
+    width: '90px',
   },
 ];
-
-export const banksData = (total: number) => {
-  const data: BanksColumnType[] = [];
-  for (let i = 0; i < total; i += 1) {
-    data.push({
-      confirmations: random.number(50),
-      fee: random.number(3),
-      ipAddress: internet.ip(),
-      networkId: finance.bitcoinAddress(),
-      transactions: random.number(3000),
-    });
-  }
-
-  return data;
-};

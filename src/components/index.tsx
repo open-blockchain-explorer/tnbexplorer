@@ -1,3 +1,4 @@
+export {default as A} from './A';
 export {default as BannerLink} from './BannerLink';
 export {default as ButtonLink} from './ButtonLink';
 export {default as ChartsCard} from './ChartsCard';
