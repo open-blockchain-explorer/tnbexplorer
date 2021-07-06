@@ -10,14 +10,13 @@ import Statistic from 'antd/es/statistic';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 
-import axios from 'axios';
 import {Link} from 'react-router-dom';
 
 import {useAccount} from 'hooks';
 import {getTransactions, getAccountDetails} from 'api/bank';
 import {KeyValuePair, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
-import {BANK_URL, CORS_BRIDGE, PV_URL} from 'constants/url';
+import {BANK_URL, PV_URL} from 'constants/url';
 
 interface AccountDetails {
   balance?: number;
@@ -198,13 +197,16 @@ const Account: FC = () => {
         </Card>
       </Col>
 
-      <Col>
+      <Col span={24}>
         <Table
           bordered
           columns={transactionColumn}
           dataSource={transactions}
           onChange={handleTableChange}
           pagination={transactionPagination}
+          scroll={{x: 700, y: 700}}
+          sticky
+          style={{overflowX: 'scroll'}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text> Transactions</Typography.Text>

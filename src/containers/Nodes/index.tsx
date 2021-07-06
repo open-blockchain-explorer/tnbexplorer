@@ -16,11 +16,10 @@ import {useChainPath} from 'hooks';
 import {BANK_URL, PV_URL} from 'constants/url';
 
 interface BanksColumnType {
-  confirmations: number;
+  confirmationBlocks: number;
   fee: number;
   networkId: string;
   ipAddress: string;
-  transactions: number;
 }
 
 const Nodes: FC = () => {
@@ -54,6 +53,7 @@ const Nodes: FC = () => {
           columns={banksColumn}
           dataSource={banks}
           pagination={false}
+          scroll={{x: 500}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text>Banks</Typography.Text>
@@ -68,6 +68,7 @@ const Nodes: FC = () => {
           columns={validatorsColumn}
           dataSource={validators}
           pagination={false}
+          scroll={{x: 500}}
           title={() => (
             <Row justify="space-between" align="middle">
               <Typography.Text>Validators</Typography.Text>

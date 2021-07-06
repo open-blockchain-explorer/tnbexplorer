@@ -1,5 +1,5 @@
 {
-  "name": "tnb-explorer",
+  "name": "tnbexplorer",
   "version": "0.1.0",
   "private": false,
   "dependencies": {
@@ -27,6 +27,7 @@
     "qrcode": "^1.4.4",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
+    "react-google-recaptcha-v3": "1.9.4",
     "react-redux": "^7.2.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
@@ -49,8 +50,16 @@
     "extends": "eslint:recommended"
   },
   "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7",
@@ -77,10 +86,26 @@
       "pre-commit": "lint-staged"
     }
   },
-  "eslintIgnore": ["node_modules", "coverage", "dist", "build", "docs", ".vscode", ".github", ".idea", ".storybook"],
+  "eslintIgnore": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "build",
+    "docs",
+    ".vscode",
+    ".github",
+    ".idea",
+    ".storybook"
+  ],
   "lint-staged": {
-    "{,!(node_modules)/**/}*.{ts,tsx,js}": ["eslint --cache --fix", "prettier --write"],
-    "{,!(node_modules)/**/}*.{css,scss}": ["prettier --write", "stylelint --cache --fix"]
+    "{,!(node_modules)/**/}*.{ts,tsx,js}": [
+      "eslint --cache --fix",
+      "prettier --write"
+    ],
+    "{,!(node_modules)/**/}*.{css,scss}": [
+      "prettier --write",
+      "stylelint --cache --fix"
+    ]
   },
   "jest": {
     "transformIgnorePatterns": [

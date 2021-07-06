@@ -57,6 +57,7 @@ const Overview: FC = () => {
               dataSource={blockData}
               columns={blocksColumn}
               pagination={false}
+              scroll={{x: 700}}
               title={() => <TableHeader title="Latest Blocks" buttonLink={'./blocks'} />}
             />
           </Row>

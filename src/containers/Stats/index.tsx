@@ -9,7 +9,7 @@ import {format as formatDate} from 'date-fns';
 
 import {ChartsCard, NetworkStats, PageContentsLayout} from 'components';
 import stats from 'data/stats.json';
-import {formatNumber} from 'utils/format';
+import {formatNumber, formatPercent} from 'utils/format';
 
 const dailyChange: {coins: number; date: string}[] = [];
 const data = stats.reduce((acc, record) => {
@@ -25,12 +25,12 @@ const config = {
   appendPadding: [20, 0, 0, 0],
   data: stats,
   height: 400,
-  label: {
-    style: {
-      fill: '#aaa',
-    },
+  label: false, // label points on graph
+  slider: {
+    start: 0.4,
+    end: 1,
   },
-  smooth: true,
+  smooth: false,
 
   xAxis: {
     title: {
@@ -60,14 +60,9 @@ const distributedCoinsConfig = {
       tickCount: 11,
     },
   },
-  point: {
-    shape: 'diamond',
-    size: 3,
-  },
   xField: 'date',
   yAxis: {
     title: {
-      offset: 90,
       text: 'Coins',
       visible: true,
     },
@@ -97,7 +92,6 @@ const totalAccountsConfig = {
 
   yAxis: {
     title: {
-      offset: 50,
       text: 'Accounts',
       visible: true,
     },
@@ -109,6 +103,11 @@ const totalAccountsConfig = {
 const dailyChangeInCoinsConfig = {
   ...config,
   data: dailyChange,
+  label: {
+    style: {
+      fill: '#aaa',
+    },
+  },
   meta: {
     coins: {
       formatter: function formatter(coins: any) {
@@ -179,6 +178,7 @@ stats.forEach((record) => {
 });
 
 const ownershipConfig = {
+  ...config,
   appendPadding: [10, 0, 0, 0],
   areaStyle: {fillOpacity: 0.7},
   color: ['#00dbff', '#009dff', '#007dcc', '#e1ae19', '#7363f6'],
@@ -193,9 +193,7 @@ const ownershipConfig = {
     },
     percent: {
       formatter: function formatter(percent: number) {
-        return Number(percent * 100)
-          .toFixed(2)
-          .concat('%');
+        return formatPercent(Number(percent * 100), 0);
       },
       nice: true,
     },
@@ -213,7 +211,6 @@ const ownershipConfig = {
   xField: 'date',
   yAxis: {
     title: {
-      offset: 70,
       text: 'Ownership Percent',
       visible: true,
     },

@@ -6,12 +6,11 @@ import Typography from 'antd/es/typography';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import CaretUpOutlined from '@ant-design/icons/CaretUpOutlined';
 
-import {formatNumber} from 'utils/format';
-
 interface Statistics {
   previous: number;
   current: number;
 }
+const formatPercent = (num: number) => (num | 0).toLocaleString();
 
 const InfoPane: FC<{
   title: string;
@@ -29,7 +28,6 @@ const InfoPane: FC<{
   } else {
     textColour = change > 0 ? 'success' : 'danger';
   }
-  const formatGain = (n: number) => {};
 
   return (
     <div {...otherProps}>
@@ -38,11 +36,11 @@ const InfoPane: FC<{
           <Typography.Text type="secondary"> {title.toUpperCase()}</Typography.Text>
         </Col>
         <Col span={24}>
-          <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>{formatNumber(current)}</Typography.Text>
+          <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>{formatPercent(current)}</Typography.Text>
         </Col>
         <Col span={24}>
           <Typography.Text type={textColour}>
-            {showChangeAsPercent ? `${formatNumber((change / previous) * 100)}%` : formatNumber(change)}
+            {showChangeAsPercent ? `${formatPercent((change / previous) * 100)}%` : formatPercent(change)}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
           </Typography.Text>
         </Col>
