@@ -22,7 +22,6 @@ const config = {
   appendPadding: [20, 0, 0, 0],
   data: stats,
   height: 400,
-  label: false, // label points on graph
   slider: {
     start: 0.4,
     end: 1,

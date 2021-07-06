@@ -38,12 +38,12 @@ const InfoPane: FC<{
         </Col>
         <Col span={24}>
           <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>
-            {formatPercent(current, 0)}
+            {current.toLocaleString()}
           </Typography.Text>
         </Col>
         <Col span={24}>
           <Typography.Text type={textColour}>
-            {showChangeAsPercent ? `${formatPercent((change / previous) * 100, 0)}%` : formatPercent(change, 0)}
+            {showChangeAsPercent ? formatPercent((change / previous) * 100, 0) : formatPercent(change, 0)}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
           </Typography.Text>
         </Col>
