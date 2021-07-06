@@ -7,8 +7,10 @@ import Grid from 'antd/es/grid';
 import Row from 'antd/es/row';
 import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
+import {useSelector} from 'react-redux';
 
 import {InfoPane} from 'components';
+import {getNetworkStats} from 'selectors';
 import stats from 'data/stats.json';
 
 const previousStats = stats[stats.length - 2];
@@ -17,6 +19,8 @@ const latestStats = stats[stats.length - 1];
 const {useBreakpoint} = Grid;
 const NetworkStats = () => {
   const screens = useBreakpoint();
+  const networkStats = useSelector(getNetworkStats);
+  console.log({networkStats});
 
   return (
     <>

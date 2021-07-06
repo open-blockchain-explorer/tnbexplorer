@@ -4,18 +4,18 @@ import Row from 'antd/es/row';
 import Radio from 'antd/es/radio';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
-
 import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
 import {getTransactions} from 'api/bank';
 import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
-import {BANK_URL} from 'constants/url';
 import {blocksColumn} from 'data/tableData/blocks';
 import {useChainPath, useTransactionColumn} from 'hooks';
+import {getCurrentChain} from 'selectors';
 
 const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
+  const {isMainnet, bankUrl} = useSelector(getCurrentChain);
   const currentPath = useChainPath();
-  const isMainnet = currentPath === '/tnb';
 
   const transactionColumn = useTransactionColumn();
   const [transactionData, setTransactionData] = useState<any[]>([]);
@@ -39,7 +39,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
       if (section === 'transactions') {
-        getTransactions(BANK_URL, {limit, offset}).then(([txs, totalTxs]) => {
+        getTransactions(bankUrl, {limit, offset}).then(([txs, totalTxs]) => {
           setTransactionData(txs);
           const pageSize = limit;
           const currentPage = offset / limit + 1;
@@ -56,18 +56,16 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
         setBlockPagination(pageDetails);
       }
     },
-    [section, setTransactionData, setBlockPagination, setTransactionPagination],
+    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination],
   );
 
   useEffect(() => {
     const load = () => {
-      if (isMainnet) {
-        handleTableChange(initialPagination);
-      }
+      handleTableChange(initialPagination);
     };
 
     load();
-  }, [isMainnet, handleTableChange, initialPagination]);
+  }, [handleTableChange, initialPagination]);
 
   return (
     <PageContentsLayout>
