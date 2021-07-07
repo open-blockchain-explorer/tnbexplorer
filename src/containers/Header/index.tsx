@@ -12,10 +12,13 @@ import Typography from 'antd/es/typography';
 
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
 import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
-import {useChainPath} from 'hooks';
+import {identifyQuery, QueryType} from 'utils/search';
 import Banner from './Banner';
 import HeaderNav from './HeaderNav';
+import {getCurrentChain} from 'selectors';
 
 const {Header: AntDHeader} = AntDLayout;
 const {Search} = Input;
@@ -23,14 +26,11 @@ const {Search} = Input;
 // interface ComponentProps {}
 
 const Header: FC<{padding: string}> = ({padding}) => {
-  const currentPath = useChainPath();
-  const isMainnet = currentPath === '/tnb';
+  const {isMainnet, path: chainPath, pvUrl, bankUrl} = useSelector(getCurrentChain);
 
   const logo = isMainnet ? tnbLogo : tnbTestnetLogo;
 
   const logoText = isMainnet ? 'thenewboston' : 'thenewboston Testnet';
-
-  const [underlineTNB, setUnderlineTNB] = useState(false);
 
   const menu = (
     <Menu>
@@ -66,6 +66,21 @@ const Header: FC<{padding: string}> = ({padding}) => {
     </Menu>
   );
 
+  const history = useHistory();
+
+  const search = async (query: string) => {
+    console.log(`searching... for ${query}`);
+    const queryType = await identifyQuery(query, {pvUrl, bankUrl});
+    console.log({queryType});
+    switch (queryType) {
+      case QueryType.account:
+        history.push(`${chainPath}/account/${query}/`);
+        break;
+      default:
+        console.log('Unidentified Search Query');
+    }
+  };
+
   return (
     <>
       <Banner padding={padding} />
@@ -81,14 +96,7 @@ const Header: FC<{padding: string}> = ({padding}) => {
         <Row align="bottom" justify="space-between">
           <Col flex="450px">
             <Row>
-              <Col
-                onMouseOver={() => {
-                  setUnderlineTNB(true);
-                }}
-                onMouseOut={() => {
-                  setUnderlineTNB(false);
-                }}
-              >
+              <Col>
                 <Dropdown overlay={menu} placement="bottomCenter" trigger={['click']}>
                   <Row align="bottom" gutter={[10, 0]} style={{cursor: 'pointer', lineHeight: '20px'}}>
                     <Col>
@@ -96,16 +104,11 @@ const Header: FC<{padding: string}> = ({padding}) => {
                     </Col>
                     <Col>
                       {isMainnet ? (
-                        <Typography.Title underline={underlineTNB} style={{margin: '0px'}} level={3}>
+                        <Typography.Title style={{margin: '0px'}} level={3}>
                           {logoText}
                         </Typography.Title>
                       ) : (
-                        <Typography.Title
-                          underline={underlineTNB}
-                          style={{cursor: 'pointer', margin: '0px'}}
-                          level={3}
-                          type="secondary"
-                        >
+                        <Typography.Title style={{cursor: 'pointer', margin: '0px'}} level={3} type="secondary">
                           {logoText}
                         </Typography.Title>
                       )}
@@ -124,11 +127,11 @@ const Header: FC<{padding: string}> = ({padding}) => {
           <Col flex="auto" lg={11} xxl={10}>
             {' '}
             <Search
-              placeholder="Address / IP Address / Node ID / Transaction ID"
+              placeholder="Account / Block Height / IP Address / Node ID / Transaction ID"
               allowClear
               enterButton="Search"
               size="middle"
-              onSearch={() => console.log('searching...')}
+              onSearch={search}
             />
           </Col>
         </Row>

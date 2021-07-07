@@ -22,6 +22,7 @@ const Layout: FC = ({children}) => {
       isMainnet,
       bankUrl: isMainnet ? BANK_URL : TESTNET_BANK_URL,
       pvUrl: isMainnet ? PV_URL : TESTNET_PV_URL,
+      path: currentChain,
     }),
   );
 
