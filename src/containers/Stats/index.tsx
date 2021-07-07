@@ -23,7 +23,7 @@ const config = {
   data: stats,
   height: 400,
   slider: {
-    start: 0.4,
+    start: 0,
     end: 1,
   },
   smooth: false,

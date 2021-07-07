@@ -2,7 +2,19 @@ import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
 
-const getData = async (url: string) => (await axios.get(`${CORS_BRIDGE}/${url}`)).data;
+const getData = async (url: string) => {
+  const source = axios.CancelToken.source();
+
+  const timeout = setTimeout(()=>{
+    source.cancel();
+  }, 2000)
+
+ const res =  (await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token}));
+
+ clearTimeout(timeout);
+ console.log({res})
+ return res.data;
+}
 
 interface BanksColumnType {
   confirmationBlocks: number;
@@ -14,29 +26,48 @@ interface BanksColumnType {
 export const getBanks = async (
   nodeUrl: string,
   {limit, offset} = {limit: 10, offset: 0},
+  callback?:(bank: BanksColumnType)=>void,
 ): Promise<BanksColumnType[]> => {
   const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`;
   const rawBanks = (await getData(url)).results;
 
-  const formattedBanks = rawBanks.map(
-    async ({protocol, ip_address, port, node_identifier, default_transaction_fee}: any): Promise<BanksColumnType> => {
+  const banks = await rawBanks.reduce(
+    async (asyncAcc: Promise<BanksColumnType[]>, {protocol, ip_address, port, node_identifier, default_transaction_fee}:any): Promise<BanksColumnType[]> => {
+     const acc = await asyncAcc;
+
       const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
       console.log({bankIp});
 
-      const [unusedObj, totalConfirmations] = await getConfirmationBlocks(bankIp);
+      try{
+        const data = await getConfirmationBlocks(bankIp);
+      console.log(data === undefined)
 
-      return {
-        confirmationBlocks: totalConfirmations as number,
-        fee: default_transaction_fee as number,
-        networkId: node_identifier,
-        ipAddress: ip_address,
-      };
-    },
+      if (data){
+
+        const [unusedObj, totalConfirmations] = data;
+
+        const bankData = {
+          confirmationBlocks: totalConfirmations as number,
+          fee: default_transaction_fee as number,
+          networkId: node_identifier,
+          ipAddress: ip_address,
+        }
+
+        callback?.(bankData);
+        acc.push(bankData);
+      }
+      }finally{
+      return acc;
+
+      }
+      
+
+      return acc;
+    },  Promise.resolve([])
   );
 
-  const banks = (await Promise.all(formattedBanks)) as BanksColumnType[];
-  console.log({rawBanks: banks});
+  console.log({banks});
   return banks;
 };
 
@@ -103,10 +134,10 @@ export const getAccountDetails = async (nodeUrl: string, accountNumber: string) 
   });
 
   await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance_lock`).then((res) => {
-    console.log(res.data);
+    // console.log(res.data);
     data.balanceLock = res.data.balance_lock ?? '';
   });
-  console.log({data});
+  // console.log({data});
 
   return data;
 };
