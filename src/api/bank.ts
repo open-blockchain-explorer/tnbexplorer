@@ -5,16 +5,16 @@ import {CORS_BRIDGE} from 'constants/url';
 const getData = async (url: string) => {
   const source = axios.CancelToken.source();
 
-  const timeout = setTimeout(()=>{
+  const timeout = setTimeout(() => {
     source.cancel();
-  }, 2000)
+  }, 2000);
 
- const res =  (await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token}));
+  const res = await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token});
 
- clearTimeout(timeout);
- console.log({res})
- return res.data;
-}
+  clearTimeout(timeout);
+  console.log({res});
+  return res.data;
+};
 
 interface BanksColumnType {
   confirmationBlocks: number;
@@ -26,45 +26,46 @@ interface BanksColumnType {
 export const getBanks = async (
   nodeUrl: string,
   {limit, offset} = {limit: 10, offset: 0},
-  callback?:(bank: BanksColumnType)=>void,
+  callback?: (bank: BanksColumnType) => void,
 ): Promise<BanksColumnType[]> => {
   const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`;
   const rawBanks = (await getData(url)).results;
 
   const banks = await rawBanks.reduce(
-    async (asyncAcc: Promise<BanksColumnType[]>, {protocol, ip_address, port, node_identifier, default_transaction_fee}:any): Promise<BanksColumnType[]> => {
-     const acc = await asyncAcc;
+    async (
+      asyncAcc: Promise<BanksColumnType[]>,
+      {protocol, ip_address, port, node_identifier, default_transaction_fee}: any,
+    ): Promise<BanksColumnType[]> => {
+      const acc = await asyncAcc;
 
       const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
       console.log({bankIp});
 
-      try{
+      try {
         const data = await getConfirmationBlocks(bankIp);
-      console.log(data === undefined)
+        console.log(data === undefined);
 
-      if (data){
+        if (data) {
+          const [unusedObj, totalConfirmations] = data;
 
-        const [unusedObj, totalConfirmations] = data;
+          const bankData = {
+            confirmationBlocks: totalConfirmations as number,
+            fee: default_transaction_fee as number,
+            networkId: node_identifier,
+            ipAddress: ip_address,
+          };
 
-        const bankData = {
-          confirmationBlocks: totalConfirmations as number,
-          fee: default_transaction_fee as number,
-          networkId: node_identifier,
-          ipAddress: ip_address,
+          callback?.(bankData);
+          acc.push(bankData);
         }
-
-        callback?.(bankData);
-        acc.push(bankData);
+      } finally {
+        return acc;
       }
-      }finally{
-      return acc;
-
-      }
-      
 
       return acc;
-    },  Promise.resolve([])
+    },
+    Promise.resolve([]),
   );
 
   console.log({banks});
