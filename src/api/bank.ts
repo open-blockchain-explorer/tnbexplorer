@@ -59,8 +59,8 @@ export const getBanks = async (
           callback?.(bankData);
           acc.push(bankData);
         }
-      } finally {
-        return acc;
+      } catch {
+        console.log(`Bank "${bankIp}" is offline` )
       }
 
       return acc;
