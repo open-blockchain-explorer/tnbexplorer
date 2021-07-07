@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
 
-const getData = async (url: string) => {
+export const getData = async (url: string) => {
   const source = axios.CancelToken.source();
 
   const timeout = setTimeout(() => {
