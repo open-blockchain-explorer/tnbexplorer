@@ -1,6 +1,4 @@
-import React, {FC, useState} from 'react';
-import tnbLogo from 'assets/tnb-logo.png';
-import tnbTestnetLogo from 'assets/tnb-testnet-logo.png';
+import React, {FC} from 'react';
 
 import Col from 'antd/es/col';
 import Dropdown from 'antd/es/dropdown';
@@ -9,16 +7,16 @@ import Menu from 'antd/es/menu';
 import Input from 'antd/es/input';
 import Row from 'antd/es/row';
 import Typography from 'antd/es/typography';
-
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import {useHistory} from 'react-router-dom';
 
+import tnbLogo from 'assets/tnb-logo.png';
+import tnbTestnetLogo from 'assets/tnb-testnet-logo.png';
+import {getCurrentChain} from 'selectors';
 import {identifyQuery, QueryType} from 'utils/search';
 import Banner from './Banner';
 import HeaderNav from './HeaderNav';
-import {getCurrentChain} from 'selectors';
 
 const {Header: AntDHeader} = AntDLayout;
 const {Search} = Input;

@@ -14,7 +14,7 @@ const currentChain = createSlice({
     isMainnet: true,
     bankUrl: BANK_URL,
     pvUrl: PV_URL,
-    path: "/tnb"
+    path: '/tnb',
   } as CurrentChainData,
   name: 'CURRENT_CHAIN',
   reducers: {
