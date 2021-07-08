@@ -80,7 +80,7 @@ const TestnetFaucet = () => {
         ref={recaptchaRef}
         size="invisible"
         sitekey={'6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
-      ></ReCAPTCHA>
+      />
 
       {/* Testnet Faucet Form */}
       <Col span={24}>

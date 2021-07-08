@@ -31,42 +31,44 @@ export const getBanks = async (
   const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`;
   const rawBanks = (await getData(url)).results;
 
-  const banks = await rawBanks.reverse().reduce(
-    async (
-      asyncAcc: Promise<BanksColumnType[]>,
-      {protocol, ip_address, port, node_identifier, default_transaction_fee}: any,
-    ): Promise<BanksColumnType[]> => {
-      const acc = await asyncAcc;
+  const banks = await rawBanks
+    .reverse()
+    .reduce(
+      async (
+        asyncAcc: Promise<BanksColumnType[]>,
+        {protocol, ip_address, port, node_identifier, default_transaction_fee}: any,
+      ): Promise<BanksColumnType[]> => {
+        const acc = await asyncAcc;
 
-      const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
+        const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
-      console.log({bankIp});
+        console.log({bankIp});
 
-      try {
-        const data = await getConfirmationBlocks(bankIp);
-        console.log(data === undefined);
+        try {
+          const data = await getConfirmationBlocks(bankIp);
+          console.log(data === undefined);
 
-        if (data) {
-          const [unusedObj, totalConfirmations] = data;
+          if (data) {
+            const [unusedObj, totalConfirmations] = data;
 
-          const bankData = {
-            confirmationBlocks: totalConfirmations as number,
-            fee: default_transaction_fee as number,
-            networkId: node_identifier,
-            ipAddress: ip_address,
-          };
+            const bankData = {
+              confirmationBlocks: totalConfirmations as number,
+              fee: default_transaction_fee as number,
+              networkId: node_identifier,
+              ipAddress: ip_address,
+            };
 
-          callback?.(bankData);
-          acc.push(bankData);
+            callback?.(bankData);
+            acc.push(bankData);
+          }
+        } catch {
+          console.log(`Bank "${bankIp}" is offline`);
         }
-      } catch {
-        console.log(`Bank "${bankIp}" is offline`);
-      }
 
-      return acc;
-    },
-    Promise.resolve([]),
-  );
+        return acc;
+      },
+      Promise.resolve([]),
+    );
 
   console.log({banks});
   return banks;
