@@ -11,12 +11,13 @@ import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 
 import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
 
 import {useAccount} from 'hooks';
 import {getTransactions, getAccountDetails} from 'api/bank';
-import {KeyValuePair, PageContentsLayout, Qr} from 'components';
+import {KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
-import {BANK_URL, PV_URL} from 'constants/url';
+import {getCurrentChain} from 'selectors';
 
 interface AccountDetails {
   balance?: number;
@@ -25,6 +26,8 @@ interface AccountDetails {
 
 const Account: FC = () => {
   const screens = Grid.useBreakpoint();
+
+  const {isMainnet, pvUrl, bankUrl} = useSelector(getCurrentChain);
 
   const accountNumber = useAccount();
   const transactionColumn = useTransactionColumn(accountNumber);
@@ -48,7 +51,7 @@ const Account: FC = () => {
       // console.log(pageDetails);
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-      getTransactions(BANK_URL, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
+      getTransactions(bankUrl, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
         console.log(txs);
         setTransactions(txs);
         const pageSize = limit;
@@ -63,7 +66,7 @@ const Account: FC = () => {
         setTransactionPagination(pagination);
       });
     },
-    [accountNumber, setTransactions, setTransactionPagination],
+    [accountNumber, bankUrl, setTransactions, setTransactionPagination],
   );
 
   useEffect(() => {
@@ -71,7 +74,7 @@ const Account: FC = () => {
     // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
 
     const load = () => {
-      getAccountDetails(PV_URL, accountNumber).then((details) => {
+      getAccountDetails(pvUrl, accountNumber).then((details) => {
         setAccountDetails(details);
       });
 
@@ -83,7 +86,7 @@ const Account: FC = () => {
     };
 
     load();
-  }, [accountNumber, handleTableChange]);
+  }, [accountNumber, pvUrl, handleTableChange]);
 
   const accountInfo = [
     {
@@ -118,6 +121,11 @@ const Account: FC = () => {
 
   return (
     <PageContentsLayout>
+      {!isMainnet && (
+        <Col span={24}>
+          <TestnetAlertMessage />
+        </Col>
+      )}
       <Col span={24}>
         <Card>
           <Row justify="space-around" align="bottom">

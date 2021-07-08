@@ -6,6 +6,7 @@ interface CurrentChainData {
   isMainnet: boolean;
   bankUrl: string;
   pvUrl: string;
+  path: string;
 }
 
 const currentChain = createSlice({
@@ -13,6 +14,7 @@ const currentChain = createSlice({
     isMainnet: true,
     bankUrl: BANK_URL,
     pvUrl: PV_URL,
+    path: '/tnb',
   } as CurrentChainData,
   name: 'CURRENT_CHAIN',
   reducers: {

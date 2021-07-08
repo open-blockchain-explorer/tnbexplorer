@@ -3,6 +3,8 @@ import Typography from 'antd/es/typography';
 import {ColumnsType} from 'antd/es/table';
 import {Link} from 'react-router-dom';
 
+import {A} from 'components';
+
 export interface BanksColumnType {
   confirmationBlocks: number;
   fee: number;
@@ -25,7 +27,7 @@ export const banksColumn: ColumnsType<any> = [
   {
     dataIndex: 'ipAddress',
     key: 'networkId',
-    render: (text) => <Link to=".">{text}</Link>,
+    render: (text) => <A href={`http://${text}`}>{text}</A>,
     title: 'IP Address',
   },
   {

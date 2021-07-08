@@ -4,6 +4,7 @@ import Col from 'antd/es/col';
 import Row from 'antd/es/row';
 import Table from 'antd/es/table';
 import Typography from 'antd/es/typography';
+import {useSelector} from 'react-redux';
 
 import {NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {validatorsColumn} from 'data/tableData/validators';
@@ -12,8 +13,7 @@ import {banksColumn} from 'data/tableData/banks';
 import {getBanks} from 'api/bank';
 import {getValidators} from 'api/validator';
 
-import {useChainPath} from 'hooks';
-import {BANK_URL, PV_URL} from 'constants/url';
+import {getCurrentChain} from 'selectors';
 
 interface BanksColumnType {
   confirmationBlocks: number;
@@ -23,25 +23,24 @@ interface BanksColumnType {
 }
 
 const Nodes: FC = () => {
-  const currentPath = useChainPath();
-  const isMainnet = currentPath === '/tnb';
+  const {isMainnet, pvUrl} = useSelector(getCurrentChain);
 
   const [banks, setBanks] = useState<BanksColumnType[]>([]);
   const [validators, setValidators] = useState<any[]>([]);
 
   useEffect(() => {
     const load = () => {
-      getValidators(PV_URL).then((validatorsData) => {
+      getValidators(pvUrl).then((validatorsData) => {
         setValidators(validatorsData);
       });
 
-      getBanks(BANK_URL).then((banksData) => {
-        setBanks(banksData);
+      getBanks(pvUrl, {limit: 10, offset: 0}, (bankData) => {
+        setBanks((prev) => [...prev, bankData]);
       });
     };
 
     load();
-  }, []);
+  }, [pvUrl, setBanks]);
 
   return (
     <PageContentsLayout>
@@ -52,6 +51,7 @@ const Nodes: FC = () => {
           bordered
           columns={banksColumn}
           dataSource={banks}
+          loading={banks.length === 0}
           pagination={false}
           scroll={{x: 500}}
           sticky
@@ -68,6 +68,7 @@ const Nodes: FC = () => {
           bordered
           columns={validatorsColumn}
           dataSource={validators}
+          loading={validators.length === 0}
           pagination={false}
           scroll={{x: 500}}
           sticky
