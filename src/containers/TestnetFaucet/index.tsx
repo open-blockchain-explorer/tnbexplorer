@@ -85,7 +85,7 @@ const TestnetFaucet = () => {
       {/* Testnet Faucet Form */}
       <Col span={24}>
         <Card>
-          <Row justify="center" gutter={[30, 30]}>
+          <Row align="middle" justify="space-between" gutter={[30, 30]}>
             <Col xs={23} sm={20} md={16} lg={14} xl={12}>
               <Typography.Title level={4}> Get Coins to test on the Testnet</Typography.Title>
               <Form
@@ -107,7 +107,7 @@ const TestnetFaucet = () => {
                   label="Post Url"
                   name="url"
                   required
-                  tooltip="This is a required field"
+                  // tooltip="This is a required field"
                   rules={[
                     {required: true, message: 'This field is required'},
                     {type: 'url', message: 'Pleases enter a valid Url'},
@@ -123,7 +123,7 @@ const TestnetFaucet = () => {
                 </Form.Item>
               </Form>
             </Col>
-            <Col lg={10}>
+            <Col xs={23} sm={20} md={16} lg={10}>
               <Typography.Title level={5}>
                 Testnet Bank:{' '}
                 <Typography.Link href={TESTNET_BANK_URL}> {TESTNET_BANK_URL.slice(7, -1)}</Typography.Link>
