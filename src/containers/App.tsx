@@ -34,7 +34,7 @@ function App() {
         <Layout>
           <Switch>
             {/* TNB Routes */}
-            <Route exact path="/sponsor-us/" component={SponsorUs} />
+            <Route exact path="/tnb/sponsor-us/" component={SponsorUs} />
 
             <Route exact path="/tnb/" component={Overview} />
             <Route exact path="/tnb/account/:accountNumber/" component={Account} />
