@@ -86,7 +86,7 @@ const TestnetFaucet = () => {
       <Col span={24}>
         <Card>
           <Row justify="center" gutter={[30, 30]}>
-            <Col xs={23} sm={20} md={16}>
+            <Col xs={23} sm={20} md={16} lg={14} xl={12}>
               <Typography.Title level={4}> Get Coins to test on the Testnet</Typography.Title>
               <Form
                 form={form}
@@ -122,8 +122,8 @@ const TestnetFaucet = () => {
                   </Button>
                 </Form.Item>
               </Form>
-              <Divider />
-
+            </Col>
+            <Col lg={10}>
               <Typography.Title level={5}>
                 Testnet Bank:{' '}
                 <Typography.Link href={TESTNET_BANK_URL}> {TESTNET_BANK_URL.slice(7, -1)}</Typography.Link>
@@ -132,6 +132,7 @@ const TestnetFaucet = () => {
                 To connect to the TNB Testnet network set the Testnet Bank as your{' '}
                 <Typography.Text strong>active bank</Typography.Text>
               </Typography.Text>
+              <br />
               <br />
               <Typography.Text mark>
                 To prevent a single account from accumulating all the coins, requests are made using a public facebook
