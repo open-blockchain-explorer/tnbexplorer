@@ -23,7 +23,7 @@ const PageContentsLayout: FC = ({children}) => {
       </Breadcrumb.Item>,
     ];
 
-    const validUrls = ['account', 'trace-transactions', 'payment-request'];
+    const validUrls = ['account', 'trace-transactions', 'payment-request', 'faucet'];
 
     // console.log({url});
     if (url.length > 1) {

@@ -51,7 +51,6 @@ const Nodes: FC = () => {
           bordered
           columns={banksColumn}
           dataSource={banks}
-          loading={banks.length === 0}
           pagination={false}
           scroll={{x: 500}}
           sticky
@@ -68,7 +67,6 @@ const Nodes: FC = () => {
           bordered
           columns={validatorsColumn}
           dataSource={validators}
-          loading={validators.length === 0}
           pagination={false}
           scroll={{x: 500}}
           sticky

@@ -63,7 +63,7 @@ const HeaderNav: FC = () => {
           <NavLink to="/tnb/stats">Stats</NavLink>
         </Menu.Item>
       ) : (
-        <Menu.Item key="stats">
+        <Menu.Item key="faucet">
           <NavLink to="/testnet/faucet">Faucet</NavLink>
         </Menu.Item>
       )}

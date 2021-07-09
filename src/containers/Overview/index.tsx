@@ -37,6 +37,7 @@ const Overview: FC = () => {
   });
 
   useEffect(() => {
+    setTransactionData(() => []);
     const load = async () => {
       const [txs] = await getTransactions(bankUrl);
       setTransactionData(txs);
