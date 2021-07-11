@@ -4,7 +4,7 @@ export const setObjectsReducer = <Type extends {[key: string]: any}>() => (
   state: any,
   {payload}: PayloadAction<Type>,
 ) => {
-  Object.keys(state).forEach((key: string) => {
+  Object.keys(payload).forEach((key: string) => {
     state[key] = payload[key];
   });
 };

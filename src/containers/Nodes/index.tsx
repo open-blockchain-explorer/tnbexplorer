@@ -30,7 +30,7 @@ const Nodes: FC = () => {
 
   useEffect(() => {
     const load = () => {
-      getValidators(pvUrl).then((validatorsData) => {
+      getValidators(pvUrl).then(([validatorsData]) => {
         setValidators(validatorsData);
       });
 

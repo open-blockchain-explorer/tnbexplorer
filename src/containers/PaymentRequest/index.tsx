@@ -35,6 +35,7 @@ interface Payment {
 }
 
 const keysign = (window as any).tnb_keysign;
+console.log({keysign});
 
 const PaymentRequest = () => {
   const initialPayments = usePaymentParams();
@@ -324,8 +325,6 @@ const PaymentRequest = () => {
                     disabled={!keysign}
                     onClick={() => {
                       if (keysign) {
-                        console.log(keysign);
-
                         keysign.requestTransfer(
                           paymentData.map(({accountNumber, amount, memo}) => ({to: accountNumber, amount, memo})),
                           (res: any) => {
@@ -336,11 +335,11 @@ const PaymentRequest = () => {
                             getConfirmationBlocks(BANK_URL, {limit: 20}).then(([confirmationBlocks]) => {
                               console.log(confirmationBlocks);
 
-                              const paymenIsSuccessful = confirmationBlocks.some((cb: any) => {
+                              const paymentIsSuccessful = confirmationBlocks.some((cb: any) => {
                                 return keysignBlock.id === cb.block;
                               });
 
-                              if (paymenIsSuccessful) {
+                              if (paymentIsSuccessful) {
                                 console.log('Successs!!!!');
                               } else {
                                 console.log('Payment Failed!');

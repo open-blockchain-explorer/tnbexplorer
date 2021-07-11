@@ -39,9 +39,25 @@ const NetworkStats = () => {
                       title="Accounts"
                       data={{current: Number(latestStats.accounts), previous: Number(previousStats.accounts)}}
                     />
-                    <InfoPane title="Transactions" data={{current: 8492, previous: 8212}} showChangeAsPercent />
-                    <InfoPane title="Active banks" data={{current: 1, previous: 1}} />
-                    <InfoPane title="Active Validators" data={{current: 2, previous: 2}} />
+                    <InfoPane
+                      title="Transactions"
+                      data={{
+                        current: networkStats.transactions as number,
+                        previous: networkStats.transactions as number,
+                      }}
+                      showChangeAsPercent
+                    />
+                    <InfoPane
+                      title="Active banks"
+                      data={{current: networkStats.activeBanks as number, previous: networkStats.activeBanks as number}}
+                    />
+                    <InfoPane
+                      title="Active Validators"
+                      data={{
+                        current: networkStats.activeValidators as number,
+                        previous: networkStats.activeValidators as number,
+                      }}
+                    />
                   </Space>
                 </Col>
               </Row>
@@ -67,17 +83,33 @@ const NetworkStats = () => {
           </Col>
           <Col span={12}>
             <Card size="small" bordered>
-              <InfoPane align="left" title="Active banks" data={{current: 1, previous: 1}} />
+              <InfoPane
+                align="left"
+                title="Active banks"
+                data={{current: networkStats.activeBanks as number, previous: networkStats.activeBanks as number}}
+              />
             </Card>
           </Col>
           <Col span={12}>
             <Card size="small" bordered>
-              <InfoPane align="left" title="Transactions" data={{current: 8492, previous: 8212}} showChangeAsPercent />
+              <InfoPane
+                align="left"
+                title="Transactions"
+                data={{current: networkStats.transactions as number, previous: networkStats.transactions as number}}
+                showChangeAsPercent
+              />
             </Card>
           </Col>
           <Col span={12}>
             <Card size="small" bordered>
-              <InfoPane align="left" title="Active Validators" data={{current: 2, previous: 2}} />
+              <InfoPane
+                align="left"
+                title="Active Validators"
+                data={{
+                  current: networkStats.activeValidators as number,
+                  previous: networkStats.activeValidators as number,
+                }}
+              />
             </Card>
           </Col>
           <Col span={24}>
