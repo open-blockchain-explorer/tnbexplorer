@@ -139,36 +139,36 @@ const dailyChangeInCoinsConfig = {
 const ownershipPercentage: any[] = [];
 
 stats.forEach((record) => {
-  const {top_5, top_10, top_25, top_50} = record.ownership_percent;
+  const {top_5: top5, top_10: top10, top_25: top25, top_50: top50} = record.ownership_percent;
 
   ownershipPercentage.push({
     date: record.date,
     ownership: '0% - 5%',
-    percent: top_5,
+    percent: top5,
   });
 
   ownershipPercentage.push({
     date: record.date,
     ownership: '5% - 10%',
-    percent: top_10 - top_5,
+    percent: top10 - top5,
   });
 
   ownershipPercentage.push({
     date: record.date,
     ownership: '10% - 25%',
-    percent: top_25 - top_10,
+    percent: top25 - top10,
   });
 
   ownershipPercentage.push({
     date: record.date,
     ownership: '25% - 50%',
-    percent: top_50 - top_25,
+    percent: top50 - top25,
   });
 
   ownershipPercentage.push({
     date: record.date,
     ownership: '50% - 100%',
-    percent: 1 - top_50,
+    percent: 1 - top50,
   });
 });
 
