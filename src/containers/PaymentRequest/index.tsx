@@ -334,11 +334,7 @@ const PaymentRequest = () => {
                   <Descriptions.Item label="Bank Fee" contentStyle={{textAlign: 'right'}} span={24}>
                     1
                   </Descriptions.Item>
-                  <Descriptions.Item
-                    contentStyle={{textAlign: 'right', background: 'lightgray'}}
-                    label="Total"
-                    span={24}
-                  >
+                  <Descriptions.Item contentStyle={{textAlign: 'right', background: '#fafafa'}} label="Total" span={24}>
                     {paymentsTotal + 2}
                   </Descriptions.Item>
                 </Descriptions>

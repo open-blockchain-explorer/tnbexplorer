@@ -123,7 +123,7 @@ export const getConfirmationBlocks = async (nodeUrl: string, queryParams?: Confi
   queryParams = {...defaultOptions, ...queryParams};
   const queryParamsUrl = formatQueryParamsToString(queryParams);
   const url = `${nodeUrl}/confirmation_blocks${queryParamsUrl}`;
-  console.log({url})
+  console.log({url});
   const {results: confirmationBlocks, count: total} = await getData(url);
 
   return [confirmationBlocks, total];
