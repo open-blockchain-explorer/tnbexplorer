@@ -21,3 +21,12 @@ export const formatNumber = (num: number, decimals = 2) => {
 export const formatPercent = (num: number, decimals = 2) => {
   return num.toFixed(decimals).concat('%');
 };
+
+export const formatQueryParamsToString = (queryParams: {[key: string]: string | number}): string => {
+  return Object.keys(queryParams).reduce((acc: string, key) => {
+    if (acc === '?') {
+      return acc.concat(`${key}=${queryParams[key]}`);
+    }
+    return acc.concat(`&${key}=${queryParams[key]}`);
+  }, '?');
+};

@@ -1,10 +1,17 @@
 import React, {FC, ReactNode, useCallback, useEffect, useState} from 'react';
 import Breadcrumb from 'antd/es/breadcrumb';
+import Modal from 'antd/es/modal';
 import Row, {RowProps} from 'antd/es/row';
+import Spin from 'antd/es/spin';
 
 import HomeFilled from '@ant-design/icons/HomeFilled';
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 
-const PageContentsLayout: FC<RowProps> = ({children, align, justify, gutter}) => {
+interface Props {
+  loading?: boolean | string;
+}
+
+const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gutter, loading}) => {
   const [breadCrumb, setBreadCrumb] = useState<ReactNode[]>();
 
   const getBreadCrumbItems = useCallback(() => {
@@ -56,6 +63,20 @@ const PageContentsLayout: FC<RowProps> = ({children, align, justify, gutter}) =>
 
   return (
     <>
+      <Modal
+        bodyStyle={{backgroundColor: 'lightgray', padding: '40px', textAlign: 'center', fontWeight: 'bold'}}
+        centered
+        closable={false}
+        visible={!!loading}
+        footer={null}
+      >
+        <Spin
+          indicator={<LoadingOutlined />}
+          size="large"
+          tip={!!loading && typeof loading === 'string' ? loading : ''}
+        />
+      </Modal>
+
       {breadCrumb ? (
         <>
           <Breadcrumb style={{padding: '20px 0px'}}>{breadCrumb}</Breadcrumb>

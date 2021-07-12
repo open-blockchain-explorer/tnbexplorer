@@ -1,13 +1,14 @@
 import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
+import {formatQueryParamsToString} from 'utils/format';
 
 export const getData = async (url: string) => {
   const source = axios.CancelToken.source();
 
   const timeout = setTimeout(() => {
     source.cancel();
-  }, 5000);
+  }, 10_000);
 
   const res = await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token});
 
@@ -104,21 +105,25 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
   return [transactions, totalTransactions];
 };
 
-interface ConfirmationBlocksQueryParams {
+type QueryParams = {[key: string]: any};
+
+interface ConfirmationBlocksQueryParams extends QueryParams {
   limit?: number;
   offset?: number;
+  block?: string;
   ordering?: `${'' | '+' | '-'}${'created_date' | 'modified_date' | 'id' | 'block' | 'validator' | 'block_identifier'}`;
 }
 
-export const getConfirmationBlocks = async (nodeUrl: string, queryParams: ConfirmationBlocksQueryParams = {}) => {
+export const getConfirmationBlocks = async (nodeUrl: string, queryParams?: ConfirmationBlocksQueryParams) => {
   const defaultOptions: ConfirmationBlocksQueryParams = {
     limit: 10,
     offset: 0,
     ordering: '-modified_date',
   };
-  const {limit, offset, ordering} = {...defaultOptions, ...queryParams};
-
-  const url = `${nodeUrl}/confirmation_blocks?limit=${limit}&offset=${offset}&ordering=${ordering}`;
+  queryParams = {...defaultOptions, ...queryParams};
+  const queryParamsUrl = formatQueryParamsToString(queryParams);
+  const url = `${nodeUrl}/confirmation_blocks${queryParamsUrl}`;
+  console.log({url})
   const {results: confirmationBlocks, count: total} = await getData(url);
 
   return [confirmationBlocks, total];
