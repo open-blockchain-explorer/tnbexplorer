@@ -57,7 +57,7 @@ const PaymentRequest = () => {
     waitForKeysign();
   }, []);
 
-  const [keysignResult, setKeysignResult] = useState<any>({success: true});
+  const [keysignResult, setKeysignResult] = useState<any>(null);
   const [paymentStatus, setPaymentStatus] = useState('');
 
   const initialPayments = usePaymentParams();
@@ -331,10 +331,7 @@ const PaymentRequest = () => {
                   <Descriptions.Item label="Sender" span={24}>
                     <Row justify="space-between" gutter={[10, 10]}>
                       <Col span={24}>
-                        <Typography.Text>
-                          {keysignResult?.result?.sender ||
-                            '8de30226230c35bbc1ce4a63c62a7b9c86bf0ce21fc7bc1a984b7884a9f88782'}
-                        </Typography.Text>
+                        <Typography.Text>{keysignResult?.result?.sender} </Typography.Text>
                       </Col>
                       <Col>
                         <Typography.Text>{keysignResult?.data?.from} Account</Typography.Text>
