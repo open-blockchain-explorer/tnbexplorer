@@ -40,7 +40,10 @@ const PaymentRequest = () => {
   console.log({keysign});
 
   useEffect(() => {
-    setKeysign((window as any).tnb_keysign);
+    const keysignObj = (window as any).tnb_keysign;
+    keysignObj?.requestHandshake(() => {
+      setKeysign(keysignObj);
+    });
   }, [setKeysign]);
 
   const [keysignResult, setKeysignResult] = useState<any>(null);
