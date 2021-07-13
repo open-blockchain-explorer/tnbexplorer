@@ -1,10 +1,17 @@
 import React, {FC, ReactNode, useCallback, useEffect, useState} from 'react';
 import Breadcrumb from 'antd/es/breadcrumb';
-import Row from 'antd/es/row';
+import Modal from 'antd/es/modal';
+import Row, {RowProps} from 'antd/es/row';
+import Spin from 'antd/es/spin';
 
 import HomeFilled from '@ant-design/icons/HomeFilled';
+import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 
-const PageContentsLayout: FC = ({children}) => {
+interface Props {
+  loading?: boolean | string;
+}
+
+const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gutter, loading}) => {
   const [breadCrumb, setBreadCrumb] = useState<ReactNode[]>();
 
   const getBreadCrumbItems = useCallback(() => {
@@ -56,16 +63,39 @@ const PageContentsLayout: FC = ({children}) => {
 
   return (
     <>
+      <Modal
+        bodyStyle={{backgroundColor: 'lightgray', padding: '40px', textAlign: 'center', fontWeight: 'bold'}}
+        centered
+        closable={false}
+        visible={!!loading}
+        footer={null}
+      >
+        <Spin
+          indicator={<LoadingOutlined />}
+          size="large"
+          tip={!!loading && typeof loading === 'string' ? loading : ''}
+        />
+      </Modal>
+
       {breadCrumb ? (
         <>
           <Breadcrumb style={{padding: '20px 0px'}}>{breadCrumb}</Breadcrumb>
-
-          <Row gutter={[20, 30]} style={{paddingBottom: '50px'}}>
+          <Row
+            align={align ?? 'top'}
+            justify={justify ?? 'start'}
+            gutter={gutter ?? [20, 30]}
+            style={{paddingBottom: '50px'}}
+          >
             {children}
           </Row>
         </>
       ) : (
-        <Row style={{paddingTop: '50px', paddingBottom: '50px'}} gutter={[20, 30]}>
+        <Row
+          align={align ?? 'top'}
+          justify={justify ?? 'start'}
+          gutter={gutter ?? [20, 30]}
+          style={{paddingTop: '50px', paddingBottom: '50px'}}
+        >
           {children}
         </Row>
       )}

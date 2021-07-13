@@ -58,7 +58,7 @@ const Overview: FC = () => {
               dataSource={blockData}
               columns={blocksColumn}
               pagination={false}
-              scroll={{x: 500}}
+              scroll={{x: 600}}
               sticky
               title={() => <TableHeader title="Latest Blocks" buttonLink={'./blocks'} />}
             />
@@ -71,7 +71,7 @@ const Overview: FC = () => {
             dataSource={transactionData}
             columns={transactionColumn}
             pagination={false}
-            scroll={{x: 500}}
+            scroll={{x: 600}}
             sticky
             title={() => <TableHeader title="Latest Transactions" buttonLink={'./transactions'} />}
           />

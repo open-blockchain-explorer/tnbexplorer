@@ -5,12 +5,11 @@ import {createSlice} from '@reduxjs/toolkit';
 import {setObjectsReducer} from 'utils/store';
 
 interface NetworkStats {
-  [key: string]: number;
-  accounts: number;
-  activeBanks: number;
-  activeValidators: number;
-  distributedCoins: number;
-  transactions: number;
+  accounts?: number;
+  activeBanks?: number;
+  activeValidators?: number;
+  distributedCoins?: number;
+  transactions?: number;
 }
 
 const networkStats = createSlice({

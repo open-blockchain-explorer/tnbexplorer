@@ -139,7 +139,7 @@ const dailyChangeInCoinsConfig = {
 const ownershipPercentage: any[] = [];
 
 stats.forEach((record) => {
-  const {top5, top10, top25, top50} = record.ownership_percent;
+  const {top_5: top5, top_10: top10, top_25: top25, top_50: top50} = record.ownership_percent;
 
   ownershipPercentage.push({
     date: record.date,
@@ -185,6 +185,7 @@ const ownershipConfig = {
         return formatDate(new Date(date), 'MM/dd/yy');
       },
       nice: true,
+      tickCount: 10,
     },
     percent: {
       formatter: function formatter(percent: number) {
@@ -294,19 +295,19 @@ const Stats: FC = () => {
           <Line {...distributedCoinsConfig} />
         </ChartsCard>
       </Col>
-      <Col md={12} sm={24}>
+      <Col md={12} span={24}>
         <ChartsCard title="Daily change in coins" description="The amount of coins released on a particular day">
           <Line {...dailyChangeInCoinsConfig} />
         </ChartsCard>
       </Col>
 
-      <Col md={12} sm={24}>
+      <Col md={12} span={24}>
         <ChartsCard title="Total accounts over time" description="The number of accounts with a balance ">
           <Line {...totalAccountsConfig} />
         </ChartsCard>
       </Col>
 
-      <Col md={12} sm={24}>
+      <Col md={12} span={24}>
         <ChartsCard
           title="Wealth distribution"
           description="The concentration of wealth among various groups in a network."
@@ -315,7 +316,7 @@ const Stats: FC = () => {
         </ChartsCard>
       </Col>
 
-      <Col md={12} sm={24}>
+      <Col md={12} span={24}>
         <ChartsCard
           title="Percentage of wealth held"
           description="Percentage of wealth held shows comparison of the wealth of various groups in a network"

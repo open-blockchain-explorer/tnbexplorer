@@ -85,8 +85,8 @@ const TestnetFaucet = () => {
       {/* Testnet Faucet Form */}
       <Col span={24}>
         <Card>
-          <Row align="middle" justify="space-between" gutter={[30, 30]}>
-            <Col xs={23} sm={20} md={16} lg={14} xl={12}>
+          <Row align="middle" justify="space-around" gutter={[30, 30]}>
+            <Col xs={23} sm={20} md={16} lg={13} xl={12}>
               <Typography.Title level={4}> Get Coins to test on the Testnet</Typography.Title>
               <Form
                 form={form}

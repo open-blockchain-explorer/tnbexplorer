@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 
 import {useDispatch} from 'react-redux';
 
+import {getData, getTransactions} from 'api/bank';
+import {getValidators} from 'api/validator';
 import {Layout} from 'components';
+import {BANK_URL, PV_URL} from 'constants/url';
 import {setNetworkStats} from 'store/app';
 
 import Account from './Account';
@@ -19,15 +22,36 @@ import TraceTransactions from './TraceTransactions';
 function App() {
   const dispatch = useDispatch();
 
-  dispatch(
-    setNetworkStats({
-      accounts: 12345,
-      distributedCoins: 22492,
-      activeBanks: 32,
-      activeValidators: 82,
-      transactions: 3456789,
-    }),
-  );
+  const retrieveNetworkStats = useCallback(async () => {
+    getData(`${PV_URL}/banks?limit=1`).then((data) => {
+      dispatch(
+        setNetworkStats({
+          activeBanks: data.count,
+        }),
+      );
+    });
+
+    getValidators(PV_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+      dispatch(
+        setNetworkStats({
+          activeValidators: total,
+        }),
+      );
+    });
+
+    getTransactions(BANK_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+      dispatch(
+        setNetworkStats({
+          transactions: total,
+        }),
+      );
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    retrieveNetworkStats();
+  }, [retrieveNetworkStats]);
+
   return (
     <div className="">
       <Router>

@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
+import Descriptions from 'antd/es/descriptions';
 import Form from 'antd/es/form';
 import Grid from 'antd/es/grid';
 import Input from 'antd/es/input';
@@ -34,9 +35,31 @@ interface Payment {
   memo: string;
 }
 
-const keysign = (window as any).tnb_keysign;
-
 const PaymentRequest = () => {
+  const [keysign, setKeysign] = useState<any>(null);
+
+  const waitForKeysign = () => {
+    let keysignObj: any;
+    let iterations = 0;
+    console.time('waitForKeysign');
+    const interval = setInterval(() => {
+      iterations += 1;
+      keysignObj = (window as any).tnb_keysign;
+      if (keysignObj || iterations >= 3) {
+        setKeysign(keysignObj);
+        clearInterval(interval);
+        console.timeEnd('waitForKeysign');
+      }
+    }, 1000);
+  };
+
+  useEffect(() => {
+    waitForKeysign();
+  }, []);
+
+  const [keysignResult, setKeysignResult] = useState<any>(null);
+  const [paymentStatus, setPaymentStatus] = useState('');
+
   const initialPayments = usePaymentParams();
   const [paymentData, setPaymentData] = useState<Payment[]>(initialPayments);
   const [form] = Form.useForm();
@@ -119,7 +142,7 @@ const PaymentRequest = () => {
       key: nanoid(),
       accountNumber: '',
       amount: 0,
-      memo: 'Processed By Tnb Explorer',
+      memo: 'Payment Request via Tnb Explorer',
     };
 
     if (!screens.xs) {
@@ -261,15 +284,12 @@ const PaymentRequest = () => {
     };
   });
 
-  const {protocol, host} = window.location;
-  const PAYMENT_REQUEST_ADDRESS = `${protocol}//${host}/tnb/payment-request`;
-
-  const stringifyPayments = (payments: Payment[]) => {
+  const createPaymentsUrl = useCallback((payments: Payment[]) => {
     let accountNumbers = '';
     let amounts = '';
     let memos = '';
 
-    const query = payments.forEach(({accountNumber, amount, memo}) => {
+    payments.forEach(({accountNumber, amount, memo}) => {
       if (accountNumber) {
         accountNumbers += accountNumber.concat(',');
         amounts += `${amount},`;
@@ -277,19 +297,118 @@ const PaymentRequest = () => {
       }
     });
 
-    return `${PAYMENT_REQUEST_ADDRESS}?accountNumber=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
+    const {protocol, host} = window.location;
+    const PAYMENT_REQUEST_URL = `${protocol}//${host}/tnb/payment-request`;
+
+    return `${PAYMENT_REQUEST_URL}?accountNumber=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
       0,
       -1,
     )}&memo=${memos.slice(0, -1)}`;
+  }, []);
+
+  const loadingMessage = () => {
+    switch (paymentStatus) {
+      case 'keysign':
+        return 'Waiting For Keysign ...';
+      case 'validating':
+        return 'Valdating Transaction Block ...';
+      default:
+        return '';
+    }
   };
+
+  const viewPaymentResultModal = useCallback(() => {
+    if (keysignResult !== null) {
+      if (keysignResult.success) {
+        Modal.success({
+          title: 'Payments were sent successfully',
+          content: (
+            <Row gutter={[20, 20]}>
+              <Col span={24}>
+                <br />
+
+                <Descriptions bordered size="small" layout="vertical">
+                  <Descriptions.Item label="Sender" span={24}>
+                    <Row justify="space-between" gutter={[10, 10]}>
+                      <Col span={24}>
+                        <Typography.Text>{keysignResult?.result?.sender} </Typography.Text>
+                      </Col>
+                      <Col>
+                        <Typography.Text>{keysignResult?.data?.from} Account</Typography.Text>
+                      </Col>
+
+                      <Col>
+                        <Button href={`/tnb/account/${keysignResult?.result?.sender}/`}>View Account</Button>
+                      </Col>
+                    </Row>
+                  </Descriptions.Item>
+                </Descriptions>
+              </Col>
+              <Col span={24}>
+                <Typography.Text strong>Payment Summary</Typography.Text>
+                <Descriptions bordered layout="horizontal" size="small">
+                  <Descriptions.Item
+                    label="Amount"
+                    labelStyle={{width: screens.xs || screens.sm ? '90px' : '120px'}}
+                    contentStyle={{textAlign: 'right'}}
+                    span={24}
+                  >
+                    {paymentsTotal}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Pv Fee" contentStyle={{textAlign: 'right'}} span={24}>
+                    1
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Bank Fee" contentStyle={{textAlign: 'right'}} span={24}>
+                    1
+                  </Descriptions.Item>
+
+                  <Descriptions.Item
+                    style={{borderTop: '5px solid #f0f0f0'}}
+                    contentStyle={{textAlign: 'right'}}
+                    label="Total"
+                    span={24}
+                  >
+                    {paymentsTotal + 2}
+                  </Descriptions.Item>
+                </Descriptions>
+              </Col>
+            </Row>
+          ),
+          centered: true,
+          cancelText: 'Cancel',
+          onCancel: console.log,
+          onOk: () => {
+            setKeysignResult(null);
+          },
+        });
+      } else {
+        Modal.error({
+          title: 'Payment failed to send',
+          content: keysignResult.message || 'Payments Block Id could not be verified',
+          centered: true,
+          okText: 'Try Again!',
+          cancelText: 'Cancel',
+          onCancel: console.log,
+          onOk: () => {
+            window.location.href = createPaymentsUrl(paymentData);
+          },
+        });
+      }
+    }
+  }, [screens, createPaymentsUrl, keysignResult, paymentData, paymentsTotal]);
+
+  useEffect(() => {
+    viewPaymentResultModal();
+  }, [viewPaymentResultModal]);
+
   return (
-    <PageContentsLayout>
+    <PageContentsLayout loading={loadingMessage()}>
       <Col span={24}>
         <Card>
           <Row gutter={[30, 30]} justify="center" align="bottom" style={{padding: '10px'}}>
             {isMakingPayment && (
               <>
-                {!keysign && (
+                {keysign === undefined && (
                   <Col span={24}>
                     <Typography.Text strong type="danger">
                       You Don't have Keysign installed
@@ -323,33 +442,42 @@ const PaymentRequest = () => {
                     size="large"
                     disabled={!keysign}
                     onClick={() => {
-                      if (keysign) {
-                        console.log(keysign);
+                      setPaymentStatus('keysign');
 
-                        keysign.requestTransfer(
-                          paymentData.map(({accountNumber, amount, memo}) => ({to: accountNumber, amount, memo})),
-                          (res: any) => {
-                            console.log(res);
+                      keysign.requestTransfer(
+                        paymentData.map(({accountNumber, amount, memo}) => ({to: accountNumber, amount, memo})),
+                        async (res: any) => {
+                          console.log({res});
 
-                            const {result: keysignBlock} = res;
-
-                            getConfirmationBlocks(BANK_URL, {limit: 20}).then(([confirmationBlocks]) => {
-                              console.log(confirmationBlocks);
-
-                              const paymenIsSuccessful = confirmationBlocks.some((cb: any) => {
-                                return keysignBlock.id === cb.block;
+                          const {success, result: keysignBlock} = res;
+                          let paymentIsSuccessful: boolean;
+                          try {
+                            if (success) {
+                              setPaymentStatus('validating');
+                              const [confirmationBlocks] = await getConfirmationBlocks(BANK_URL, {
+                                limit: 20,
+                                block: keysignBlock.id,
                               });
 
-                              if (paymenIsSuccessful) {
-                                console.log('Successs!!!!');
-                              } else {
-                                console.log('Payment Failed!');
-                              }
-                            });
-                          },
-                          BANK_URL,
-                        );
-                      }
+                              console.log(confirmationBlocks);
+
+                              paymentIsSuccessful = confirmationBlocks.some((cb: any) => {
+                                return keysignBlock.id === cb.block;
+                              });
+                            } else {
+                              paymentIsSuccessful = false;
+                            }
+                          } catch {
+                            paymentIsSuccessful = false;
+                          }
+                          setKeysignResult(() => ({
+                            ...res,
+                            success: paymentIsSuccessful,
+                          }));
+                          setPaymentStatus(() => '');
+                        },
+                        BANK_URL,
+                      );
                     }}
                   >
                     Pay with
@@ -459,18 +587,18 @@ const PaymentRequest = () => {
                   </Typography.Title>
                   <Row justify="center">
                     <Col md={8}>
-                      <Qr width={250} text={stringifyPayments(paymentData)} />
+                      <Qr width={250} text={createPaymentsUrl(paymentData)} />
                     </Col>
                     <Col span={24} md={16}>
                       <Row>
                         <Col span={24}>
-                          <Input.TextArea autoSize disabled value={stringifyPayments(paymentData)} />
+                          <Input.TextArea autoSize disabled value={createPaymentsUrl(paymentData)} />
                         </Col>
                         <Col span={24}>
                           <Button
                             block
                             onClick={async () => {
-                              await navigator.clipboard.writeText(stringifyPayments(paymentData));
+                              await navigator.clipboard.writeText(createPaymentsUrl(paymentData));
                               setCopied(true);
                             }}
                           >
