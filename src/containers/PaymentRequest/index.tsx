@@ -36,7 +36,7 @@ interface Payment {
 }
 
 const PaymentRequest = () => {
-  let [keysign, setKeysign] = useState<any>(null);
+  const [keysign, setKeysign] = useState<any>(null);
 
   useEffect(() => {
     setKeysign((window as any).tnb_keysign);
