@@ -350,6 +350,9 @@ const PaymentRequest = () => {
           okText: 'ok',
           cancelText: 'Cancel',
           onCancel: console.log,
+          onOk: () => {
+            setKeysignResult(null);
+          },
         });
       } else {
         Modal.error({
