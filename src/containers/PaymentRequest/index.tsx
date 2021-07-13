@@ -37,14 +37,25 @@ interface Payment {
 
 const PaymentRequest = () => {
   const [keysign, setKeysign] = useState<any>(null);
-  console.log({keysign});
+
+  const waitForKeysign = () => {
+    let keysignObj: any;
+    let iterations = 0;
+    console.time('waitForKeysign');
+    const interval = setInterval(() => {
+      iterations += 1;
+      keysignObj = (window as any).tnb_keysign;
+      if (keysignObj || iterations >= 5) {
+        setKeysign(keysignObj);
+        clearInterval(interval);
+        console.timeEnd('waitForKeysign');
+      }
+    }, 1000);
+  };
 
   useEffect(() => {
-    const keysignObj = (window as any).tnb_keysign;
-    keysignObj?.requestHandshake(() => {
-      setKeysign(keysignObj);
-    });
-  }, [setKeysign]);
+    waitForKeysign();
+  }, []);
 
   const [keysignResult, setKeysignResult] = useState<any>(null);
   const [paymentStatus, setPaymentStatus] = useState('');
