@@ -45,7 +45,7 @@ const PaymentRequest = () => {
     const interval = setInterval(() => {
       iterations += 1;
       keysignObj = (window as any).tnb_keysign;
-      if (keysignObj || iterations >= 5) {
+      if (keysignObj || iterations >= 3) {
         setKeysign(keysignObj);
         clearInterval(interval);
         console.timeEnd('waitForKeysign');
@@ -57,7 +57,7 @@ const PaymentRequest = () => {
     waitForKeysign();
   }, []);
 
-  const [keysignResult, setKeysignResult] = useState<any>(null);
+  const [keysignResult, setKeysignResult] = useState<any>({success: true});
   const [paymentStatus, setPaymentStatus] = useState('');
 
   const initialPayments = usePaymentParams();
@@ -142,7 +142,7 @@ const PaymentRequest = () => {
       key: nanoid(),
       accountNumber: '',
       amount: 0,
-      memo: 'Processed By Tnb Explorer',
+      memo: 'Payment Request via Tnb Explorer',
     };
 
     if (!screens.xs) {
@@ -329,23 +329,33 @@ const PaymentRequest = () => {
 
                 <Descriptions bordered size="small" layout="vertical">
                   <Descriptions.Item label="Sender" span={24}>
-                    <Row justify="space-between">
-                      <Col>{keysignResult?.data?.from} Account</Col>
-                      <Col>
-                        <Typography.Text ellipsis>{keysignResult?.result?.sender}</Typography.Text>
+                    <Row justify="space-between" gutter={[10, 10]}>
+                      <Col span={24}>
+                        <Typography.Text>
+                          {keysignResult?.result?.sender ||
+                            '8de30226230c35bbc1ce4a63c62a7b9c86bf0ce21fc7bc1a984b7884a9f88782'}
+                        </Typography.Text>
                       </Col>
-                      <Col offset={5}>
-                        {' '}
-                        <Button href={`/tnb/account/${keysignResult?.result?.sender}`}>View Account</Button>
+                      <Col>
+                        <Typography.Text>{keysignResult?.data?.from} Account</Typography.Text>
+                      </Col>
+
+                      <Col>
+                        <Button href={`/tnb/account/${keysignResult?.result?.sender}/`}>View Account</Button>
                       </Col>
                     </Row>
                   </Descriptions.Item>
                 </Descriptions>
               </Col>
-              <Col>
+              <Col span={24}>
                 <Typography.Text strong>Payment Summary</Typography.Text>
                 <Descriptions bordered layout="horizontal" size="small">
-                  <Descriptions.Item label="Amount" contentStyle={{textAlign: 'right'}} span={24}>
+                  <Descriptions.Item
+                    label="Amount"
+                    labelStyle={{width: screens.xs || screens.sm ? '90px' : '120px'}}
+                    contentStyle={{textAlign: 'right'}}
+                    span={24}
+                  >
                     {paymentsTotal}
                   </Descriptions.Item>
                   <Descriptions.Item label="Pv Fee" contentStyle={{textAlign: 'right'}} span={24}>
@@ -354,7 +364,13 @@ const PaymentRequest = () => {
                   <Descriptions.Item label="Bank Fee" contentStyle={{textAlign: 'right'}} span={24}>
                     1
                   </Descriptions.Item>
-                  <Descriptions.Item contentStyle={{textAlign: 'right', background: '#fafafa'}} label="Total" span={24}>
+
+                  <Descriptions.Item
+                    style={{borderTop: '5px solid #f0f0f0'}}
+                    contentStyle={{textAlign: 'right'}}
+                    label="Total"
+                    span={24}
+                  >
                     {paymentsTotal + 2}
                   </Descriptions.Item>
                 </Descriptions>
@@ -362,7 +378,6 @@ const PaymentRequest = () => {
             </Row>
           ),
           centered: true,
-          okText: 'ok',
           cancelText: 'Cancel',
           onCancel: console.log,
           onOk: () => {
@@ -372,7 +387,7 @@ const PaymentRequest = () => {
       } else {
         Modal.error({
           title: 'Payment failed to send',
-          content: keysignResult.message || "Payment's Block Id could not be verified",
+          content: keysignResult.message || 'Payments Block Id could not be verified',
           centered: true,
           okText: 'Try Again!',
           cancelText: 'Cancel',
@@ -383,7 +398,7 @@ const PaymentRequest = () => {
         });
       }
     }
-  }, [createPaymentsUrl, keysignResult, paymentData, paymentsTotal]);
+  }, [screens, createPaymentsUrl, keysignResult, paymentData, paymentsTotal]);
 
   useEffect(() => {
     viewPaymentResultModal();
