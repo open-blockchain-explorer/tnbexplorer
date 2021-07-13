@@ -30,7 +30,7 @@ import {EditableCell} from './EditableCell';
 
 interface Payment {
   key: string;
-  accountNumber: string;
+  recipient: string;
   amount: number;
   memo: string;
 }
@@ -84,19 +84,19 @@ const PaymentRequest = () => {
     if (screens.xs) {
       setShowEditModal(true);
     }
-    form.setFieldsValue({accountNumber: '', amount: '', memo: '', ...record});
+    form.setFieldsValue({recipient: '', amount: '', memo: '', ...record});
     setEditingKey(record.key);
   };
 
   const editByModal = (record: Partial<Payment> & {key: React.Key}) => {
-    form.setFieldsValue({accountNumber: '', amount: '', memo: '', ...record});
+    form.setFieldsValue({recipient: '', amount: '', memo: '', ...record});
     setEditingKey(record.key);
     setShowEditModal(true);
   };
 
   const cancel = () => {
     if (paymentData.length) {
-      if (paymentData[paymentData.length - 1].accountNumber === '') {
+      if (paymentData[paymentData.length - 1].recipient === '') {
         const dataCpy = [...paymentData];
         dataCpy.pop();
         setPaymentData(dataCpy);
@@ -140,16 +140,16 @@ const PaymentRequest = () => {
   const handleAdd = async () => {
     let newData: Payment = {
       key: nanoid(),
-      accountNumber: '',
+      recipient: '',
       amount: 0,
       memo: 'Payment Request via Tnb Explorer',
     };
 
     if (!screens.xs) {
       if (paymentData.length > 0) {
-        if (paymentData[paymentData.length - 1].accountNumber === '') return;
+        if (paymentData[paymentData.length - 1].recipient === '') return;
         const prevData = paymentData[paymentData.length - 1];
-        newData = {...prevData, key: nanoid(), accountNumber: ''};
+        newData = {...prevData, key: nanoid(), recipient: ''};
       }
       setPaymentData([...paymentData, {...newData, amount: 0, memo: ''}]);
       edit(newData);
@@ -199,7 +199,7 @@ const PaymentRequest = () => {
       },
     },
     {
-      dataIndex: 'accountNumber',
+      dataIndex: 'recipient',
       title: 'Recipient Address',
       width: '40%',
       editable: true,
@@ -229,7 +229,7 @@ const PaymentRequest = () => {
 
   type PaymentRules = {[Property in keyof Omit<Payment, 'key'>]: Rule} | {[s: string]: Rule[]};
   const validationRules: PaymentRules = {
-    accountNumber: [
+    recipient: [
       {len: 64, message: 'Length has to be 64'},
       {message: 'Must only contain hex values (a-f 0-9)', pattern: /^#?([a-f0-9]{1,})$/i},
       {
@@ -238,9 +238,7 @@ const PaymentRequest = () => {
       },
       {
         validator: (_, value) => {
-          const duplicate = paymentData.find(
-            (payment) => value === payment.accountNumber && payment.key !== editingKey,
-          );
+          const duplicate = paymentData.find((payment) => value === payment.recipient && payment.key !== editingKey);
           console.log({recipient: value, duplicate});
           if (duplicate) {
             return Promise.reject(new Error('Account Number Must be Unique'));
@@ -289,9 +287,9 @@ const PaymentRequest = () => {
     let amounts = '';
     let memos = '';
 
-    payments.forEach(({accountNumber, amount, memo}) => {
-      if (accountNumber) {
-        accountNumbers += accountNumber.concat(',');
+    payments.forEach(({recipient, amount, memo}) => {
+      if (recipient) {
+        accountNumbers += recipient.concat(',');
         amounts += `${amount},`;
         memos += memo.trim().replaceAll(' ', '%20').concat(',');
       }
@@ -300,7 +298,7 @@ const PaymentRequest = () => {
     const {protocol, host} = window.location;
     const PAYMENT_REQUEST_URL = `${protocol}//${host}/tnb/payment-request`;
 
-    return `${PAYMENT_REQUEST_URL}?accountNumber=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
+    return `${PAYMENT_REQUEST_URL}?recipient=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
       0,
       -1,
     )}&memo=${memos.slice(0, -1)}`;
@@ -445,7 +443,7 @@ const PaymentRequest = () => {
                       setPaymentStatus('keysign');
 
                       keysign.requestTransfer(
-                        paymentData.map(({accountNumber, amount, memo}) => ({to: accountNumber, amount, memo})),
+                        paymentData.map(({recipient, amount, memo}) => ({to: recipient, amount, memo})),
                         async (res: any) => {
                           console.log({res});
 
@@ -506,11 +504,11 @@ const PaymentRequest = () => {
               >
                 <Form form={form} layout="vertical">
                   <Form.Item
-                    name={'accountNumber'}
+                    name={'recipient'}
                     label="Recipient Address"
                     validateStatus="success"
                     style={{margin: 0}}
-                    rules={validationRules.accountNumber}
+                    rules={validationRules.recipient}
                   >
                     <Input />
                   </Form.Item>
