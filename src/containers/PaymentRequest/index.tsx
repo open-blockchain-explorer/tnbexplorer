@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
@@ -36,7 +36,12 @@ interface Payment {
 }
 
 const PaymentRequest = () => {
-  const keysign = (window as any).tnb_keysign;
+  let [keysign, setKeysign] = useState<any>(null);
+
+  useEffect(() => {
+    setKeysign((window as any).tnb_keysign);
+  }, [setKeysign]);
+
   const [keysignResult, setKeysignResult] = useState<any>(null);
   const [paymentStatus, setPaymentStatus] = useState('');
 
@@ -264,10 +269,7 @@ const PaymentRequest = () => {
     };
   });
 
-  const {protocol, host} = window.location;
-  const PAYMENT_REQUEST_ADDRESS = `${protocol}//${host}/tnb/payment-request`;
-
-  const stringifyPayments = (payments: Payment[]) => {
+  const createPaymentsUrl = useCallback((payments: Payment[]) => {
     let accountNumbers = '';
     let amounts = '';
     let memos = '';
@@ -280,11 +282,14 @@ const PaymentRequest = () => {
       }
     });
 
-    return `${PAYMENT_REQUEST_ADDRESS}?accountNumber=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
+    const {protocol, host} = window.location;
+    const PAYMENT_REQUEST_URL = `${protocol}//${host}/tnb/payment-request`;
+
+    return `${PAYMENT_REQUEST_URL}?accountNumber=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
       0,
       -1,
     )}&memo=${memos.slice(0, -1)}`;
-  };
+  }, []);
 
   const loadingMessage = () => {
     switch (paymentStatus) {
@@ -297,7 +302,7 @@ const PaymentRequest = () => {
     }
   };
 
-  const viewPaymentResultModal = () => {
+  const viewPaymentResultModal = useCallback(() => {
     if (keysignResult !== null) {
       if (keysignResult.success) {
         Modal.success({
@@ -343,7 +348,6 @@ const PaymentRequest = () => {
           ),
           centered: true,
           okText: 'ok',
-
           cancelText: 'Cancel',
           onCancel: console.log,
         });
@@ -356,12 +360,16 @@ const PaymentRequest = () => {
           cancelText: 'Cancel',
           onCancel: console.log,
           onOk: () => {
-            window.location.href = stringifyPayments(paymentData);
+            window.location.href = createPaymentsUrl(paymentData);
           },
         });
       }
     }
-  };
+  }, [createPaymentsUrl, keysignResult, paymentData, paymentsTotal]);
+
+  useEffect(() => {
+    viewPaymentResultModal();
+  }, [viewPaymentResultModal]);
 
   return (
     <PageContentsLayout loading={loadingMessage()}>
@@ -370,7 +378,7 @@ const PaymentRequest = () => {
           <Row gutter={[30, 30]} justify="center" align="bottom" style={{padding: '10px'}}>
             {isMakingPayment && (
               <>
-                {!keysign && (
+                {keysign === undefined && (
                   <Col span={24}>
                     <Typography.Text strong type="danger">
                       You Don't have Keysign installed
@@ -437,7 +445,6 @@ const PaymentRequest = () => {
                             success: paymentIsSuccessful,
                           }));
                           setPaymentStatus(() => '');
-                          viewPaymentResultModal();
                         },
                         BANK_URL,
                       );
@@ -550,18 +557,18 @@ const PaymentRequest = () => {
                   </Typography.Title>
                   <Row justify="center">
                     <Col md={8}>
-                      <Qr width={250} text={stringifyPayments(paymentData)} />
+                      <Qr width={250} text={createPaymentsUrl(paymentData)} />
                     </Col>
                     <Col span={24} md={16}>
                       <Row>
                         <Col span={24}>
-                          <Input.TextArea autoSize disabled value={stringifyPayments(paymentData)} />
+                          <Input.TextArea autoSize disabled value={createPaymentsUrl(paymentData)} />
                         </Col>
                         <Col span={24}>
                           <Button
                             block
                             onClick={async () => {
-                              await navigator.clipboard.writeText(stringifyPayments(paymentData));
+                              await navigator.clipboard.writeText(createPaymentsUrl(paymentData));
                               setCopied(true);
                             }}
                           >

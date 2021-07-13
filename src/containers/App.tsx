@@ -23,22 +23,35 @@ function App() {
   const dispatch = useDispatch();
 
   const retrieveNetworkStats = useCallback(async () => {
-    const stats = {
-      activeBanks: (await getData(`${PV_URL}/banks?limit=1`)).count,
-      activeValidators: (await getValidators(PV_URL, {limit: 1, offset: 0}))[1],
-      transactions: (await getTransactions(BANK_URL, {limit: 1, offset: 0}))[1],
-    };
+    getData(`${PV_URL}/banks?limit=1`).then((data) => {
+      dispatch(
+        setNetworkStats({
+          activeBanks: data.count,
+        }),
+      );
+    });
 
-    console.log({stats});
+    getValidators(PV_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+      dispatch(
+        setNetworkStats({
+          activeValidators: total,
+        }),
+      );
+    });
 
-    dispatch(setNetworkStats(stats));
+    getTransactions(BANK_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+      dispatch(
+        setNetworkStats({
+          transactions: total,
+        }),
+      );
+    });
   }, [dispatch]);
 
   useEffect(() => {
     retrieveNetworkStats();
   }, [retrieveNetworkStats]);
 
-  console.log('App');
   return (
     <div className="">
       <Router>
