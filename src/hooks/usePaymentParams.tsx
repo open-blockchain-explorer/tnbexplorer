@@ -4,7 +4,7 @@ import {useLocation} from 'react-router-dom';
 import {nanoid} from 'nanoid';
 
 interface QueryParams {
-  accountNumber: string;
+  recipient: string;
   amount: string;
   memo: string;
 }
@@ -12,7 +12,7 @@ interface QueryParams {
 export const usePaymentParams = () => {
   const query = new URLSearchParams(useLocation().search);
   const [accountNumberString, amountString, memoString] = [
-    query.get('accountNumber'),
+    query.get('recipient'),
     query.get('amount'),
     query.get('memo')?.replaceAll('%20', ' '),
   ];
@@ -34,7 +34,7 @@ export const usePaymentParams = () => {
     if (accountNumbers[i]) {
       payments.push({
         key: nanoid(),
-        accountNumber: accountNumbers[i],
+        recipient: accountNumbers[i],
         amount: Number(amounts[i]),
         memo: memos[i],
       });
