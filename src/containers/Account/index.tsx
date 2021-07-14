@@ -18,6 +18,7 @@ import {getTransactions, getAccountDetails} from 'api/bank';
 import {KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {getCurrentChain} from 'selectors';
+import {createPaymentsUrl} from 'utils/payment-request';
 
 interface AccountDetails {
   balance?: number;
@@ -37,6 +38,7 @@ const Account: FC = () => {
     balanceLock: '-',
   });
 
+  const [paymentRequestUrl, setPaymentRequestUrl] = useState('');
   const [transactions, setTransactions] = useState<any[]>([]);
 
   const [transactionPagination, setTransactionPagination] = useState({
@@ -86,6 +88,14 @@ const Account: FC = () => {
     };
 
     load();
+
+    setPaymentRequestUrl(
+      createPaymentsUrl({
+        recipient: accountNumber,
+        amount: 1,
+        memo: 'Payment Request via TNB Explorer',
+      }),
+    );
   }, [accountNumber, pvUrl, handleTableChange]);
 
   const accountInfo = [
@@ -136,7 +146,7 @@ const Account: FC = () => {
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
-                  <Link to="/tnb/payment-request">
+                  <Link to={paymentRequestUrl}>
                     <Button>Payment Request</Button>
                   </Link>
                   <Link to="./trace-transactions">
@@ -170,17 +180,22 @@ const Account: FC = () => {
                     renderItem={({title, value, ...properties}) => (
                       <List.Item>
                         {title === 'Account Number' && screens.md === false ? (
-                          <Row>
+                          <Row gutter={[0, 10]}>
                             <Col span={24}>
                               <KeyValuePair title={title} value={value} {...properties} />
                             </Col>
                             <Col span={24}>
-                              <Row justify="end" align="middle" gutter={[0, 10]}>
+                              <Row align="middle" gutter={[10, 10]}>
                                 <Col span={12}>
                                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
                                 </Col>
                                 <Col span={12}>
                                   <Qr text={accountNumber} />
+                                </Col>
+                                <Col span={12}>
+                                  <Button>
+                                    <Link to={paymentRequestUrl}>Payment Request</Link>
+                                  </Button>
                                 </Col>
                                 <Col>
                                   <Button>

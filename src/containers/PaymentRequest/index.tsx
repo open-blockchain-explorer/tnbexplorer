@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
@@ -25,15 +25,10 @@ import {getConfirmationBlocks} from 'api/bank';
 import {PageContentsLayout, Qr} from 'components';
 import {BANK_URL} from 'constants/url';
 import {usePaymentParams} from 'hooks';
+import {Payment} from 'types/payment-request';
+import {createPaymentsUrl} from 'utils/payment-request';
 import {EditableCell} from './EditableCell';
 // import { responsiveWidth } from 'utils/responsive';
-
-interface Payment {
-  key: string;
-  recipient: string;
-  amount: number;
-  memo: string;
-}
 
 const PaymentRequest = () => {
   const [keysign, setKeysign] = useState<any>(null);
@@ -80,17 +75,17 @@ const PaymentRequest = () => {
 
   const isEditing = (record: Payment) => record.key === editingKey;
 
-  const edit = (record: Partial<Payment> & {key: React.Key}) => {
+  const edit = (record: Partial<Payment>) => {
     if (screens.xs) {
       setShowEditModal(true);
     }
     form.setFieldsValue({recipient: '', amount: '', memo: '', ...record});
-    setEditingKey(record.key);
+    setEditingKey(record.key as string);
   };
 
-  const editByModal = (record: Partial<Payment> & {key: React.Key}) => {
+  const editByModal = (record: Partial<Payment>) => {
     form.setFieldsValue({recipient: '', amount: '', memo: '', ...record});
-    setEditingKey(record.key);
+    setEditingKey(record.key as string);
     setShowEditModal(true);
   };
 
@@ -167,7 +162,7 @@ const PaymentRequest = () => {
         const beingEditedInTable = isEditing(record) && !screens.xs;
         return beingEditedInTable ? (
           <Space direction="vertical">
-            <Button onClick={() => save(record.key)} style={{marginRight: 8}}>
+            <Button onClick={() => save(record.key as string)} style={{marginRight: 8}}>
               Save
             </Button>
 
@@ -184,7 +179,7 @@ const PaymentRequest = () => {
                     Edit
                   </Button>
 
-                  <Popconfirm title="Sure you want to delete?" onConfirm={() => handleDelete(record.key)}>
+                  <Popconfirm title="Sure you want to delete?" onConfirm={() => handleDelete(record.key as string)}>
                     <Button type="text" block disabled={editingKey !== ''}>
                       Delete
                     </Button>
@@ -282,27 +277,12 @@ const PaymentRequest = () => {
     };
   });
 
-  const createPaymentsUrl = useCallback((payments: Payment[]) => {
-    let accountNumbers = '';
-    let amounts = '';
-    let memos = '';
-
-    payments.forEach(({recipient, amount, memo}) => {
-      if (recipient) {
-        accountNumbers += recipient.concat(',');
-        amounts += `${amount},`;
-        memos += memo.trim().replaceAll(' ', '%20').concat(',');
-      }
-    });
-
+  const hrefPaymentUrl = useMemo(() => {
     const {protocol, host} = window.location;
-    const PAYMENT_REQUEST_URL = `${protocol}//${host}/tnb/payment-request`;
+    const websiteDomainName = `${protocol}//${host}`;
 
-    return `${PAYMENT_REQUEST_URL}?recipient=${accountNumbers.slice(0, -1)}&amount=${amounts.slice(
-      0,
-      -1,
-    )}&memo=${memos.slice(0, -1)}`;
-  }, []);
+    return websiteDomainName.concat(createPaymentsUrl(paymentData));
+  }, [paymentData]);
 
   const loadingMessage = () => {
     switch (paymentStatus) {
@@ -388,12 +368,12 @@ const PaymentRequest = () => {
           cancelText: 'Cancel',
           onCancel: console.log,
           onOk: () => {
-            window.location.href = createPaymentsUrl(paymentData);
+            window.location.href = hrefPaymentUrl;
           },
         });
       }
     }
-  }, [screens, createPaymentsUrl, keysignResult, paymentData, paymentsTotal]);
+  }, [screens, hrefPaymentUrl, keysignResult, paymentsTotal]);
 
   useEffect(() => {
     viewPaymentResultModal();
@@ -585,18 +565,18 @@ const PaymentRequest = () => {
                   </Typography.Title>
                   <Row justify="center">
                     <Col md={8}>
-                      <Qr width={250} text={createPaymentsUrl(paymentData)} />
+                      <Qr width={250} text={hrefPaymentUrl} />
                     </Col>
                     <Col span={24} md={16}>
                       <Row>
                         <Col span={24}>
-                          <Input.TextArea autoSize disabled value={createPaymentsUrl(paymentData)} />
+                          <Input.TextArea autoSize disabled value={hrefPaymentUrl} />
                         </Col>
                         <Col span={24}>
                           <Button
                             block
                             onClick={async () => {
-                              await navigator.clipboard.writeText(createPaymentsUrl(paymentData));
+                              await navigator.clipboard.writeText(hrefPaymentUrl);
                               setCopied(true);
                             }}
                           >
