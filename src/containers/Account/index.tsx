@@ -38,7 +38,12 @@ const Account: FC = () => {
     balanceLock: '-',
   });
 
-  const [paymentRequestUrl, setPaymentRequestUrl] = useState('');
+  const paymentRequestUrl = createPaymentsUrl({
+    recipient: accountNumber,
+    amount: 1,
+    memo: 'Payment Request via TNB Explorer',
+  });
+
   const [transactions, setTransactions] = useState<any[]>([]);
 
   const [transactionPagination, setTransactionPagination] = useState({
@@ -88,14 +93,6 @@ const Account: FC = () => {
     };
 
     load();
-
-    setPaymentRequestUrl(
-      createPaymentsUrl({
-        recipient: accountNumber,
-        amount: 1,
-        memo: 'Payment Request via TNB Explorer',
-      }),
-    );
   }, [accountNumber, pvUrl, handleTableChange]);
 
   const accountInfo = [
