@@ -10,12 +10,11 @@ import Statistic from 'antd/es/statistic';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 
-import {Link} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 
 import {useAccount} from 'hooks';
 import {getTransactions, getAccountDetails} from 'api/bank';
-import {KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr} from 'components';
+import {KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr, ButtonLink} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {getCurrentChain} from 'selectors';
 import {createPaymentsUrl} from 'utils/payment-request';
@@ -143,12 +142,8 @@ const Account: FC = () => {
 
                   <Statistic title="Balance" value={accountDetails?.balance ?? 0} />
 
-                  <Link to={paymentRequestUrl}>
-                    <Button>Payment Request</Button>
-                  </Link>
-                  <Link to="./trace-transactions">
-                    <Button>Trace Transaction</Button>
-                  </Link>
+                  <ButtonLink href={paymentRequestUrl}>Payment Request</ButtonLink>
+                  <ButtonLink href="./trace-transactions">Trace Transaction</ButtonLink>
                 </div>
               </Col>
             ) : (
@@ -190,14 +185,10 @@ const Account: FC = () => {
                                   <Qr text={accountNumber} />
                                 </Col>
                                 <Col span={12}>
-                                  <Button>
-                                    <Link to={paymentRequestUrl}>Payment Request</Link>
-                                  </Button>
+                                  <ButtonLink href={paymentRequestUrl}>Payment Request</ButtonLink>
                                 </Col>
                                 <Col>
-                                  <Button>
-                                    <Link to="./trace-transaction">Trace Transaction</Link>
-                                  </Button>
+                                  <ButtonLink href="./trace-transactions">Trace Transaction</ButtonLink>
                                 </Col>
                               </Row>
                             </Col>

@@ -5,7 +5,7 @@ import {useDispatch} from 'react-redux';
 
 import {getData, getTransactions} from 'api/bank';
 import {getValidators} from 'api/validator';
-import {Layout} from 'components';
+import {GoogleAnalytics, Layout} from 'components';
 import {BANK_URL, PV_URL} from 'constants/url';
 import {setNetworkStats} from 'store/app';
 
@@ -55,6 +55,7 @@ function App() {
   return (
     <div className="">
       <Router>
+        <GoogleAnalytics />
         <Layout>
           <Switch>
             {/* TNB Routes */}

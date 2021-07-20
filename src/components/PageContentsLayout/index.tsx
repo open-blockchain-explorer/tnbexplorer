@@ -7,6 +7,8 @@ import Spin from 'antd/es/spin';
 import HomeFilled from '@ant-design/icons/HomeFilled';
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
 
+import {A} from 'components';
+
 interface Props {
   loading?: boolean | string;
 }
@@ -18,16 +20,19 @@ const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gut
     const url = window.location.pathname.slice(1).split('/');
 
     const getHref = (index: number) =>
-      window.location.origin.concat('/') +
-      url
-        .slice(0, index + 1)
-        .join('/')
-        .concat('/');
+      '/'.concat(
+        url
+          .slice(0, index + 1)
+          .join('/')
+          .concat('/'),
+      );
 
     const breadCrumbItems: ReactNode[] = [
-      <Breadcrumb.Item key={0} href={getHref(0)}>
-        <HomeFilled />
-      </Breadcrumb.Item>,
+      <A href={getHref(0)}>
+        <Breadcrumb.Item key={0}>
+          <HomeFilled />
+        </Breadcrumb.Item>
+      </A>,
     ];
 
     const validUrls = ['account', 'trace-transactions', 'payment-request', 'faucet'];
@@ -38,15 +43,15 @@ const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gut
         if (url[i].length > 0) {
           if (validUrls.includes(url[i])) {
             breadCrumbItems.push(
-              <Breadcrumb.Item key={i} href={getHref(i)}>
-                {url[i].charAt(0).toUpperCase() + url[i].slice(1)}
-              </Breadcrumb.Item>,
+              <A href={getHref(i)}>
+                <Breadcrumb.Item key={i}>{url[i].charAt(0).toUpperCase() + url[i].slice(1)}</Breadcrumb.Item>
+              </A>,
             );
           } else {
             breadCrumbItems[breadCrumbItems.length - 1] = (
-              <Breadcrumb.Item key={i} href={getHref(i)}>
-                {url[i - 1].charAt(0).toUpperCase() + url[i - 1].slice(1)}
-              </Breadcrumb.Item>
+              <A href={getHref(i)}>
+                <Breadcrumb.Item key={i}>{url[i - 1].charAt(0).toUpperCase() + url[i - 1].slice(1)}</Breadcrumb.Item>
+              </A>
             );
           }
         }

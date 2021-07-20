@@ -17,6 +17,7 @@ import Statistic from 'antd/es/statistic';
 import Typography from 'antd/es/typography';
 import {Rule} from 'rc-field-form/lib/interface';
 import {nanoid} from 'nanoid';
+import {useHistory} from 'react-router-dom';
 
 import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
@@ -63,15 +64,24 @@ const PaymentRequest = () => {
   const [copied, setCopied] = useState(false);
   const {useBreakpoint} = Grid;
   const screens = useBreakpoint();
+  const history = useHistory();
+  console.log({history});
 
   // for xs screen
   const [showEditModal, setShowEditModal] = useState(false);
 
   const paymentsTotal = paymentData.reduce((acc, payment) => payment.amount + acc, 0);
   const isMakingPayment = initialPayments.length > 0;
+
   useEffect(() => {
     setCopied(false);
   }, [paymentData]);
+
+  const updateUrl = (data: Payment[]) => {
+    if (initialPayments.length) {
+      history.replace(createPaymentsUrl(data || paymentData));
+    }
+  };
 
   const isEditing = (record: Payment) => record.key === editingKey;
 
@@ -106,6 +116,7 @@ const PaymentRequest = () => {
   const handleDelete = (recordKey: string) => {
     const filteredData = paymentData.filter(({key}) => key !== recordKey);
     setPaymentData(filteredData);
+    updateUrl(filteredData);
   };
 
   const save = async (key: React.Key) => {
@@ -127,6 +138,7 @@ const PaymentRequest = () => {
       setPaymentData(() => newData);
       setEditingKey(() => '');
       if (screens.xs) setShowEditModal(false);
+      updateUrl(newData);
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
@@ -140,12 +152,13 @@ const PaymentRequest = () => {
       memo: 'Payment Request via Tnb Explorer',
     };
 
+    if (paymentData.length > 0) {
+      if (paymentData[paymentData.length - 1].recipient === '') return;
+      const prevData = paymentData[paymentData.length - 1];
+      newData = {...prevData, key: nanoid(), recipient: ''};
+    }
+
     if (!screens.xs) {
-      if (paymentData.length > 0) {
-        if (paymentData[paymentData.length - 1].recipient === '') return;
-        const prevData = paymentData[paymentData.length - 1];
-        newData = {...prevData, key: nanoid(), recipient: ''};
-      }
       setPaymentData([...paymentData, {...newData, amount: 0, memo: ''}]);
       edit(newData);
     } else {

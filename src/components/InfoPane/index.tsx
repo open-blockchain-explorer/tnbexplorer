@@ -1,4 +1,4 @@
-import React, {CSSProperties, FC} from 'react';
+import React, {CSSProperties, FC, ReactNode} from 'react';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
 import Typography from 'antd/es/typography';
@@ -15,11 +15,12 @@ interface Statistics {
 
 const InfoPane: FC<{
   title: string;
+  prefix?: ReactNode | string;
   data: Statistics;
   align?: 'left' | 'center' | 'right';
   showChangeAsPercent?: boolean;
   style?: CSSProperties;
-}> = ({title, data, align = 'center', showChangeAsPercent, ...otherProps}) => {
+}> = ({title, data, align = 'center', showChangeAsPercent, prefix, ...otherProps}) => {
   const {current, previous} = data;
   const change = current - previous;
   const isGain = change >= 0;
@@ -38,6 +39,7 @@ const InfoPane: FC<{
         </Col>
         <Col span={24}>
           <Typography.Text style={{fontSize: 'x-large', fontWeight: 'bold'}}>
+            {prefix ?? null}
             {current.toLocaleString()}
           </Typography.Text>
         </Col>

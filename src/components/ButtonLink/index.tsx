@@ -1,26 +1,39 @@
 import React, {FC} from 'react';
-import Button from 'antd/es/button';
+import Button, {ButtonProps} from 'antd/es/button';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
 
 import {ArrowRightOutlined} from '@ant-design/icons';
+import {A} from 'components';
 
-const ButtonLink: FC<{link: string; text?: string}> = ({link, text = 'View All'}) => {
-  console.log({link});
+const ButtonLink: FC<ButtonProps & {href: string; viewAll?: boolean}> = ({
+  href,
+  type,
+  children,
+  viewAll,
+  ...buttonProps
+}) => {
+  console.log({href});
   return (
-    <Button type="primary" href={link}>
-      <Row gutter={[10, 0]}>
-        <Col>View All</Col>
-        <Col>
-          <ArrowRightOutlined
-            style={{
-              background: 'white',
-              color: 'var(--primary)',
-            }}
-          />
-        </Col>
-      </Row>
-    </Button>
+    <A href={href}>
+      <Button type={viewAll ? 'primary' : type} {...buttonProps}>
+        {viewAll ? (
+          <Row gutter={[10, 0]}>
+            <Col>View All</Col>
+            <Col>
+              <ArrowRightOutlined
+                style={{
+                  background: 'white',
+                  color: 'var(--primary)',
+                }}
+              />
+            </Col>
+          </Row>
+        ) : (
+          children
+        )}
+      </Button>
+    </A>
   );
 };
 

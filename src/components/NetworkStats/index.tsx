@@ -35,6 +35,10 @@ const NetworkStats = () => {
                       title="distributed coins"
                       data={{current: Number(latestStats.total), previous: Number(previousStats.total)}}
                     />
+                    {/* <InfoPane
+                      title="Price"
+                      data={{current: Number(latestStats.total), previous: Number(previousStats.total)}}
+                    /> */}
                     <InfoPane
                       title="Accounts"
                       data={{current: Number(latestStats.accounts), previous: Number(previousStats.accounts)}}
@@ -121,6 +125,11 @@ const NetworkStats = () => {
               />
             </Card>
           </Col>
+          {/* <Col span={12}>
+            <Card size="small" bordered>
+              <InfoPane align="left" title="price (usd)" data={{current: 0.015, previous: 0.001}} />
+            </Card>
+          </Col> */}
           <Col>
             <Typography.Text type="secondary">
               {' '}
