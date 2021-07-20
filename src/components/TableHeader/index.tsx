@@ -17,7 +17,7 @@ const TableHeader: FC<ComponentProps> = ({title, buttonLink}) => {
         <Typography.Text> {title}</Typography.Text>
       </Col>
       <Col>
-        <ButtonLink link={buttonLink} />
+        <ButtonLink href={buttonLink} viewAll />
       </Col>
     </Row>
   );

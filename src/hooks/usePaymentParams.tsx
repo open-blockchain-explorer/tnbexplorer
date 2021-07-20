@@ -3,38 +3,30 @@ import React from 'react';
 import {useLocation} from 'react-router-dom';
 import {nanoid} from 'nanoid';
 
-interface QueryParams {
-  recipient: string;
-  amount: string;
-  memo: string;
-}
+import {Payment} from 'types/payment-request';
 
 export const usePaymentParams = () => {
   const query = new URLSearchParams(useLocation().search);
-  const [accountNumberString, amountString, memoString] = [
+  const [recipientString, amountString, memoString] = [
     query.get('recipient'),
     query.get('amount'),
     query.get('memo')?.replaceAll('%20', ' '),
   ];
 
-  // console.log({accountNumberString, amountString, memoString});
+  // console.log({recipientString, amountString, memoString});
 
-  if (!accountNumberString || !amountString) return [];
+  if (!recipientString || !amountString) return [];
 
-  const [accountNumbers, amounts, memos] = [
-    accountNumberString!.split(','),
-    amountString!.split(','),
-    memoString!.split(','),
-  ];
+  const [recipients, amounts, memos] = [recipientString!.split(','), amountString!.split(','), memoString!.split(',')];
 
-  // console.log({accountNumbers, amounts, memos});
+  // console.log({recipients, amounts, memos});
 
-  const payments: any[] = [];
-  for (let i = 0; i < accountNumbers.length; i += 1) {
-    if (accountNumbers[i]) {
+  const payments: Payment[] = [];
+  for (let i = 0; i < recipients.length; i += 1) {
+    if (recipients[i]) {
       payments.push({
         key: nanoid(),
-        recipient: accountNumbers[i],
+        recipient: recipients[i],
         amount: Number(amounts[i]),
         memo: memos[i],
       });

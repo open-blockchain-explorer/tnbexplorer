@@ -3,7 +3,6 @@ import axios from 'axios';
 import Button from 'antd/es/button';
 import Col from 'antd/es/col';
 import Card from 'antd/es/card';
-import Divider from 'antd/es/divider';
 
 import Form from 'antd/es/form';
 import Image from 'antd/es/image';
@@ -155,7 +154,15 @@ const TestnetFaucet = () => {
 
             <Col>
               <Step src={tweet_webp} fallback={tweet_png} alt="example tweet" title="1. Post on Social Media">
-                Create a post on Facebook or a tweet on Twitter
+                Create a post on Facebook or a{' '}
+                <A
+                  href={
+                    'https://twitter.com/intent/tweet?url=&text=Requesting%20faucet%20funds%20into%20[Account%20Number]%20on%20the%20%23TNBFaucet%20test%20network.'
+                  }
+                >
+                  tweet
+                </A>{' '}
+                on Twitter
                 <br />
                 Mention #TNBFaucet and thenewboston address
               </Step>
