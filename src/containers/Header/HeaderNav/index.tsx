@@ -53,10 +53,10 @@ const HeaderNav: FC = () => {
         <NavLink to={`${currentChain}/`}>Overview</NavLink>
       </Menu.Item>
       <Menu.Item key="transactions">
-        <NavLink to={`${currentChain}/transactions`}>Transactions</NavLink>
+        <NavLink to={`${currentChain}/transactions/`}>Transactions</NavLink>
       </Menu.Item>
       <Menu.Item key="nodes">
-        <NavLink to={`${currentChain}/nodes`}>Nodes</NavLink>
+        <NavLink to={`${currentChain}/nodes/`}>Nodes</NavLink>
       </Menu.Item>
       {isMainnet ? (
         <Menu.Item key="stats">

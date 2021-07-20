@@ -1,15 +1,13 @@
 import React, {useCallback, useEffect} from 'react';
-import {BrowserRouter as Router, Redirect, Route, Switch, useHistory} from 'react-router-dom';
+import {BrowserRouter as Router, Redirect, Route, Switch} from 'react-router-dom';
 
 import {useDispatch} from 'react-redux';
-import ReactGA from 'react-ga';
 
 import {getData, getTransactions} from 'api/bank';
 import {getValidators} from 'api/validator';
-import {Layout} from 'components';
+import {GoogleAnalytics, Layout} from 'components';
 import {BANK_URL, PV_URL} from 'constants/url';
 import {setNetworkStats} from 'store/app';
-import {createBrowserHistory} from 'history';
 
 import Account from './Account';
 import Overview from './Overview';
@@ -22,12 +20,6 @@ import TestnetFaucet from './TestnetFaucet';
 import TraceTransactions from './TraceTransactions';
 
 function App() {
-  const history = createBrowserHistory();
-  history.listen((location) => {
-    ReactGA.set({page: location.pathname}); // Update the user's current page
-    ReactGA.pageview(location.pathname); // Record a pageview for the given page
-  });
-
   const dispatch = useDispatch();
 
   const retrieveNetworkStats = useCallback(async () => {
@@ -62,7 +54,8 @@ function App() {
 
   return (
     <div className="">
-      <Router history={history}>
+      <Router>
+        <GoogleAnalytics />
         <Layout>
           <Switch>
             {/* TNB Routes */}
