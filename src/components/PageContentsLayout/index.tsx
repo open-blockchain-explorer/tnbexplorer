@@ -38,7 +38,7 @@ const PageContentsLayout: FC<RowProps & Props> = ({
           .concat('/'),
       );
 
-    const getBreadcrumbItem = (index: number, link: boolean = true, displayPrevPath: boolean = false) => {
+    const getBreadcrumbItem = (index: number, link = true, displayPrevPath = false) => {
       const path = displayPrevPath && index > 0 ? url[index - 1] : url[index];
       const pathArray = path.split('-').map((section: string) => section.charAt(0).toUpperCase() + section.slice(1));
       const breadCrumbText = pathArray.join(' ');

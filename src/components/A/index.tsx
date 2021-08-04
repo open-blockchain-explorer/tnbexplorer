@@ -14,7 +14,8 @@ type AnchorProps = ComponentProps & Partial<LinkProps>;
 const formatHref = (href: string, network: string) => {
   if (href.startsWith('/')) {
     return href;
-  } else if (href.startsWith('./')) {
+  }
+  if (href.startsWith('./')) {
     const arr = window.location.pathname.split('/');
     arr.pop();
     arr.push(href.slice(2));
