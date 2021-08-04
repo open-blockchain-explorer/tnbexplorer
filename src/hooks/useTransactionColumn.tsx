@@ -1,10 +1,9 @@
 import React from 'react';
 import Tag from 'antd/es/tag';
 import Typography from 'antd/es/typography';
-import {Link} from 'react-router-dom';
 import {ColumnsType} from 'antd/es/table';
 import {formatDistance} from 'date-fns';
-import {useChainPath} from 'hooks';
+import {A} from 'components';
 
 export interface TransactionColumnType {
   amount: number;
@@ -15,15 +14,14 @@ export interface TransactionColumnType {
 }
 
 export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> => {
-  const currentPath = useChainPath();
   const formatColumnAccount = (text: string) => {
     if (accountNumber && accountNumber === text) {
       return text;
     }
     return (
-      <Link to={`${currentPath}/account/${text}/`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
+      <A href={`account/${text}/`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
         {text}
-      </Link>
+      </A>
     );
   };
 

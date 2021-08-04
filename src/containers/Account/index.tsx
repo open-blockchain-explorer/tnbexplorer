@@ -126,7 +126,7 @@ const Account: FC = () => {
   ];
 
   return (
-    <PageContentsLayout>
+    <PageContentsLayout showBreadCrumb>
       {!isMainnet && (
         <Col span={24}>
           <TestnetAlertMessage />

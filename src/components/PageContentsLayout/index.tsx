@@ -1,23 +1,34 @@
 import React, {FC, ReactNode, useCallback, useEffect, useState} from 'react';
 import Breadcrumb from 'antd/es/breadcrumb';
+import Col from 'antd/es/col';
 import Modal from 'antd/es/modal';
 import Row, {RowProps} from 'antd/es/row';
 import Spin from 'antd/es/spin';
+import Typography from 'antd/es/typography';
 
 import HomeFilled from '@ant-design/icons/HomeFilled';
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
-
+import {matchPath} from 'react-router-dom';
 import {A} from 'components';
 
 interface Props {
+  showBreadCrumb?: boolean;
   loading?: boolean | string;
+  title?: string;
 }
 
-const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gutter, loading}) => {
+const PageContentsLayout: FC<RowProps & Props> = ({
+  children,
+  align,
+  showBreadCrumb,
+  justify,
+  gutter,
+  loading,
+  title,
+}) => {
   const [breadCrumb, setBreadCrumb] = useState<ReactNode[]>();
-
-  const getBreadCrumbItems = useCallback(() => {
-    const url = window.location.pathname.slice(1).split('/');
+  const getBreadCrumb = useCallback(() => {
+    const url = window.location.pathname.split('/').filter((path: string) => !!path.length);
 
     const getHref = (index: number) =>
       '/'.concat(
@@ -27,44 +38,39 @@ const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gut
           .concat('/'),
       );
 
-    const breadCrumbItems: ReactNode[] = [
-      <A href={getHref(0)}>
-        <Breadcrumb.Item key={0}>
-          <HomeFilled />
-        </Breadcrumb.Item>
-      </A>,
-    ];
-
-    const validUrls = ['account', 'trace-transactions', 'payment-request', 'faucet'];
-
-    // console.log({url});
-    if (url.length > 1) {
-      for (let i = 1; i < url.length; i += 1) {
-        if (url[i].length > 0) {
-          if (validUrls.includes(url[i])) {
-            breadCrumbItems.push(
-              <A href={getHref(i)}>
-                <Breadcrumb.Item key={i}>{url[i].charAt(0).toUpperCase() + url[i].slice(1)}</Breadcrumb.Item>
-              </A>,
-            );
-          } else {
-            breadCrumbItems[breadCrumbItems.length - 1] = (
-              <A href={getHref(i)}>
-                <Breadcrumb.Item key={i}>{url[i - 1].charAt(0).toUpperCase() + url[i - 1].slice(1)}</Breadcrumb.Item>
-              </A>
-            );
-          }
-        }
+    const getBreadcrumbItem = (index: number, link: boolean = true, displayPrevPath: boolean = false) => {
+      const path = displayPrevPath && index > 0 ? url[index - 1] : url[index];
+      const pathArray = path.split('-').map((section: string) => section.charAt(0).toUpperCase() + section.slice(1));
+      const breadCrumbText = pathArray.join(' ');
+      if (link) {
+        return (
+          <Breadcrumb.Item key={index}>
+            {index === 0 ? <HomeFilled /> : <A href={getHref(index)}> breadCrumbText</A>}
+          </Breadcrumb.Item>
+        );
       }
-    }
+      return <Breadcrumb.Item key={index}>{breadCrumbText}</Breadcrumb.Item>;
+    };
+
+    const breadCrumbItems = url.reduce((acc: ReactNode[], path: string, i: number) => {
+      if (path.length === 0) return acc;
+      const isLastPath = i !== url.length - 1;
+      if (path.length !== 64) {
+        acc.push(getBreadcrumbItem(i, isLastPath));
+      } else {
+        acc[acc.length - 1] = getBreadcrumbItem(i, true, true);
+      }
+      return acc;
+    }, []);
+
     return breadCrumbItems;
   }, []);
 
   useEffect(() => {
-    const breadCrumbs = getBreadCrumbItems();
+    const breadCrumbs = getBreadCrumb();
     // console.log(breadCrumbs.length);
     if (breadCrumbs.length > 1) setBreadCrumb(breadCrumbs);
-  }, [getBreadCrumbItems]);
+  }, [getBreadCrumb]);
 
   return (
     <>
@@ -82,28 +88,26 @@ const PageContentsLayout: FC<RowProps & Props> = ({children, align, justify, gut
         />
       </Modal>
 
-      {breadCrumb ? (
-        <>
-          <Breadcrumb style={{padding: '20px 0px'}}>{breadCrumb}</Breadcrumb>
-          <Row
-            align={align ?? 'top'}
-            justify={justify ?? 'start'}
-            gutter={gutter ?? [20, 30]}
-            style={{paddingBottom: '50px'}}
-          >
-            {children}
-          </Row>
-        </>
-      ) : (
-        <Row
-          align={align ?? 'top'}
-          justify={justify ?? 'start'}
-          gutter={gutter ?? [20, 30]}
-          style={{paddingTop: '50px', paddingBottom: '50px'}}
-        >
-          {children}
-        </Row>
-      )}
+      <Row justify="space-between" align={'middle'} style={{padding: `${breadCrumb ? '20px' : '25px'} 0px`}}>
+        {title && (
+          <Col>
+            <Typography.Title level={2} style={{margin: '0px', padding: '0px'}}>
+              {' '}
+              {title}
+            </Typography.Title>
+          </Col>
+        )}
+        <Col>{breadCrumb && showBreadCrumb && <Breadcrumb>{breadCrumb}</Breadcrumb>}</Col>
+      </Row>
+
+      <Row
+        align={align ?? 'top'}
+        justify={justify ?? 'start'}
+        gutter={gutter ?? [20, 30]}
+        style={{paddingBottom: '50px'}}
+      >
+        {children}
+      </Row>
     </>
   );
 };

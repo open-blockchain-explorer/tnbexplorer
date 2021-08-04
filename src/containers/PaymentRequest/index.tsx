@@ -393,7 +393,7 @@ const PaymentRequest = () => {
   }, [viewPaymentResultModal]);
 
   return (
-    <PageContentsLayout loading={loadingMessage()}>
+    <PageContentsLayout showBreadCrumb loading={loadingMessage()}>
       <Col span={24}>
         <Card>
           <Row gutter={[30, 30]} justify="center" align="bottom" style={{padding: '10px'}}>
