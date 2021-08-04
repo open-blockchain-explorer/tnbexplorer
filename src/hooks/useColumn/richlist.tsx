@@ -5,6 +5,12 @@ import {Link} from 'react-router-dom';
 import stats from 'data/stats.json';
 import {A} from 'components';
 
+export interface RichlistColumnType {
+  addr: string;
+  bal: number;
+  rank: number;
+}
+
 export const richlistColumn: ColumnsType<any> = [
   {
     dataIndex: 'rank',
