@@ -15,7 +15,7 @@ import Stats from './Stats';
 import Transactions from './Transactions';
 import Nodes from './Nodes';
 import PaymentRequest from './PaymentRequest';
-import Richlist from './Richlist';
+import RichList from './RichList';
 import SponsorUs from './SponsorUs';
 import TestnetFaucet from './TestnetFaucet';
 import TraceTransactions from './TraceTransactions';
@@ -66,7 +66,7 @@ function App() {
             <Route exact path="/tnb/account/:accountNumber/" component={Account} />
             <Route exact path="/tnb/account/:accountNumber/trace-transactions" component={TraceTransactions} />
 
-            <Route exact path="/tnb/richlist/" component={Richlist} />
+            <Route exact path="/tnb/rich-list/" component={RichList} />
 
             <Route exact path="/tnb/transactions/">
               <Transactions section="transactions" />

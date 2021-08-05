@@ -4,25 +4,25 @@ import Table from 'antd/es/table';
 
 import {useColumn} from 'hooks';
 import {PageContentsLayout} from 'components';
-import richlistData from 'data/richlist.json';
+import richListData from 'data/richlist.json';
 
-const Richlist = () => {
+const RichList = () => {
   const getRichList = () => {
     console.log('Processing Rich List data ...');
-    return richlistData.map((obj, index: number) => ({
+    return richListData.map((obj, index: number) => ({
       rank: index + 1,
       ...obj,
     }));
   };
 
-  const richlistColumn = useColumn('richlist');
+  const richListColumn = useColumn('richList');
   return (
     <PageContentsLayout showBreadCrumb>
       <Col span={24}>
-        <Table columns={richlistColumn} dataSource={getRichList()} bordered scroll={{x: 450}} />
+        <Table columns={richListColumn} dataSource={getRichList()} bordered scroll={{x: 450}} />
       </Col>
     </PageContentsLayout>
   );
 };
 
-export default Richlist;
+export default RichList;
