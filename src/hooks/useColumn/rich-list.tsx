@@ -1,17 +1,15 @@
 import React from 'react';
-import Typography from 'antd/es/typography';
 import {ColumnsType} from 'antd/es/table';
-import {Link} from 'react-router-dom';
 import stats from 'data/stats.json';
 import {A} from 'components';
 
-export interface RichlistColumnType {
+export interface RichListColumnType {
   addr: string;
   bal: number;
   rank: number;
 }
 
-export const richlistColumn: ColumnsType<any> = [
+export const richListColumn: ColumnsType<any> = [
   {
     dataIndex: 'rank',
     key: 'addr',

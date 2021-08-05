@@ -1,18 +1,18 @@
 import React from 'react';
 import {transactionColumn, TransactionColumnType} from './transactions';
 import {blocksColumn, BlocksColumnType} from './blocks';
-import {richlistColumn, RichlistColumnType} from './richlist';
+import {richListColumn, RichListColumnType} from './rich-list';
 
-type ColumnType = TransactionColumnType | BlocksColumnType | RichlistColumnType;
+type ColumnType = TransactionColumnType | BlocksColumnType | RichListColumnType;
 
-export const useColumn = (dataType: 'blocks' | 'richlist' | 'transactions' | 'banks' | 'nodes', param?: any) => {
+export const useColumn = (dataType: 'blocks' | 'rich-list' | 'transactions' | 'banks' | 'nodes', param?: any) => {
   switch (dataType) {
     case 'transactions':
       return transactionColumn(param);
     case 'blocks':
       return blocksColumn;
-    case 'richlist':
-      return richlistColumn;
+    case 'rich-list':
+      return richListColumn;
     default:
       throw new Error('useColumn: Invalid Data Type ');
   }
