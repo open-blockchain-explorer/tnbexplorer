@@ -45,7 +45,7 @@ const PageContentsLayout: FC<RowProps & Props> = ({
       if (link) {
         return (
           <Breadcrumb.Item key={index}>
-            {index === 0 ? <HomeFilled /> : <A href={getHref(index)}> breadCrumbText</A>}
+            {index === 0 ? <HomeFilled /> : <A href={getHref(index)}> {breadCrumbText}</A>}
           </Breadcrumb.Item>
         );
       }

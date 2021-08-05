@@ -15,7 +15,7 @@ const RichList = () => {
     }));
   };
 
-  const richListColumn = useColumn('richList');
+  const richListColumn = useColumn('rich-list');
   return (
     <PageContentsLayout showBreadCrumb>
       <Col span={24}>

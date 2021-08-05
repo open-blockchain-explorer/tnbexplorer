@@ -24,8 +24,8 @@ const HeaderNav: FC = () => {
       case 'nodes':
         setSelectedNavlink(['nodes']);
         break;
-      case 'richlist':
-        setSelectedNavlink(['richlist']);
+      case 'rich-list':
+        setSelectedNavlink(['rich-list']);
         break;
       case 'stats':
         setSelectedNavlink(['stats']);
@@ -63,8 +63,8 @@ const HeaderNav: FC = () => {
       </Menu.Item>
       {isMainnet ? (
         <>
-          <Menu.Item key="richlist">
-            <NavLink to="/tnb/richlist">Rich List</NavLink>
+          <Menu.Item key="rich-list">
+            <NavLink to="/tnb/rich-list">Rich List</NavLink>
           </Menu.Item>
           <Menu.Item key="stats">
             <NavLink to="/tnb/stats">Stats</NavLink>
