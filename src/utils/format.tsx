@@ -1,4 +1,8 @@
 export const formatNumber = (num: number, decimals = 2) => {
+  if (num < 1) {
+    return num.toPrecision(decimals);
+  }
+
   const si = [
     {value: 1, symbol: ''},
     {value: 1e3, symbol: 'k'},

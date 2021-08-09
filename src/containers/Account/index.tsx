@@ -1,5 +1,4 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import Divider from 'antd/es/divider';
@@ -99,8 +98,9 @@ const Account: FC = () => {
       copyable: {
         text: accountNumber,
       },
+      ellipsis: true,
       title: 'Account Number',
-      value: accountNumber.substring(0, 24).concat('...'),
+      value: accountNumber,
     },
     {
       copyable: accountDetails?.balanceLock

@@ -1,12 +1,13 @@
 import React, {FC} from 'react';
 import Col from 'antd/es/col';
 
-import {Area, Bar, Line, Pie} from '@ant-design/charts';
+import {Area, Bar, Pie} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard, NetworkStats, PageContentsLayout} from 'components';
 import stats from 'data/stats.json';
-import {formatNumber, formatPercent} from 'utils/format';
+import {formatPercent} from 'utils/format';
+import {DailyChangeInCoinsChart, DistributedCoinsChart, TotalAccountsChart} from './Charts';
 
 const dailyChange: {coins: number; date: string}[] = [];
 stats.reduce((acc, record) => {
@@ -37,103 +38,6 @@ const config = {
     type: 'time',
   },
   xField: 'date',
-};
-const distributedCoinsConfig = {
-  ...config,
-  meta: {
-    date: {
-      formatter: function formatter(date: string) {
-        return formatDate(new Date(date), 'MM/dd/yy');
-      },
-      nice: true,
-      tickCount: 10,
-    },
-    total: {
-      formatter: function formatter(coins: any) {
-        return formatNumber(Number(coins));
-      },
-      nice: true,
-      tickCount: 11,
-    },
-  },
-  xField: 'date',
-  yAxis: {
-    title: {
-      text: 'Coins',
-      visible: true,
-    },
-    type: 'linear',
-  },
-  yField: 'total',
-};
-
-const totalAccountsConfig = {
-  ...config,
-  meta: {
-    accounts: {
-      formatter: function formatter(coins: any) {
-        return formatNumber(Number(coins));
-      },
-      nice: true,
-      tickCount: 11,
-    },
-    date: {
-      formatter: function formatter(date: string) {
-        return formatDate(new Date(date), 'MM/dd/yy');
-      },
-      nice: true,
-      tickCount: 10,
-    },
-  },
-
-  yAxis: {
-    title: {
-      text: 'Accounts',
-      visible: true,
-    },
-    type: 'linear',
-  },
-  yField: 'accounts',
-};
-
-const dailyChangeInCoinsConfig = {
-  ...config,
-  data: dailyChange,
-  label: {
-    style: {
-      fill: '#aaa',
-    },
-  },
-  meta: {
-    coins: {
-      formatter: function formatter(coins: any) {
-        return formatNumber(Number(coins));
-      },
-      nice: true,
-      tickCount: 11,
-    },
-    date: {
-      formatter: function formatter(date: string) {
-        return formatDate(new Date(date), 'MM/dd/yy');
-      },
-      nice: true,
-      tickCount: 10,
-    },
-  },
-  point: {
-    shape: 'diamond',
-    size: 3,
-    visible: false,
-  },
-
-  yAxis: {
-    title: {
-      text: 'Coins',
-      visible: true,
-    },
-    type: 'linear',
-  },
-  yField: 'coins',
 };
 
 const ownershipPercentage: any[] = [];
@@ -287,24 +191,16 @@ const Stats: FC = () => {
       <Col span={24}>
         <NetworkStats />
       </Col>
+
       <Col span={24}>
-        <ChartsCard
-          title="Total coins distributed over time"
-          description="The total amount of coins released into the network"
-        >
-          <Line {...distributedCoinsConfig} />
-        </ChartsCard>
+        <DistributedCoinsChart />
       </Col>
       <Col md={12} span={24}>
-        <ChartsCard title="Daily change in coins" description="The amount of coins released on a particular day">
-          <Line {...dailyChangeInCoinsConfig} />
-        </ChartsCard>
+        <DailyChangeInCoinsChart />
       </Col>
 
       <Col md={12} span={24}>
-        <ChartsCard title="Total accounts over time" description="The number of accounts with a balance ">
-          <Line {...totalAccountsConfig} />
-        </ChartsCard>
+        <TotalAccountsChart />
       </Col>
 
       <Col md={12} span={24}>

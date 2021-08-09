@@ -44,9 +44,9 @@ const PageContentsLayout: FC<RowProps & Props> = ({
       const breadCrumbText = pathArray.join(' ');
       if (link) {
         return (
-          <Breadcrumb.Item key={index}>
-            {index === 0 ? <HomeFilled /> : <A href={getHref(index)}> {breadCrumbText}</A>}
-          </Breadcrumb.Item>
+          <A href={getHref(index)} key={index}>
+            <Breadcrumb.Item>{index === 0 ? <HomeFilled /> : breadCrumbText}</Breadcrumb.Item>
+          </A>
         );
       }
       return <Breadcrumb.Item key={index}>{breadCrumbText}</Breadcrumb.Item>;

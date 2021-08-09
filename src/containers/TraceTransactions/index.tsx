@@ -1,12 +1,10 @@
 import React, {useState, useRef} from 'react';
-import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import {DagreGraph} from '@ant-design/charts';
 
 import {ChartsCard, PageContentsLayout} from 'components';
 
 const TraceTransactions = () => {
-  const userAccount = '8928526805de48e4bf2ed2a9b4b839e6b2603018ecdfbf4cffdb2065e01a3ed1';
   const sourceData = {
     nodes: [
       {

@@ -12,7 +12,8 @@
     "prettier",
     "prettier/react",
     "prettier/@typescript-eslint",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "eslint:recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -43,6 +44,7 @@
     "jsx-a11y/control-has-associated-label": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "no-param-reassign": "off",
+    "no-unused-vars": "error",
     "prettier/prettier": [
       "error",
       {
