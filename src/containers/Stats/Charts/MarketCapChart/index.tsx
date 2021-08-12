@@ -55,7 +55,7 @@ export const MarketCapChart = () => {
   useEffect(() => {
     if (priceData.length > 0) {
       const calculatedData: any[] = [];
-      let supplyData = stats;
+      const supplyData = stats;
       let supplyIndex = supplyData.length - 1;
       priceData.reverse().forEach((trade: Trade) => {
         let supplyObj = supplyData[supplyIndex];
