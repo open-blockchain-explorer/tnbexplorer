@@ -7,7 +7,7 @@ import {format as formatDate} from 'date-fns';
 import {ChartsCard, NetworkStats, PageContentsLayout} from 'components';
 import stats from 'data/stats.json';
 import {formatPercent} from 'utils/format';
-import {DailyChangeInCoinsChart, DistributedCoinsChart, TotalAccountsChart} from './Charts';
+import {DistributionChart, MarketCapChart, PriceChart, TotalAccountsChart, TotalSupplyChart} from './Charts';
 
 const dailyChange: {coins: number; date: string}[] = [];
 stats.reduce((acc, record) => {
@@ -192,11 +192,18 @@ const Stats: FC = () => {
         <NetworkStats />
       </Col>
 
-      <Col span={24}>
-        <DistributedCoinsChart />
+      <Col md={12} span={24}>
+        <PriceChart />
       </Col>
       <Col md={12} span={24}>
-        <DailyChangeInCoinsChart />
+        <MarketCapChart />
+      </Col>
+
+      <Col span={24}>
+        <TotalSupplyChart />
+      </Col>
+      <Col md={12} span={24}>
+        <DistributionChart />
       </Col>
 
       <Col md={12} span={24}>
@@ -205,7 +212,7 @@ const Stats: FC = () => {
 
       <Col md={12} span={24}>
         <ChartsCard
-          title="Wealth distribution"
+          title="Wealth Distribution"
           description="The concentration of wealth among various groups in a network."
         >
           <Bar {...wealthBarChartConfig} />
@@ -221,10 +228,7 @@ const Stats: FC = () => {
         </ChartsCard>
       </Col>
       <Col span={24}>
-        <ChartsCard
-          title="Ownership of different groups"
-          description="The wealth distribution trend across various groups over time"
-        >
+        <ChartsCard title="Ownership Chart" description="The wealth distribution trend across various groups over time">
           <Area {...ownershipConfig} />
         </ChartsCard>
       </Col>

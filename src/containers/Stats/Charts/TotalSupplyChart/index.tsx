@@ -14,14 +14,15 @@ const distributedCoinsConfig = {
   meta: {
     date: {
       formatter: function formatter(date: string) {
-        return formatDate(new Date(date), 'MM/dd/yy');
+        return formatDate(new Date(date), 'MMM dd, yyyy');
       },
       nice: true,
       tickCount: 10,
     },
     total: {
+      alias: 'Total',
       formatter: function formatter(coins: any) {
-        return formatNumber(Number(coins));
+        return coins.toLocaleString();
       },
       nice: true,
       tickCount: 11,
@@ -33,16 +34,16 @@ const distributedCoinsConfig = {
       text: 'Coins',
       visible: true,
     },
+    label: {
+      formatter: (text: string) => formatNumber(Number(text.replaceAll(',', ''))),
+    },
     type: 'linear',
   },
   yField: 'total',
 };
 
-export const DistributedCoinsChart = () => (
-  <ChartsCard
-    title="Total coins distributed over time"
-    description="The total amount of coins released into the network"
-  >
+export const TotalSupplyChart = () => (
+  <ChartsCard title="Total Supply Chart" description="The total amount of coins released into the network">
     <Line {...distributedCoinsConfig} />
   </ChartsCard>
 );
