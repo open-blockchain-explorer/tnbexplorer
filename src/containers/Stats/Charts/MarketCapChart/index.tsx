@@ -69,7 +69,7 @@ export const MarketCapChart = () => {
         }
       });
 
-      setMarketCapData(calculatedData);
+      setMarketCapData(calculatedData.reverse());
     }
   }, [priceData]);
   const distributedCoinsConfig = {
