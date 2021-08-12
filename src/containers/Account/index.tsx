@@ -97,7 +97,6 @@ const Account: FC = () => {
       copyable: {
         text: accountNumber,
       },
-      ellipsis: true,
       title: 'Account Number',
       value: accountNumber.substring(0, screens.lg ? 36 : 24).concat('...'),
     },

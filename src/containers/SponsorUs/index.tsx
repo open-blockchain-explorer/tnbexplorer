@@ -25,20 +25,14 @@ const SponsorUs = () => {
         </p>
       </Col>
 
-      <Col span={8} sm={8} xs={24}>
+      <Col span={8} sm={8} xs={20}>
         <Card bordered>
           <Row align="middle" gutter={[15, 0]}>
             <Col>
               <Typography.Text strong>TNB Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text
-                copyable
-                ellipsis
-                style={{overflow: 'hidden', whiteSpace: 'nowrap', wordBreak: 'break-all', wordWrap: 'break-word'}}
-              >
-                {tnbAddress}
-              </Typography.Text>
+              <Typography.Text copyable>{tnbAddress}</Typography.Text>
             </Col>
             <Col>
               <Qr text={tnbAddress} />
@@ -55,16 +49,14 @@ const SponsorUs = () => {
         </Card>
       </Col>
 
-      <Col span={8} sm={8} xs={24}>
+      <Col span={8} sm={8} xs={20}>
         <Card bordered>
           <Row>
             <Col span={24}>
               <Typography.Text strong>BTC Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text copyable ellipsis style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
-                {btcAddress}
-              </Typography.Text>
+              <Typography.Text copyable>{btcAddress}</Typography.Text>
             </Col>
             <Col>
               <Qr text={btcAddress} />
@@ -72,16 +64,14 @@ const SponsorUs = () => {
           </Row>
         </Card>
       </Col>
-      <Col span={8} sm={8} xs={24}>
+      <Col span={8} sm={8} xs={20}>
         <Card bordered>
           <Row>
             <Col span={24}>
               <Typography.Text strong>ETH Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text copyable ellipsis style={{overflow: 'hidden', whiteSpace: 'nowrap'}}>
-                {ethAddress}
-              </Typography.Text>
+              <Typography.Text copyable>{ethAddress}</Typography.Text>
             </Col>
             <Col>
               <Qr text={ethAddress} />
