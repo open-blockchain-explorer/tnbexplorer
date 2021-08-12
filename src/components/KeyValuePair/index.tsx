@@ -25,7 +25,7 @@ const KeyValuePair: FC<CommonProps> = ({title, value, ...others}) => (
       </Col>
       <Col xs={10} sm={12} md={14}>
         <Typography.Text strong {...others}>
-          {typeof value === 'number' ? new Intl.NumberFormat().format(value) : value}
+          {typeof value === 'number' ? value.toLocaleString() : value}
         </Typography.Text>
       </Col>
     </Row>

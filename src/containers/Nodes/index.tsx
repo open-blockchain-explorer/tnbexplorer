@@ -30,12 +30,12 @@ const Nodes: FC = () => {
 
   useEffect(() => {
     const load = () => {
-      getValidators(pvUrl).then(([validatorsData]) => {
-        setValidators(validatorsData);
+      getValidators(pvUrl).then(({results}) => {
+        setValidators(results);
       });
 
-      getBanks(pvUrl, {limit: 10, offset: 0}, (bankData) => {
-        setBanks((prev) => [...prev, bankData]);
+      getBanks(pvUrl, {limit: 10, offset: 0}, (bank) => {
+        setBanks((prev) => [...prev, bank]);
       });
     };
 

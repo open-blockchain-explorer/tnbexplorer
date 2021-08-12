@@ -1,21 +1,42 @@
 import React, {FC} from 'react';
 import Card from 'antd/es/card';
-import Space from 'antd/es/space';
+import Row from 'antd/es/row';
+import Col from 'antd/es/col';
 import Typography from 'antd/es/typography';
 
-const ChartsCard: FC<{title?: string; description?: string}> = ({children, title, description}) => {
+import {A} from 'components';
+
+interface SourceProp {
+  link: string;
+  text: string;
+}
+
+interface ComponentProps {
+  title?: string;
+  description?: string;
+  source?: SourceProp;
+}
+
+const ChartsCard: FC<ComponentProps> = ({children, title, description, source}) => {
   return (
     <Card>
-      <Space direction="vertical">
-        {title ? (
-          <>
-            <Typography.Text strong>{title}</Typography.Text>
+      <>
+        <Row justify="space-between">
+          <Col>
+            <Typography.Title level={5}>{title}</Typography.Title>
+          </Col>
+          {source && (
+            <Col>
+              Source: <A href={source.link}>{source.text}</A>
+            </Col>
+          )}
+
+          <Col span={24}>
             <Typography.Text>{description}</Typography.Text>
-          </>
-        ) : (
-          <></>
-        )}
-      </Space>
+          </Col>
+        </Row>
+      </>
+      <br />
       {children}
     </Card>
   );

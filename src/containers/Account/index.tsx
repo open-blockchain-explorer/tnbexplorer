@@ -1,5 +1,4 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import Divider from 'antd/es/divider';
@@ -57,16 +56,15 @@ const Account: FC = () => {
       // console.log(pageDetails);
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-      getTransactions(bankUrl, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
-        console.log(txs);
-        setTransactions(txs);
+      getTransactions(bankUrl, {limit, offset, accountNumber}).then(({results, total}) => {
+        setTransactions(results);
         const pageSize = limit;
         const currentPage = offset / limit + 1;
 
         const pagination = {
           current: currentPage,
           pageSize,
-          total: totalTxs,
+          total,
         };
         // console.log({pagination});
         setTransactionPagination(pagination);
@@ -100,7 +98,7 @@ const Account: FC = () => {
         text: accountNumber,
       },
       title: 'Account Number',
-      value: accountNumber.substring(0, 24).concat('...'),
+      value: accountNumber.substring(0, screens.lg ? 36 : 24).concat('...'),
     },
     {
       copyable: accountDetails?.balanceLock
@@ -109,7 +107,9 @@ const Account: FC = () => {
           }
         : false,
       title: 'Balance Lock',
-      value: accountDetails?.balanceLock ? accountDetails?.balanceLock.substring(0, 24).concat('...') : '-',
+      value: accountDetails?.balanceLock
+        ? accountDetails?.balanceLock.substring(0, screens.lg ? 36 : 24).concat('...')
+        : '-',
     },
     {
       title: 'Transactions',
@@ -126,7 +126,7 @@ const Account: FC = () => {
   ];
 
   return (
-    <PageContentsLayout>
+    <PageContentsLayout showBreadCrumb>
       {!isMainnet && (
         <Col span={24}>
           <TestnetAlertMessage />

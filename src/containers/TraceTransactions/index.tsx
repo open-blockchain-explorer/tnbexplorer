@@ -1,12 +1,10 @@
-import React, {useState, useRef} from 'react';
-import Card from 'antd/es/card';
+import React, {useState} from 'react';
 import Col from 'antd/es/col';
 import {DagreGraph} from '@ant-design/charts';
 
 import {ChartsCard, PageContentsLayout} from 'components';
 
 const TraceTransactions = () => {
-  const userAccount = '8928526805de48e4bf2ed2a9b4b839e6b2603018ecdfbf4cffdb2065e01a3ed1';
   const sourceData = {
     nodes: [
       {
@@ -423,34 +421,34 @@ const TraceTransactions = () => {
     ],
   };
 
-  const [data, setData] = useState(sourceData);
+  const [data] = useState(sourceData);
 
-  const [nodeStyle, setNodeStyle] = useState({
+  const [nodeStyle] = useState({
     fontFamily: 'Titillium Web',
   });
-  const [edgeStyle, setEdgeStyle] = useState();
-  const [layoutCfg, setLayoutCfg] = useState();
-  const [anchorPoints, setAnchorPoints] = useState();
-  const [nodeType, setNodeType] = useState();
-  const [minimapCfg, setMinimapCfg] = useState({
+  // const [edgeStyle, setEdgeStyle] = useState();
+  const [layoutCfg] = useState();
+  const [anchorPoints] = useState();
+  const [nodeType] = useState();
+  const [minimapCfg] = useState({
     show: true,
   });
-  const [behaviors, setBehaviors] = useState(['drag-canvas', 'zoom-canvas', 'drag-node']);
-  const [nodeLabelCfg, setNodeLabelCfg] = useState();
+  const [behaviors] = useState(['drag-canvas', 'zoom-canvas', 'drag-node']);
+  const [nodeLabelCfg] = useState();
 
-  const ref = useRef();
+  // const ref = useRef();
 
-  const destroyGraph = () => {
-    // ref.current.destroy();
-  };
+  // const destroyGraph = () => {
+  //   ref.current.destroy();
+  // };
 
-  const updateBehaviors = () => {
-    if (behaviors.indexOf('drag-node') !== -1) {
-      setBehaviors(['drag-canvas', 'zoom-canvas']);
-    } else {
-      setBehaviors(['drag-canvas', 'zoom-canvas', 'drag-node']);
-    }
-  };
+  // const updateBehaviors = () => {
+  //   if (behaviors.indexOf('drag-node') !== -1) {
+  //     setBehaviors(['drag-canvas', 'zoom-canvas']);
+  //   } else {
+  //     setBehaviors(['drag-canvas', 'zoom-canvas', 'drag-node']);
+  //   }
+  // };
 
   const handleEdgeClick = (item: any, graph: any) => {
     graph.setItemState(item, 'selected', true);

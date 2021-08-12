@@ -8,7 +8,7 @@ export enum QueryType {
 }
 
 export const identifyQuery = async (query: string, currentChain: any): Promise<QueryType | null> => {
-  const {pvUrl, bankUrl} = currentChain;
+  const {pvUrl} = currentChain;
 
   query = query.trim();
 
