@@ -56,16 +56,15 @@ const Account: FC = () => {
       // console.log(pageDetails);
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-      getTransactions(bankUrl, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
-        // console.log(txs);
-        setTransactions(txs);
+      getTransactions(bankUrl, {limit, offset, accountNumber}).then(({results, total}) => {
+        setTransactions(results);
         const pageSize = limit;
         const currentPage = offset / limit + 1;
 
         const pagination = {
           current: currentPage,
           pageSize,
-          total: totalTxs,
+          total,
         };
         // console.log({pagination});
         setTransactionPagination(pagination);

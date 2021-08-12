@@ -39,7 +39,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
       if (section === 'transactions') {
-        getTransactions(bankUrl, {limit, offset}).then(([txs, totalTxs]) => {
+        getTransactions(bankUrl, {limit, offset}).then(({results: txs, total}) => {
           setTransactionData(txs);
           const pageSize = limit;
           const currentPage = offset / limit + 1;
@@ -47,7 +47,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
           const pagination = {
             current: currentPage,
             pageSize,
-            total: totalTxs,
+            total,
           };
           // console.log({pagination});
           setTransactionPagination(pagination);

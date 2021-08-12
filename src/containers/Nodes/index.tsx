@@ -34,8 +34,8 @@ const Nodes: FC = () => {
         setValidators(results);
       });
 
-      getBanks(pvUrl, {limit: 10, offset: 0}, ({results}) => {
-        setBanks((prev) => [...prev, results]);
+      getBanks(pvUrl, {limit: 10, offset: 0}, (bank) => {
+        setBanks((prev) => [...prev, bank]);
       });
     };
 
