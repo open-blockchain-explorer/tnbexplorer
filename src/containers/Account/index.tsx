@@ -57,7 +57,7 @@ const Account: FC = () => {
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
       getTransactions(bankUrl, {limit, offset, accountNumber}).then(([txs, totalTxs]) => {
-        console.log(txs);
+        // console.log(txs);
         setTransactions(txs);
         const pageSize = limit;
         const currentPage = offset / limit + 1;

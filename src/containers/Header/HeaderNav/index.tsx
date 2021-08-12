@@ -40,7 +40,7 @@ const HeaderNav: FC = () => {
   }, [url]);
 
   const onChange = ({keyPath}: any) => {
-    console.log(keyPath);
+    // console.log(keyPath);
     setSelectedNavlink(keyPath);
   };
 

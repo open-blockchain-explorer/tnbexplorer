@@ -13,7 +13,6 @@ const ButtonLink: FC<ButtonProps & {href: string; viewAll?: boolean}> = ({
   viewAll,
   ...buttonProps
 }) => {
-  console.log({href});
   return (
     <A href={href}>
       <Button type={viewAll ? 'primary' : type} {...buttonProps}>

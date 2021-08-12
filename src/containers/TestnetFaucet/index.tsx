@@ -4,7 +4,7 @@ import Button from 'antd/es/button';
 import Col from 'antd/es/col';
 import Card from 'antd/es/card';
 
-import Form from 'antd/es/form';
+import Form, {FormItemProps} from 'antd/es/form';
 import Image from 'antd/es/image';
 import Input from 'antd/es/input';
 import Radio from 'antd/es/radio';
@@ -22,7 +22,8 @@ import step3_png from 'assets/FaucetSteps/step3.png';
 import step4_png from 'assets/FaucetSteps/step4.png';
 import {A, PageContentsLayout} from 'components';
 import {TESTNET_BANK_URL} from 'constants/url';
-import {RE_CAPTCHA_SITE_KEY} from 'constants/key';
+
+// const RE_CAPTCHA_SITE_KEY = process.env.RE_CAPTCHA_SITE_KEY
 
 interface StepProps {
   src: string;
@@ -45,7 +46,7 @@ const Step: FC<StepProps> = ({src, fallback, alt, title, description, children})
 );
 
 interface FaucetRequest {
-  amount: 100 | 500 | 1500;
+  amountOptionId: number;
   url: string;
 }
 
@@ -56,17 +57,16 @@ const TestnetFaucet = () => {
 
   const recaptchaRef: any = React.createRef<HTMLInputElement>();
 
-  const faucetRequest = async ({amount, url}: FaucetRequest) => {
+  const faucetRequest = async ({amountOptionId, url}: FaucetRequest) => {
     const token = await recaptchaRef.current.executeAsync();
 
-    console.log(token);
-    console.log({amount, url});
+    // console.log(token);
+    // console.log({amountOptionId, url});
 
     const faucetResponse = await axios.post(`${TESTNET_BANK_URL}/faucet`, {
-      amount,
-      csrfmiddlewaretoken: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
+      faucet_option_id: amountOptionId,
       url,
-      'g-recaptcha-response': token,
+      recaptcha: token,
     });
 
     console.log({faucetResponse});
@@ -95,17 +95,18 @@ const TestnetFaucet = () => {
                 onFinish={faucetRequest}
                 onFinishFailed={() => setUrlValidateStatus('error')}
               >
-                <Form.Item label="Amount" name="amount" initialValue={100}>
+                <Form.Item label="Amount" name="amountOptionId" initialValue={1}>
                   <Radio.Group>
-                    <Radio.Button value={100}>100 coins / 3 hrs</Radio.Button>
-                    <Radio.Button value={500}>500 coins / day</Radio.Button>
-                    <Radio.Button value={1500}>1500 coins / 3 days</Radio.Button>
+                    <Radio.Button value={1}>100 coins / 3 hrs</Radio.Button>
+                    <Radio.Button value={2}>500 coins / day</Radio.Button>
+                    <Radio.Button value={3}>1500 coins / 3 days</Radio.Button>
                   </Radio.Group>
                 </Form.Item>
                 <Form.Item
                   label="Post Url"
                   name="url"
                   required
+                  validateStatus={urlValidateStatus as FormItemProps["validateStatus"]}
                   // tooltip="This is a required field"
                   rules={[
                     {required: true, message: 'This field is required'},

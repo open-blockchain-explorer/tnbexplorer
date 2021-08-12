@@ -65,7 +65,6 @@ const PaymentRequest = () => {
   const {useBreakpoint} = Grid;
   const screens = useBreakpoint();
   const history = useHistory();
-  console.log({history});
 
   // for xs screen
   const [showEditModal, setShowEditModal] = useState(false);
@@ -247,7 +246,7 @@ const PaymentRequest = () => {
       {
         validator: (_, value) => {
           const duplicate = paymentData.find((payment) => value === payment.recipient && payment.key !== editingKey);
-          console.log({recipient: value, duplicate});
+          // console.log({recipient: value, duplicate});
           if (duplicate) {
             return Promise.reject(new Error('Account Number Must be Unique'));
           }
@@ -367,7 +366,6 @@ const PaymentRequest = () => {
           ),
           centered: true,
           cancelText: 'Cancel',
-          onCancel: console.log,
           onOk: () => {
             setKeysignResult(null);
           },
@@ -379,7 +377,6 @@ const PaymentRequest = () => {
           centered: true,
           okText: 'Try Again!',
           cancelText: 'Cancel',
-          onCancel: console.log,
           onOk: () => {
             window.location.href = hrefPaymentUrl;
           },
@@ -438,7 +435,7 @@ const PaymentRequest = () => {
                       keysign.requestTransfer(
                         paymentData.map(({recipient, amount, memo}) => ({to: recipient, amount, memo})),
                         async (res: any) => {
-                          console.log({res});
+                          // console.log({res});
 
                           const {success, result: keysignBlock} = res;
                           let paymentIsSuccessful: boolean;
@@ -450,7 +447,7 @@ const PaymentRequest = () => {
                                 block: keysignBlock.id,
                               });
 
-                              console.log(confirmationBlocks);
+                              // console.log(confirmationBlocks);
 
                               paymentIsSuccessful = confirmationBlocks.some((cb: any) => {
                                 return keysignBlock.id === cb.block;

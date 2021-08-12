@@ -13,15 +13,16 @@ const totalAccountsConfig = {
   data: stats,
   meta: {
     accounts: {
+      alias: 'Accounts',
       formatter: function formatter(coins: any) {
-        return formatNumber(Number(coins));
+        return Number(coins).toLocaleString();
       },
       nice: true,
       tickCount: 11,
     },
     date: {
       formatter: function formatter(date: string) {
-        return formatDate(new Date(date), 'MM/dd/yy');
+        return formatDate(new Date(date), 'MMM dd, yyyy');
       },
       nice: true,
       tickCount: 10,
@@ -33,13 +34,16 @@ const totalAccountsConfig = {
       text: 'Accounts',
       visible: true,
     },
+    label: {
+      formatter: (text: string) => formatNumber(Number(text.replaceAll(',', ''))),
+    },
     type: 'linear',
   },
   yField: 'accounts',
 };
 
 export const TotalAccountsChart = () => (
-  <ChartsCard title="Total accounts over time" description="The number of accounts with a balance ">
+  <ChartsCard title="Total Accounts Chart" description="The number of accounts with a balance ">
     <Line {...totalAccountsConfig} />
   </ChartsCard>
 );

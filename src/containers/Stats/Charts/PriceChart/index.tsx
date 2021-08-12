@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from 'react';
 
 import axios from 'axios';
-import {Line} from '@ant-design/charts';
+import {Area} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
@@ -10,10 +10,9 @@ import {config} from '../defaultConfig';
 import {formatNumber} from 'utils/format';
 
 interface Trade {
-  uuid: string;
   amount: number;
-  rate: number;
-  created_at: string;
+  date: string;
+  price: number;
 }
 
 export const PriceChart = () => {
@@ -23,30 +22,53 @@ export const PriceChart = () => {
     ...config,
     data: priceData,
     meta: {
-      created_at: {
+      date: {
         formatter: function formatter(date: string) {
-          return formatDate(new Date(date), 'MM/dd/yy');
+          return formatDate(new Date(date), 'MMM dd, yyyy');
         },
         nice: true,
         tickCount: 10,
       },
-      rate: {
-        formatter: function formatter(rate: number) {
-          return '$'.concat(formatNumber(rate / 10000));
+      price: {
+        alias: 'Price (USD)',
+        formatter: function formatter(price: number) {
+          return '$'.concat(formatNumber(price));
         },
         nice: true,
         tickCount: 11,
       },
     },
-    xField: 'created_at',
+    smooth: true,
+    slider: {
+      start: 0,
+      end: 1,
+    },
+
+    tooltip: {
+      formatter: (datum: Trade) => {
+        return {
+          name: 'Price (USD)',
+          value: '$'.concat(formatNumber(datum.price)),
+          title: formatDate(new Date(datum.date), 'eeee, MMMM do, yyyy'),
+        };
+      },
+    },
+    xAxis: {
+      title: {
+        offset: 40,
+        text: 'Date',
+        visible: true,
+      },
+    },
+    xField: 'date',
     yAxis: {
       title: {
-        text: 'Rate',
+        text: 'Price',
         visible: true,
       },
       type: 'linear',
     },
-    yField: 'rate',
+    yField: 'price',
   };
 
   useEffect(() => {
@@ -54,18 +76,24 @@ export const PriceChart = () => {
       const {data} = await axios.get(
         CORS_BRIDGE.concat('/https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at'),
       );
-        console.log({data})
+      console.log({data});
       const calculateRate = (t1: Trade, t2: Trade) => {
-        return (t1.rate * t1.amount + t2.rate * t2.amount) / (t2.amount + t1.amount);
+        return (t1.price * t1.amount + t2.price * t2.amount) / (t2.amount + t1.amount);
       };
 
-      const priceData = data.results.reduce((acc: Trade[], priceObj: Trade) => {
+      const priceData = data.results.reduce((acc: Trade[], {created_at: date, rate: price, amount}: any) => {
+        price /= 10000;
         const lastPriceObj = acc[acc.length - 1];
-        if (acc.length && lastPriceObj.created_at.startsWith(priceObj.created_at.slice(0, 10))) {
-          lastPriceObj.rate = calculateRate(lastPriceObj, priceObj);
-          lastPriceObj.amount += priceObj.amount;
+        if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
+          lastPriceObj.price = calculateRate(lastPriceObj, {date, amount, price});
+          lastPriceObj.amount += amount;
         } else {
-          acc.push(priceObj);
+          const formattedObj = {
+            date,
+            amount,
+            price,
+          };
+          acc.push(formattedObj);
         }
         return acc;
       }, []);
@@ -76,8 +104,12 @@ export const PriceChart = () => {
   }, []);
 
   return (
-    <ChartsCard title="Price Chart" description="The total amount of coins released into the network">
-      <Line {...priceConfig} />
+    <ChartsCard
+      title="Price Chart"
+      description="The over-the-counter (OTC) price of each TNBC"
+      source={{text: 'tnbCrow', link: 'https://tnbcrow.pythonanywhere.com/'}}
+    >
+      <Area {...priceConfig} />
     </ChartsCard>
   );
 };

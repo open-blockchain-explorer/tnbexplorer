@@ -13,7 +13,7 @@ export const getData = async (url: string) => {
   const res = await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token});
 
   clearTimeout(timeout);
-  console.log({res});
+  // console.log({res});
   return res.data;
 };
 
@@ -43,12 +43,10 @@ export const getBanks = async (
 
         const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
-        console.log({bankIp});
+        // console.log({bankIp});
 
         try {
           const data = await getConfirmationBlocks(bankIp);
-          console.log(data === undefined);
-
           if (data) {
             const [unusedObj, totalConfirmations] = data;
 
@@ -71,7 +69,6 @@ export const getBanks = async (
       Promise.resolve([]),
     );
 
-  console.log({banks});
   return banks;
 };
 
@@ -123,7 +120,6 @@ export const getConfirmationBlocks = async (nodeUrl: string, queryParams?: Confi
   queryParams = {...defaultOptions, ...queryParams};
   const queryParamsUrl = formatQueryParamsToString(queryParams);
   const url = `${nodeUrl}/confirmation_blocks${queryParamsUrl}`;
-  console.log({url});
   const {results: confirmationBlocks, count: total} = await getData(url);
 
   return [confirmationBlocks, total];

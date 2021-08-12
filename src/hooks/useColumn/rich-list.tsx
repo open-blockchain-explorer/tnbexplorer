@@ -40,7 +40,7 @@ export const richListColumn: ColumnsType<any> = [
     key: 'addr',
     render: (balance: number) => {
       const circulatingSupply = stats[stats.length - 1].total;
-      return ((balance / circulatingSupply) * 100).toPrecision(2).concat('%');
+      return ((balance / circulatingSupply) * 100).toPrecision(3).concat('%');
     },
     title: 'Percentage',
     width: '120px',

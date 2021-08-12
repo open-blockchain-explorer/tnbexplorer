@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
@@ -60,11 +59,11 @@ const SponsorUs = () => {
             </Col>
             <Col span={24}>
               <Typography.Text copyable ellipsis>
-                1AefJGT4JmJ4bYi91WpHn1aSmiQJyg3m9k
+                {btcAddress}
               </Typography.Text>
             </Col>
             <Col>
-              <Qr text="1AefJGT4JmJ4bYi91WpHn1aSmiQJyg3m9k" />
+              <Qr text={btcAddress} />
             </Col>
           </Row>
         </Card>
@@ -77,11 +76,11 @@ const SponsorUs = () => {
             </Col>
             <Col span={24}>
               <Typography.Text copyable ellipsis>
-                0x5Df197b20de86389A53577e21b5F22d492be6618
+                {ethAddress}
               </Typography.Text>
             </Col>
             <Col>
-              <Qr text="0x5Df197b20de86389A53577e21b5F22d492be6618" />
+              <Qr text={ethAddress} />
             </Col>
           </Row>
         </Card>
