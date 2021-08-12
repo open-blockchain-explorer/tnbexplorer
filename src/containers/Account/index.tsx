@@ -99,7 +99,7 @@ const Account: FC = () => {
       },
       ellipsis: true,
       title: 'Account Number',
-      value: accountNumber,
+      value: accountNumber.substring(0, screens.lg ? 36 : 24).concat('...'),
     },
     {
       copyable: accountDetails?.balanceLock
@@ -108,7 +108,9 @@ const Account: FC = () => {
           }
         : false,
       title: 'Balance Lock',
-      value: accountDetails?.balanceLock ? accountDetails?.balanceLock.substring(0, 24).concat('...') : '-',
+      value: accountDetails?.balanceLock
+        ? accountDetails?.balanceLock.substring(0, screens.lg ? 36 : 24).concat('...')
+        : '-',
     },
     {
       title: 'Transactions',

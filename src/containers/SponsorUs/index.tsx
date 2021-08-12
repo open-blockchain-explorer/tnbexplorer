@@ -12,7 +12,7 @@ const SponsorUs = () => {
   const btcAddress = '1AefJGT4JmJ4bYi91WpHn1aSmiQJyg3m9k';
 
   return (
-    <PageContentsLayout justify="center" gutter={[30, 5]}>
+    <PageContentsLayout justify="center" gutter={[30, 10]}>
       <Col span={24} style={{textAlign: 'center'}}>
         <Typography.Title>Donate to TNB Explorer</Typography.Title>
       </Col>
@@ -25,14 +25,18 @@ const SponsorUs = () => {
         </p>
       </Col>
 
-      <Col span={8} sm={8} xs={18}>
+      <Col span={8} sm={8} xs={24}>
         <Card bordered>
           <Row align="middle" gutter={[15, 0]}>
             <Col>
               <Typography.Text strong>TNB Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text copyable ellipsis>
+              <Typography.Text
+                copyable
+                ellipsis
+                style={{overflow: 'hidden', whiteSpace: 'nowrap', wordBreak: 'break-all', wordWrap: 'break-word'}}
+              >
                 {tnbAddress}
               </Typography.Text>
             </Col>
@@ -51,14 +55,14 @@ const SponsorUs = () => {
         </Card>
       </Col>
 
-      <Col span={8} sm={8} xs={18}>
+      <Col span={8} sm={8} xs={24}>
         <Card bordered>
           <Row>
             <Col span={24}>
               <Typography.Text strong>BTC Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text copyable ellipsis>
+              <Typography.Text copyable ellipsis style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
                 {btcAddress}
               </Typography.Text>
             </Col>
@@ -68,14 +72,14 @@ const SponsorUs = () => {
           </Row>
         </Card>
       </Col>
-      <Col span={8} sm={8} xs={18}>
+      <Col span={8} sm={8} xs={24}>
         <Card bordered>
           <Row>
             <Col span={24}>
               <Typography.Text strong>ETH Address</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text copyable ellipsis>
+              <Typography.Text copyable ellipsis style={{overflow: 'hidden', whiteSpace: 'nowrap'}}>
                 {ethAddress}
               </Typography.Text>
             </Col>
