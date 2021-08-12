@@ -45,7 +45,7 @@ export const PriceChart = () => {
     },
 
     tooltip: {
-      formatter: (datum: Trade) => {
+      formatter: (datum: any) => {
         return {
           name: 'Price (USD)',
           value: '$'.concat(formatNumber(datum.price)),
