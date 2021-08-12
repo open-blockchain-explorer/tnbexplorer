@@ -1,12 +1,12 @@
-import React, {FC} from 'react';
+import React from 'react';
 
 import {Line} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
 import stats from 'data/stats.json';
-import {config} from '../defaultConfig';
 import {formatNumber} from 'utils/format';
+import {config} from '../defaultConfig';
 
 const distributedCoinsConfig = {
   ...config,

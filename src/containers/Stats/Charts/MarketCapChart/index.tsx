@@ -1,14 +1,14 @@
-import React, {FC, useEffect, useCallback, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import axios from 'axios';
-import {Area, Line} from '@ant-design/charts';
+import {Area} from '@ant-design/charts';
 import {format as formatDate, compareDesc} from 'date-fns';
 
 import {ChartsCard} from 'components';
 import {CORS_BRIDGE} from 'constants/url';
 import stats from 'data/stats.json';
-import {config} from '../defaultConfig';
 import {formatNumber} from 'utils/format';
+import {config} from '../defaultConfig';
 
 interface Trade {
   amount: number;
@@ -30,7 +30,7 @@ export const MarketCapChart = () => {
         return (t1.price * t1.amount + t2.price * t2.amount) / (t2.amount + t1.amount);
       };
 
-      const priceData = data.results.reduce((acc: Trade[], {created_at: date, rate: price, amount}: any) => {
+      const formattedPriceData = data.results.reduce((acc: Trade[], {created_at: date, rate: price, amount}: any) => {
         price /= 10000;
         const lastPriceObj = acc[acc.length - 1];
         if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
@@ -46,7 +46,7 @@ export const MarketCapChart = () => {
         }
         return acc;
       }, []);
-      setPriceData(priceData);
+      setPriceData(formattedPriceData);
     };
 
     load();

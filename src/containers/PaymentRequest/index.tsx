@@ -442,7 +442,7 @@ const PaymentRequest = () => {
                           try {
                             if (success) {
                               setPaymentStatus('validating');
-                              const [confirmationBlocks] = await getConfirmationBlocks(BANK_URL, {
+                              const {results: confirmationBlocks} = await getConfirmationBlocks(BANK_URL, {
                                 limit: 20,
                                 block: keysignBlock.id,
                               });

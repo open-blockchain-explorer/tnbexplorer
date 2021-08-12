@@ -8,7 +8,6 @@ import Typography from 'antd/es/typography';
 
 import HomeFilled from '@ant-design/icons/HomeFilled';
 import LoadingOutlined from '@ant-design/icons/LoadingOutlined';
-import {matchPath} from 'react-router-dom';
 import {A} from 'components';
 
 interface Props {

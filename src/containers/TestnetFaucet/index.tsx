@@ -33,7 +33,7 @@ interface StepProps {
   description?: string;
 }
 
-const Step: FC<StepProps> = ({src, fallback, alt, title, description, children}) => (
+const Step: FC<StepProps> = ({src, fallback, alt, title, children}) => (
   <Row justify="center" style={{width: '300px'}}>
     <Col span={24}>
       <Image src={src} fallback={fallback} alt={alt} />
@@ -106,7 +106,7 @@ const TestnetFaucet = () => {
                   label="Post Url"
                   name="url"
                   required
-                  validateStatus={urlValidateStatus as FormItemProps["validateStatus"]}
+                  validateStatus={urlValidateStatus as FormItemProps['validateStatus']}
                   // tooltip="This is a required field"
                   rules={[
                     {required: true, message: 'This field is required'},

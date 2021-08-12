@@ -28,9 +28,9 @@ export const getBanks = async (
   nodeUrl: string,
   {limit, offset} = {limit: 10, offset: 0},
   callback?: (bank: BanksColumnType) => void,
-): Promise<BanksColumnType[]> => {
+) => {
   const url = `${nodeUrl}/banks?limit=${limit}&offset=${offset}`;
-  const rawBanks = (await getData(url)).results;
+  const {results: rawBanks, count: total} = await getData(url);
 
   const banks = await rawBanks
     .reverse()
@@ -48,7 +48,7 @@ export const getBanks = async (
         try {
           const data = await getConfirmationBlocks(bankIp);
           if (data) {
-            const [unusedObj, totalConfirmations] = data;
+            const {total: totalConfirmations} = data;
 
             const bankData = {
               confirmationBlocks: totalConfirmations as number,
@@ -69,7 +69,7 @@ export const getBanks = async (
       Promise.resolve([]),
     );
 
-  return banks;
+  return {results: banks, total};
 };
 
 export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
@@ -98,8 +98,10 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
     };
   });
 
-  const totalTransactions = data.count;
-  return [transactions, totalTransactions];
+  return {
+    results: transactions,
+    total: data.count,
+  };
 };
 
 type QueryParams = {[key: string]: any};
@@ -120,9 +122,12 @@ export const getConfirmationBlocks = async (nodeUrl: string, queryParams?: Confi
   queryParams = {...defaultOptions, ...queryParams};
   const queryParamsUrl = formatQueryParamsToString(queryParams);
   const url = `${nodeUrl}/confirmation_blocks${queryParamsUrl}`;
-  const {results: confirmationBlocks, count: total} = await getData(url);
+  const {results, count: total} = await getData(url);
 
-  return [confirmationBlocks, total];
+  return {
+    results,
+    total,
+  };
 };
 
 interface AccountDetails {
@@ -138,10 +143,8 @@ export const getAccountDetails = async (nodeUrl: string, accountNumber: string) 
   });
 
   await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance_lock`).then((res) => {
-    // console.log(res.data);
     data.balanceLock = res.data.balance_lock ?? '';
   });
-  // console.log({data});
 
   return data;
 };

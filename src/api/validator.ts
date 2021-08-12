@@ -18,5 +18,8 @@ export const getValidators = async (nodeUrl: string, {limit, offset} = {limit: 1
     },
   );
 
-  return [validators, rawValidators.count];
+  return {
+    results: validators,
+    total: rawValidators.count,
+  };
 };

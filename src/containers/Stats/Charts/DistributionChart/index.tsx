@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Radio from 'antd/es/radio';
 import Row from 'antd/es/row';
 import Col from 'antd/es/col';
@@ -8,8 +8,8 @@ import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
 import stats from 'data/stats.json';
-import {config} from '../defaultConfig';
 import {formatNumber} from 'utils/format';
+import {config} from '../defaultConfig';
 
 interface ChangeData {
   coins: number;
@@ -40,7 +40,7 @@ export const DistributionChart = () => {
   const [periodicalData, setPeriodicalData] = useState<ChangeData[]>([]);
   const [chartPeriod, setChartPeriod] = useState<keyof typeof Period>('month');
 
-  const selectDateFormat = (period: keyof typeof Period) => {
+  const selectDateFormat = (period?: keyof typeof Period) => {
     switch (period) {
       case 'day':
         return 'MMM dd, yyyy';
@@ -52,13 +52,15 @@ export const DistributionChart = () => {
         return 'qqq yyyy';
       case 'year':
         return 'yyyy';
+      default:
+        return 'MMM dd, yyyy';
     }
   };
 
-  const cumulateDataByPeriod = useCallback((data: ChangeData[], period: keyof typeof Period) => {
+  const cumulateDataByPeriod = useCallback((originalData: ChangeData[], period: keyof typeof Period) => {
     const cumulated: ChangeData[] = [];
     const dateFormat = selectDateFormat(period);
-    data.forEach((current: ChangeData) => {
+    originalData.forEach((current: ChangeData) => {
       const formatedDate = formatDate(new Date(current.date), dateFormat);
       if (cumulated.length === 0) {
         cumulated.push({

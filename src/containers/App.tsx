@@ -32,7 +32,7 @@ function App() {
       );
     });
 
-    getValidators(PV_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+    getValidators(PV_URL, {limit: 1, offset: 0}).then(({total}) => {
       dispatch(
         setNetworkStats({
           activeValidators: total,
@@ -40,7 +40,7 @@ function App() {
       );
     });
 
-    getTransactions(BANK_URL, {limit: 1, offset: 0}).then(([unusedParam, total]) => {
+    getTransactions(BANK_URL, {limit: 1, offset: 0}).then(({total}) => {
       dispatch(
         setNetworkStats({
           transactions: total,

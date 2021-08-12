@@ -2,7 +2,7 @@ import {format as formatDate} from 'date-fns';
 
 export const config = {
   appendPadding: [20, 0, 0, 0],
-  data: null, //overrifd and supply data
+  data: null, // override and supply data
   height: 400,
   meta: {
     date: {
@@ -25,7 +25,7 @@ export const config = {
       text: 'Date',
       visible: true,
     },
-    type: 'time', //override and supply x field property
+    type: 'time', // override and supply x field property
   },
-  xField: 'date', //override and supply y field property
+  xField: 'date', // override and supply y field property
 };
