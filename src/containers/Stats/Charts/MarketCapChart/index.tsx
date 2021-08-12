@@ -94,7 +94,7 @@ export const MarketCapChart = () => {
       },
     },
     tooltip: {
-      formatter: (datum: any[]) => {
+      formatter: (datum: any) => {
         return {
           name: 'Market Cap',
           value: '$'.concat(datum.marketCap.toLocaleString()),
