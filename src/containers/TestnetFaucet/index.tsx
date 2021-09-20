@@ -7,6 +7,7 @@ import Card from 'antd/es/card';
 import Form, {FormItemProps} from 'antd/es/form';
 import Image from 'antd/es/image';
 import Input from 'antd/es/input';
+import message, {MessageApi} from 'antd/es/message';
 import Radio from 'antd/es/radio';
 import Row from 'antd/es/row';
 import Typography from 'antd/es/typography';
@@ -21,9 +22,9 @@ import step3_png from 'assets/FaucetSteps/step3.png';
 // import step4_webp from 'assets/FaucetSteps/step4.webp';
 import step4_png from 'assets/FaucetSteps/step4.png';
 import {A, PageContentsLayout} from 'components';
-import {TESTNET_BANK_URL} from 'constants/url';
+import {TESTNET_BANK_URL, CORS_BRIDGE} from 'constants/url';
 
-// const RE_CAPTCHA_SITE_KEY = process.env.RE_CAPTCHA_SITE_KEY
+const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY!;
 
 interface StepProps {
   src: string;
@@ -60,26 +61,37 @@ const TestnetFaucet = () => {
   const faucetRequest = async ({amountOptionId, url}: FaucetRequest) => {
     const token = await recaptchaRef.current.executeAsync();
 
-    // console.log(token);
-    // console.log({amountOptionId, url});
+    console.log(token);
+    console.log({amountOptionId, url});
 
-    const faucetResponse = await axios.post(`${TESTNET_BANK_URL}/faucet`, {
-      faucet_option_id: amountOptionId,
-      url,
-      recaptcha: token,
-    });
+    //Exit fn if token is null
+    if (token === null) return message.error('Too many requests to testnet faucet');
 
-    console.log({faucetResponse});
+    let alertContent, alertType;
+
+    try {
+      const faucetResponse = await axios.post(`${CORS_BRIDGE}/${TESTNET_BANK_URL}/faucet/api`, {
+        faucet_option_id: amountOptionId,
+        url,
+        recaptcha: token,
+      });
+
+      const {type, content} = faucetResponse.data;
+      alertType = type;
+      alertContent = content;
+    } catch (e) {
+      const {type, content} = e.response.data;
+      alertType = type;
+      alertContent = content;
+    }
+
+    //Alert message
+    message[alertType as keyof MessageApi](alertContent);
   };
 
   return (
     <PageContentsLayout>
-      <ReCAPTCHA
-        badge="bottomright"
-        ref={recaptchaRef}
-        size="invisible"
-        sitekey={'6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
-      />
+      <ReCAPTCHA badge="bottomright" ref={recaptchaRef} size="invisible" sitekey={RECAPTCHA_SITE_KEY} />
 
       {/* Testnet Faucet Form */}
       <Col span={24}>
@@ -106,8 +118,8 @@ const TestnetFaucet = () => {
                   label="Post Url"
                   name="url"
                   required
-                  validateStatus={urlValidateStatus as FormItemProps['validateStatus']}
-                  // tooltip="This is a required field"
+                  // validateStatus={urlValidateStatus as FormItemProps['validateStatus']}
+                  tooltip="The link to your facebook post or tweet"
                   rules={[
                     {required: true, message: 'This field is required'},
                     {type: 'url', message: 'Pleases enter a valid Url'},
@@ -126,7 +138,7 @@ const TestnetFaucet = () => {
             <Col xs={23} sm={20} md={16} lg={10}>
               <Typography.Title level={5}>
                 Testnet Bank:{' '}
-                <Typography.Link href={TESTNET_BANK_URL}> {TESTNET_BANK_URL.slice(7, -1)}</Typography.Link>
+                <Typography.Link href={`${TESTNET_BANK_URL}/config`}> {TESTNET_BANK_URL.slice(7, 100)}</Typography.Link>
               </Typography.Title>
               <Typography.Text>
                 To connect to the TNB Testnet network set the Testnet Bank as your{' '}

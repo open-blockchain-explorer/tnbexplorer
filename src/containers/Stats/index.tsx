@@ -200,14 +200,14 @@ const Stats: FC = () => {
       </Col>
 
       <Col span={24}>
-        <TotalSupplyChart />
+        <TotalSupplyChart data={stats} />
       </Col>
       <Col md={12} span={24}>
         <DistributionChart />
       </Col>
 
       <Col md={12} span={24}>
-        <TotalAccountsChart />
+        <TotalAccountsChart data={stats} />
       </Col>
 
       <Col md={12} span={24}>

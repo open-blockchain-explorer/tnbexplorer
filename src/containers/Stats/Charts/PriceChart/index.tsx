@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 
 import axios from 'axios';
-import {Area} from '@ant-design/charts';
+import {Area, Column, DualAxes} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
@@ -10,13 +10,29 @@ import {formatNumber} from 'utils/format';
 import {config} from '../defaultConfig';
 
 interface Trade {
-  amount: number;
+  volume: number;
   date: string;
   price: number;
 }
 
 export const PriceChart = () => {
   const [priceData, setPriceData] = useState<Trade[]>([]);
+
+  const dualChartConfig = {
+    data: [priceData, priceData],
+    xField: 'date',
+    yField: ['price', 'volume'],
+    geometryOptions: [
+      {
+        geometry: 'line',
+        color: '#29cae4',
+      },
+      {
+        geometry: 'column',
+        color: '#586bce',
+      },
+    ],
+  };
 
   const priceConfig = {
     ...config,
@@ -71,6 +87,19 @@ export const PriceChart = () => {
     yField: 'price',
   };
 
+  const volumeConfig = {
+    ...config,
+    data: priceData,
+    yAxis: {
+      title: {
+        text: 'Price',
+        visible: true,
+      },
+      type: 'linear',
+    },
+    yField: 'volume',
+  };
+
   useEffect(() => {
     const load = async () => {
       const {data} = await axios.get(
@@ -78,25 +107,28 @@ export const PriceChart = () => {
       );
       console.log({data});
       const calculateRate = (t1: Trade, t2: Trade) => {
-        return (t1.price * t1.amount + t2.price * t2.amount) / (t2.amount + t1.amount);
+        return (t1.price * t1.volume + t2.price * t2.volume) / (t2.volume + t1.volume);
       };
 
-      const formattedPriceData = data.results.reduce((acc: Trade[], {created_at: date, rate: price, amount}: any) => {
-        price /= 10000;
-        const lastPriceObj = acc[acc.length - 1];
-        if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
-          lastPriceObj.price = calculateRate(lastPriceObj, {date, amount, price});
-          lastPriceObj.amount += amount;
-        } else {
-          const formattedObj = {
-            date,
-            amount,
-            price,
-          };
-          acc.push(formattedObj);
-        }
-        return acc;
-      }, []);
+      const formattedPriceData = data.results.reduce(
+        (acc: Trade[], {created_at: date, rate: price, amount: volume}: any) => {
+          price /= 10000;
+          const lastPriceObj = acc[acc.length - 1];
+          if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
+            lastPriceObj.price = calculateRate(lastPriceObj, {date, volume, price});
+            lastPriceObj.volume += volume;
+          } else {
+            const formattedObj = {
+              date,
+              volume,
+              price,
+            };
+            acc.push(formattedObj);
+          }
+          return acc;
+        },
+        [],
+      );
       setPriceData(formattedPriceData);
     };
 
@@ -109,7 +141,9 @@ export const PriceChart = () => {
       description="The over-the-counter (OTC) price of each TNBC"
       source={{text: 'tnbCrow', link: 'https://tnbcrow.pythonanywhere.com/'}}
     >
+      {/* <DualAxes {...dualChartConfig} /> */}
       <Area {...priceConfig} />
+      {/* <Column {...volumeConfig} /> */}
     </ChartsCard>
   );
 };

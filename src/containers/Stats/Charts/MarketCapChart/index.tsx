@@ -57,6 +57,7 @@ export const MarketCapChart = () => {
       const calculatedData: any[] = [];
       const supplyData = stats;
       let supplyIndex = supplyData.length - 1;
+
       priceData.reverse().forEach((trade: Trade) => {
         let supplyObj = supplyData[supplyIndex];
         while (compareDesc(new Date(trade.date), new Date(supplyObj.date)) >= 0) {
@@ -64,6 +65,7 @@ export const MarketCapChart = () => {
             date: supplyObj.date,
             marketCap: supplyObj.total * trade.price,
           });
+
           supplyIndex -= 1;
           supplyObj = supplyData[supplyIndex];
         }
