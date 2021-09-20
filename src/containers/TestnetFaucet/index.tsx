@@ -1,10 +1,10 @@
-import React, {FC, useState} from 'react';
+import React, {FC} from 'react';
 import axios from 'axios';
 import Button from 'antd/es/button';
 import Col from 'antd/es/col';
 import Card from 'antd/es/card';
 
-import Form, {FormItemProps} from 'antd/es/form';
+import Form from 'antd/es/form';
 import Image from 'antd/es/image';
 import Input from 'antd/es/input';
 import message, {MessageApi} from 'antd/es/message';
@@ -54,7 +54,6 @@ interface FaucetRequest {
 const TestnetFaucet = () => {
   const [form] = Form.useForm();
   const requiredMark = false;
-  const [urlValidateStatus, setUrlValidateStatus] = useState('');
 
   const recaptchaRef: any = React.createRef<HTMLInputElement>();
 
@@ -64,10 +63,11 @@ const TestnetFaucet = () => {
     console.log(token);
     console.log({amountOptionId, url});
 
-    //Exit fn if token is null
+    // Exit fn if token is null
     if (token === null) return message.error('Too many requests to testnet faucet');
 
-    let alertContent, alertType;
+    let alertContent;
+    let alertType: keyof MessageApi;
 
     try {
       const faucetResponse = await axios.post(`${CORS_BRIDGE}/${TESTNET_BANK_URL}/faucet/api`, {
@@ -77,16 +77,16 @@ const TestnetFaucet = () => {
       });
 
       const {type, content} = faucetResponse.data;
-      alertType = type;
+      alertType = type as keyof MessageApi;
       alertContent = content;
     } catch (e) {
       const {type, content} = e.response.data;
-      alertType = type;
+      alertType = type as keyof MessageApi;
       alertContent = content;
     }
 
-    //Alert message
-    message[alertType as keyof MessageApi](alertContent);
+    // Alert message
+    message[alertType](alertContent);
   };
 
   return (
@@ -105,7 +105,7 @@ const TestnetFaucet = () => {
                 initialValues={{requiredMarkValue: requiredMark}}
                 requiredMark={requiredMark}
                 onFinish={faucetRequest}
-                onFinishFailed={() => setUrlValidateStatus('error')}
+                onFinishFailed={() => console.log('Form failed')}
               >
                 <Form.Item label="Amount" name="amountOptionId" initialValue={1}>
                   <Radio.Group>
@@ -138,7 +138,7 @@ const TestnetFaucet = () => {
             <Col xs={23} sm={20} md={16} lg={10}>
               <Typography.Title level={5}>
                 Testnet Bank:{' '}
-                <Typography.Link href={`${TESTNET_BANK_URL}/config`}> {TESTNET_BANK_URL.slice(7, 100)}</Typography.Link>
+                <Typography.Link href={`${TESTNET_BANK_URL}/config`}> {TESTNET_BANK_URL.slice(7)}</Typography.Link>
               </Typography.Title>
               <Typography.Text>
                 To connect to the TNB Testnet network set the Testnet Bank as your{' '}
@@ -201,7 +201,7 @@ const TestnetFaucet = () => {
               <Step src={step4_png} fallback={step4_png} alt="Step 4 img" title="4. Connect to TNB Testnet">
                 Open the Account Manager / TNB Wallet
                 <br />
-                Use <A href={TESTNET_BANK_URL}>{TESTNET_BANK_URL.slice(7, -1)} </A>
+                Use <A href={TESTNET_BANK_URL}>{TESTNET_BANK_URL.slice(7)} </A>
                 as your active bank
                 <br />
                 Build great apps for the mainnet without the fear of burning coins!

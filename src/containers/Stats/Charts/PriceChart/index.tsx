@@ -1,7 +1,7 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import axios from 'axios';
-import {Area, Column, DualAxes} from '@ant-design/charts';
+import {Area} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
@@ -18,21 +18,21 @@ interface Trade {
 export const PriceChart = () => {
   const [priceData, setPriceData] = useState<Trade[]>([]);
 
-  const dualChartConfig = {
-    data: [priceData, priceData],
-    xField: 'date',
-    yField: ['price', 'volume'],
-    geometryOptions: [
-      {
-        geometry: 'line',
-        color: '#29cae4',
-      },
-      {
-        geometry: 'column',
-        color: '#586bce',
-      },
-    ],
-  };
+  // const dualChartConfig = {
+  //   data: [priceData, priceData],
+  //   xField: 'date',
+  //   yField: ['price', 'volume'],
+  //   geometryOptions: [
+  //     {
+  //       geometry: 'line',
+  //       color: '#29cae4',
+  //     },
+  //     {
+  //       geometry: 'column',
+  //       color: '#586bce',
+  //     },
+  //   ],
+  // };
 
   const priceConfig = {
     ...config,
@@ -87,18 +87,18 @@ export const PriceChart = () => {
     yField: 'price',
   };
 
-  const volumeConfig = {
-    ...config,
-    data: priceData,
-    yAxis: {
-      title: {
-        text: 'Price',
-        visible: true,
-      },
-      type: 'linear',
-    },
-    yField: 'volume',
-  };
+  // const volumeConfig = {
+  //   ...config,
+  //   data: priceData,
+  //   yAxis: {
+  //     title: {
+  //       text: 'Price',
+  //       visible: true,
+  //     },
+  //     type: 'linear',
+  //   },
+  //   yField: 'volume',
+  // };
 
   useEffect(() => {
     const load = async () => {
