@@ -26,6 +26,8 @@ import {TESTNET_BANK_URL, CORS_BRIDGE} from 'constants/url';
 
 const RECAPTCHA_SITE_KEY = process.env.RECAPTCHA_SITE_KEY!;
 
+console.log({RECAPTCHA_SITE_KEY: !!RECAPTCHA_SITE_KEY});
+
 interface StepProps {
   src: string;
   fallback: string;
@@ -86,7 +88,7 @@ const TestnetFaucet = () => {
     }
 
     // Alert message
-    message[alertType](alertContent);
+    message[alertType](alertContent, 5);
   };
 
   return (
