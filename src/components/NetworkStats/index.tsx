@@ -13,10 +13,6 @@ import {useSelector} from 'react-redux';
 import {InfoPane} from 'components';
 import {CORS_BRIDGE} from 'constants/url';
 import {getNetworkStats} from 'selectors';
-import stats from 'data/stats.json';
-
-const previousStats = stats[stats.length - 2];
-const latestStats = stats[stats.length - 1];
 
 const {useBreakpoint} = Grid;
 const NetworkStats = () => {

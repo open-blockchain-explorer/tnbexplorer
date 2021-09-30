@@ -129,6 +129,7 @@ export const PriceChart = () => {
         },
         [],
       );
+      console.log('priceData', formattedPriceData);
       setPriceData(formattedPriceData);
     };
 
