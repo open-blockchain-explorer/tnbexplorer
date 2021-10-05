@@ -9,8 +9,6 @@ import App from 'containers/App';
 import 'styles/main.css';
 import reportWebVitals from './reportWebVitals';
 
-console.log('RECAPTCHA_SITE_KEY', process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SITE_KEY!.length);
-
 const measurementId = 'UA-166269409-1';
 ReactGA.initialize(measurementId, {debug: true});
 

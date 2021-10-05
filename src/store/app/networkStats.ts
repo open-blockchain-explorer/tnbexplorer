@@ -8,6 +8,7 @@ interface NetworkStats {
   accounts?: number;
   activeBanks?: number;
   activeValidators?: number;
+  date?: string;
   distributedCoins?: number;
   transactions?: number;
 }
@@ -17,6 +18,7 @@ const networkStats = createSlice({
     accounts: 0,
     activeBanks: 0,
     activeValidators: 0,
+    date: new Date(0).toISOString(),
     distributedCoins: 0,
     transactions: 0,
   } as NetworkStats,

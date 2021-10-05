@@ -8,8 +8,10 @@ export const useColumn = (dataType: 'blocks' | 'rich-list' | 'transactions' | 'b
       return transactionColumn(param);
     case 'blocks':
       return blocksColumn;
-    case 'rich-list':
-      return richListColumn;
+    case 'rich-list': {
+      const {circulatingSupply} = param;
+      return richListColumn(circulatingSupply);
+    }
     default:
       throw new Error('useColumn: Invalid Data Type ');
   }
