@@ -8,15 +8,17 @@ import Grid from 'antd/es/grid';
 import Row from 'antd/es/row';
 import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {InfoPane} from 'components';
 import {CORS_BRIDGE} from 'constants/url';
 import {getNetworkStats} from 'selectors';
+import {setNetworkStats} from 'store/app';
 
 const {useBreakpoint} = Grid;
 const NetworkStats = () => {
   const screens = useBreakpoint();
+  const dispatch = useDispatch();
   const networkStats = useSelector(getNetworkStats);
   console.log({networkStats});
 
@@ -29,7 +31,6 @@ const NetworkStats = () => {
   };
 
   const [prevData, setPrevData] = useState(defaultData);
-  const [currentData, setCurrentData] = useState(defaultData);
 
   useEffect(() => {
     const timestamp = new Date().getTime();
@@ -44,9 +45,18 @@ const NetworkStats = () => {
         console.log(response.data);
 
         setPrevData(response.data[0]);
-        setCurrentData(response.data[response.data.length - 1]);
+
+        const recentData = response.data[response.data.length - 1];
+
+        dispatch(
+          setNetworkStats({
+            distributedCoins: recentData.total,
+            accounts: recentData.accounts,
+            date: recentData.date,
+          }),
+        );
       });
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -59,15 +69,15 @@ const NetworkStats = () => {
                   <Space size="small" split={<Divider type="vertical" style={{height: '90px'}} />}>
                     <InfoPane
                       title="distributed coins"
-                      data={{current: Number(currentData.total), previous: Number(prevData.total)}}
+                      data={{current: Number(networkStats.distributedCoins), previous: Number(prevData.total)}}
                     />
                     {/* <InfoPane
                       title="Price"
-                      data={{current: Number(currentData.total), previous: Number(prevData.total)}}
+                      data={{current: Number(networkStats.total), previous: Number(prevData.total)}}
                     /> */}
                     <InfoPane
                       title="Accounts"
-                      data={{current: Number(currentData.accounts), previous: Number(prevData.accounts)}}
+                      data={{current: Number(networkStats.accounts), previous: Number(prevData.accounts)}}
                     />
                     <InfoPane
                       title="Transactions"
@@ -96,7 +106,7 @@ const NetworkStats = () => {
           <Col>
             <Typography.Text type="secondary">
               {' '}
-              Last Updated: {new Date(currentData.date).toString().slice(0, 16)}
+              Last Updated: {new Date(networkStats.date ?? 0).toString().slice(0, 16)}
             </Typography.Text>
           </Col>
         </Row>
@@ -107,7 +117,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="Accounts"
-                data={{current: Number(currentData.accounts), previous: Number(prevData.accounts)}}
+                data={{current: Number(networkStats.accounts), previous: Number(prevData.accounts)}}
               />
             </Card>
           </Col>
@@ -147,7 +157,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="distributed coins"
-                data={{current: Number(currentData.total), previous: Number(prevData.total)}}
+                data={{current: Number(networkStats.distributedCoins), previous: Number(prevData.total)}}
               />
             </Card>
           </Col>
@@ -159,7 +169,7 @@ const NetworkStats = () => {
           <Col>
             <Typography.Text type="secondary">
               {' '}
-              Last Updated: {new Date(currentData.date).toString().slice(0, 16)}
+              Last Updated: {new Date(networkStats.date ?? 0).toString().slice(0, 16)}
             </Typography.Text>
           </Col>
         </Row>
