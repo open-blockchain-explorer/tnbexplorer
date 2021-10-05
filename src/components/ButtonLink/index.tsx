@@ -3,7 +3,7 @@ import Button, {ButtonProps} from 'antd/es/button';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
 
-import {ArrowRightOutlined} from '@ant-design/icons';
+import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
 import {A} from 'components';
 
 const ButtonLink: FC<ButtonProps & {href: string; viewAll?: boolean}> = ({

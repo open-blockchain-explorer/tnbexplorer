@@ -1,5 +1,5 @@
 export const formatNumber = (num: number, decimals = 2) => {
-  if (num < 1) {
+  if (num < 1 && num > 0) {
     return num.toPrecision(decimals);
   }
 

@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import store from 'store';
 import ReactGA from 'react-ga';
-import {config as dotenvConfig} from 'dotenv';
 
 import App from 'containers/App';
 
 import 'styles/main.css';
 import reportWebVitals from './reportWebVitals';
 
-dotenvConfig();
+console.log('RECAPTCHA_SITE_KEY', process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SITE_KEY!.length);
 
 const measurementId = 'UA-166269409-1';
 ReactGA.initialize(measurementId, {debug: true});

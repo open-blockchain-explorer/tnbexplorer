@@ -24,6 +24,7 @@ const InfoPane: FC<{
   const {current, previous} = data;
   const change = current - previous;
   const isGain = change >= 0;
+
   let textColour: any;
   if (change === 0) {
     textColour = 'secondary';
@@ -45,7 +46,7 @@ const InfoPane: FC<{
         </Col>
         <Col span={24}>
           <Typography.Text type={textColour}>
-            {showChangeAsPercent ? formatPercent((change / previous) * 100, 0) : formatPercent(change, 0)}
+            {showChangeAsPercent ? formatPercent((change / previous) * 100, 0) : change.toLocaleString()}
             {isGain ? <CaretUpOutlined /> : <CaretDownOutlined />}
           </Typography.Text>
         </Col>
