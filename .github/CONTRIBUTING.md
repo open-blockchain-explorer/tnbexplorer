@@ -8,7 +8,7 @@ Thank you for choosing to contribute to our project! We appreciate your input an
 - Proposing new features
 - Becoming a maintainer
 
-Check out the [README](README.md) file for an overview of the project. This project adheres to the [Contributor Code of Conduct](/.github/CODE_OF_CONDUCT.md); you agree to abide by this code by participating.
+Check out the [README](https://github.com/open-blockchain-explorer/tnbexplorer/blob/6fa2e2e69c41aa5e5c327d320068e6b5ad5450ea/README.md) file for an overview of the project. This project adheres to the [Contributor Code of Conduct](/.github/CODE_OF_CONDUCT.md); you agree to abide by this code by participating.
 
 ## **Any contributions you make will be under the Apache License 2.0**
 
