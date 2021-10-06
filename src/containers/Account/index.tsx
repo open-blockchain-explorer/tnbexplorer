@@ -8,12 +8,15 @@ import Row from 'antd/es/row';
 import Statistic from 'antd/es/statistic';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
+import {Area} from '@ant-design/charts';
+import {format as formatDate} from 'date-fns';
 
+import {formatNumber} from 'utils/format';
 import {useSelector} from 'react-redux';
 
 import {useAccount} from 'hooks';
 import {getTransactions, getAccountDetails} from 'api/bank';
-import {KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr, ButtonLink} from 'components';
+import {ChartsCard, KeyValuePair, TestnetAlertMessage, PageContentsLayout, Qr, ButtonLink} from 'components';
 import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {getCurrentChain} from 'selectors';
 import {createPaymentsUrl} from 'utils/payment-request';
@@ -23,6 +26,11 @@ interface AccountDetails {
   balanceLock: string;
 }
 
+interface BalanceData {
+  balance: number;
+  date: string;
+  transactions?: number;
+}
 const Account: FC = () => {
   const screens = Grid.useBreakpoint();
 
@@ -73,15 +81,16 @@ const Account: FC = () => {
     [accountNumber, bankUrl, setTransactions, setTransactionPagination],
   );
 
-  useEffect(() => {
-    // console.log({accountNumber});
-    // const accountNumber = 'c7498d45482098a4c4e2b2fa405fdb00e5bc74bf4739c43417e7c50ff08c4109';
+  const [balanceHistory, setBalanceHistory] = useState<BalanceData[]>([]);
 
+  useEffect(() => {
     const load = () => {
+      // Get balance and balance_lock
       getAccountDetails(pvUrl, accountNumber).then((details) => {
         setAccountDetails(details);
       });
 
+      // Retrieve Data For Transactions Page
       handleTableChange({
         current: 1,
         pageSize: 10,
@@ -91,6 +100,45 @@ const Account: FC = () => {
 
     load();
   }, [accountNumber, pvUrl, handleTableChange]);
+
+  useEffect(() => {
+    // Retrieve data for Balance History
+    getTransactions(bankUrl, {limit: 100, accountNumber}).then(({results: txs}) => {
+      const {balance} = accountDetails;
+
+      const balanceArr: BalanceData[] = [];
+
+      txs.reduce((currentBalance: number, tx: any) => {
+        // {
+        //   id: tx.id,
+        //   coins: tx.amount,
+        //   fee: tx.fee,
+        //   memo: tx.memo,
+        //   recipient: tx.recipient,
+        //   sender: tx.block.sender,
+        //   time: tx.block.modified_date,
+        // };
+        if (balanceArr.length && tx.time.startsWith(balanceArr[0].date.slice(0, 10))) {
+          balanceArr[0].balance += tx.coins;
+          balanceArr[0].transactions! += 1;
+        } else {
+          balanceArr.unshift({
+            balance: currentBalance,
+            date: tx.time,
+            transactions: 1,
+          });
+        }
+
+        if (tx.sender === accountNumber) {
+          return currentBalance + tx.coins;
+        }
+        return currentBalance - tx.coins;
+      }, balance ?? 0);
+
+      setBalanceHistory(balanceArr);
+      console.log({balanceArr});
+    });
+  }, [accountDetails, accountNumber, bankUrl]);
 
   const accountInfo = [
     {
@@ -124,6 +172,90 @@ const Account: FC = () => {
       value: '-',
     },
   ];
+
+  const [currentTab, setCurrentTab] = useState('transactions');
+  const tabList = [
+    {
+      key: 'transactions',
+      tab: 'Transactions',
+    },
+    {
+      key: 'balanceHistory',
+      tab: 'Coin Balance History',
+    },
+  ];
+
+  const priceConfig = {
+    data: balanceHistory,
+    meta: {
+      date: {
+        formatter: function formatter(date: string) {
+          return formatDate(new Date(date), 'MMM dd, yyyy');
+        },
+        nice: true,
+        tickCount: 10,
+      },
+      balance: {
+        alias: 'Balance (TNB)',
+        formatter: function formatter(balance: number) {
+          return formatNumber(balance);
+        },
+        nice: true,
+        tickCount: 11,
+      },
+    },
+    smooth: true,
+    slider: {
+      start: 0,
+      end: 1,
+    },
+
+    tooltip: {
+      formatter: (datum: any) => {
+        return {
+          name: 'Coin Balance',
+          value: datum.balance.toLocaleString(),
+          title: formatDate(new Date(datum.date), 'eeee, MMMM do, yyyy'),
+        };
+      },
+    },
+    xAxis: {
+      title: {
+        offset: 40,
+        text: 'Date',
+        visible: true,
+      },
+    },
+    xField: 'date',
+    yAxis: {
+      title: {
+        text: 'Coin Balance',
+        visible: false,
+      },
+      type: 'linear',
+    },
+    yField: 'balance',
+  };
+  const contentList: {[x: string]: any} = {
+    transactions: (
+      <>
+        <Table
+          bordered
+          columns={transactionColumn}
+          dataSource={transactions}
+          onChange={handleTableChange}
+          pagination={transactionPagination}
+          scroll={{x: 700}}
+          sticky
+        />
+      </>
+    ),
+    balanceHistory: (
+      <ChartsCard title={'Balances'}>
+        <Area {...priceConfig} />
+      </ChartsCard>
+    ),
+  };
 
   return (
     <PageContentsLayout showBreadCrumb>
@@ -209,20 +341,15 @@ const Account: FC = () => {
       </Col>
 
       <Col span={24}>
-        <Table
-          bordered
-          columns={transactionColumn}
-          dataSource={transactions}
-          onChange={handleTableChange}
-          pagination={transactionPagination}
-          scroll={{x: 700}}
-          sticky
-          title={() => (
-            <Row justify="space-between" align="middle">
-              <Typography.Text> Transactions</Typography.Text>
-            </Row>
-          )}
-        />
+        <Card
+          tabList={tabList}
+          activeTabKey={currentTab}
+          onTabChange={(key: string) => {
+            setCurrentTab(key);
+          }}
+        >
+          {contentList[currentTab]}
+        </Card>
       </Col>
     </PageContentsLayout>
   );
