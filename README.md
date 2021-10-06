@@ -19,13 +19,13 @@ Multiple network integration ([Mainnet](https://tnbexplorer.com/tnb/) and [Testn
 Instructions get a copy this project and run on your local machine for development and testing.
 
 #### Installation
-Clone the project using git from the terminal
+- Clone the project using git from the terminal
     ```git clone https://github.com/open-blockchain-explorer/Website```
-Go to the project directory
+- Go to the project directory
     ```cd tnbexplorer```
-Install the project's dependencies
+- Install the project's dependencies
     ```npm install```
-Run the project on your computer
+- Run the project on your computer
     ```npm start```
 
 ## License
