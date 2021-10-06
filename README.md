@@ -8,12 +8,12 @@
 TnbExplorer is a website tool for exploring and inspecting thenewboston blockchain for transactions, nodes, addresses and other analytics data on thenewboston.
 
 ## Features
-Address Lookup
-[Richlist](https://tnbexplorer.com/tnb/rich-list)
-[Curated Analytics page](https://tnbexplorer.com/tnb/stats)
-[Payments Processing and Requests](https://tnbexplorer.com/tnb/payment-request)
-Multiple network integration ([Mainnet](https://tnbexplorer.com/tnb/) and [Testnet](https://tnbexplorer.com/testnet/))
-[Testnet Faucet](https://tnbexplorer.com/testnet/faucet)
+- Address Lookup
+- [Richlist](https://tnbexplorer.com/tnb/rich-list)
+- [Curated Analytics page](https://tnbexplorer.com/tnb/stats)
+- [Payments Processing and Requests](https://tnbexplorer.com/tnb/payment-request)
+- Multiple network integration ([Mainnet](https://tnbexplorer.com/tnb/) and [Testnet](https://tnbexplorer.com/testnet/))
+- [Testnet Faucet](https://tnbexplorer.com/testnet/faucet)
 
 ## Getting started
 Instructions get a copy this project and run on your local machine for development and testing.
