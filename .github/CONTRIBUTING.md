@@ -10,7 +10,7 @@ Thank you for choosing to contribute to our project! We appreciate your input an
 
 Check out the [README](https://github.com/open-blockchain-explorer/tnbexplorer#readme) file for an overview of the project. This project adheres to the [Contributor Code of Conduct](/.github/CODE_OF_CONDUCT.md); you agree to abide by this code by participating.
 
-## **Any contributions you make will be under the Apache License 2.0**
+## **Any contributions you make will be under the [MIT](https://choosealicense.com/licenses/mit/) License**
 
 When you submit code changes, they are subject to the same Apache License as the project. If you have any concerns, please contact the project maintainers.
 
@@ -24,4 +24,4 @@ These are the steps you should take to contribute to this project;
 
 Following a successful PR review, the project maintainer will merge your contribution into the project's app or website's existing content.
 
-Hooray! You have successfully contributed to ToDon't!
+Hooray! You have successfully contributed to TNBExplorer!
