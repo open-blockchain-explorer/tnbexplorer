@@ -12,7 +12,7 @@ Check out the [README](https://github.com/open-blockchain-explorer/tnbexplorer#r
 
 ## **Any contributions you make will be under the [MIT](https://choosealicense.com/licenses/mit/) License**
 
-When you submit code changes, they are subject to the same Apache License as the project. If you have any concerns, please contact the project maintainers.
+When you submit code changes, they are subject to the same MIT License as the project. If you have any concerns, please contact the project maintainers.
 
 ## How to Contribute
 
