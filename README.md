@@ -20,13 +20,25 @@ Instructions get a copy this project and run on your local machine for developme
 
 #### Installation
 - Clone the project using git from the terminal
-    ```git clone https://github.com/open-blockchain-explorer/Website```
+
+    ```
+    git clone https://github.com/open-blockchain-explorer/Website
+    ```
 - Go to the project directory
-    ```cd tnbexplorer```
+
+    ```
+    cd tnbexplorer
+    ```
 - Install the project's dependencies
-    ```npm install```
+
+    ```
+    npm install
+    ```
 - Run the project on your computer
-    ```npm start```
+
+    ```
+    npm start
+    ```
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
