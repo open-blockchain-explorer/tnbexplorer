@@ -42,6 +42,7 @@ export const TotalAccountsChart: FC<{data?: any[]}> = ({data = []}) => {
     },
     yField: 'accounts',
   };
+
   return (
     <ChartsCard title="Total Accounts Chart" description="The number of accounts with a balance ">
       <Line {...totalAccountsConfig} />

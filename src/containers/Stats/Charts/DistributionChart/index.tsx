@@ -7,12 +7,11 @@ import {Column} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
 import {ChartsCard} from 'components';
-import stats from 'data/stats.json';
 import {formatNumber} from 'utils/format';
 import {config} from '../defaultConfig';
 
 interface ChangeData {
-  coins: number;
+  changeInCoins: number;
   date: string;
 }
 
@@ -24,58 +23,47 @@ enum Period {
   year = 'year',
 }
 
-const data: ChangeData[] = [];
-stats.reduce((previousTotal, record) => {
-  const changeObj = {
-    coins: record.total - previousTotal,
-    date: record.date,
-  };
+const selectDateFormat = (period?: keyof typeof Period) => {
+  switch (period) {
+    case 'day':
+      return 'MMM dd, yyyy';
+    case 'week':
+      return "ww 'Wk' yyyy";
+    case 'month':
+      return 'MMM yyyy';
+    case 'quarter':
+      return 'qqq yyyy';
+    case 'year':
+      return 'yyyy';
+    default:
+      return 'MMM dd, yyyy';
+  }
+};
 
-  data.push(changeObj);
-
-  return record.total;
-}, stats[0].total);
-
-export const DistributionChart = () => {
+export const DistributionChart = ({data}: {data?: any[]}) => {
   const [periodicalData, setPeriodicalData] = useState<ChangeData[]>([]);
   const [chartPeriod, setChartPeriod] = useState<keyof typeof Period>('month');
 
-  const selectDateFormat = (period?: keyof typeof Period) => {
-    switch (period) {
-      case 'day':
-        return 'MMM dd, yyyy';
-      case 'week':
-        return "ww 'Wk' yyyy";
-      case 'month':
-        return 'MMM yyyy';
-      case 'quarter':
-        return 'qqq yyyy';
-      case 'year':
-        return 'yyyy';
-      default:
-        return 'MMM dd, yyyy';
-    }
-  };
-
-  const cumulateDataByPeriod = useCallback((originalData: ChangeData[], period: keyof typeof Period) => {
+  const cumulateDataByPeriod = useCallback((originalData: any[] = [], period: keyof typeof Period) => {
     const cumulated: ChangeData[] = [];
     const dateFormat = selectDateFormat(period);
+
     originalData.forEach((current: ChangeData) => {
       const formatedDate = formatDate(new Date(current.date), dateFormat);
       if (cumulated.length === 0) {
         cumulated.push({
-          coins: current.coins,
+          changeInCoins: current.changeInCoins,
           date: formatedDate,
         });
       } else {
         const prev = cumulated[cumulated.length - 1];
         if (prev.date !== formatedDate) {
           cumulated.push({
-            coins: current.coins,
+            changeInCoins: current.changeInCoins,
             date: formatedDate,
           });
         } else {
-          prev.coins += current.coins;
+          prev.changeInCoins += current.changeInCoins;
         }
       }
     }, []);
@@ -86,28 +74,29 @@ export const DistributionChart = () => {
   useEffect(() => {
     const cumulatedData = cumulateDataByPeriod(data, chartPeriod);
     setPeriodicalData(cumulatedData);
-  }, [chartPeriod, cumulateDataByPeriod, setPeriodicalData]);
+  }, [chartPeriod, cumulateDataByPeriod, data, setPeriodicalData]);
+
   const dailyChangeInCoinsConfig = {
     ...config,
     data: periodicalData,
-    meta: {
-      coins: {
-        alias: 'Coins',
-        formatter: function formatter(coins: any) {
-          return coins.toLocaleString();
-        },
-        nice: true,
-        tickCount: 11,
-      },
-    },
+    meta: {},
     slider: {
       start: 0,
       end: 1,
     },
+    tooltip: {
+      formatter: ({date, changeInCoins}: any) => {
+        return {
+          name: 'Coins Released',
+          value: changeInCoins.toLocaleString(),
+          title: date,
+        };
+      },
+    },
     xAxis: {},
     yAxis: {
       title: {
-        text: 'Coins',
+        text: 'Coins Released',
         visible: true,
       },
       label: {
@@ -115,7 +104,7 @@ export const DistributionChart = () => {
       },
       type: 'linear',
     },
-    yField: 'coins',
+    yField: 'changeInCoins',
   };
   return (
     <ChartsCard title="Distribution Chart" description="The amount of coins released periodically on the network">

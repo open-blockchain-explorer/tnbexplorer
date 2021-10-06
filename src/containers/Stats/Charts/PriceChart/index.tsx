@@ -18,22 +18,6 @@ interface Trade {
 export const PriceChart = () => {
   const [priceData, setPriceData] = useState<Trade[]>([]);
 
-  // const dualChartConfig = {
-  //   data: [priceData, priceData],
-  //   xField: 'date',
-  //   yField: ['price', 'volume'],
-  //   geometryOptions: [
-  //     {
-  //       geometry: 'line',
-  //       color: '#29cae4',
-  //     },
-  //     {
-  //       geometry: 'column',
-  //       color: '#586bce',
-  //     },
-  //   ],
-  // };
-
   const priceConfig = {
     ...config,
     data: priceData,
@@ -64,7 +48,7 @@ export const PriceChart = () => {
       formatter: (datum: any) => {
         return {
           name: 'Price (USD)',
-          value: '$'.concat(formatNumber(datum.price)),
+          value: '$'.concat(formatNumber(datum.price, 3)),
           title: formatDate(new Date(datum.date), 'eeee, MMMM do, yyyy'),
         };
       },
@@ -86,19 +70,6 @@ export const PriceChart = () => {
     },
     yField: 'price',
   };
-
-  // const volumeConfig = {
-  //   ...config,
-  //   data: priceData,
-  //   yAxis: {
-  //     title: {
-  //       text: 'Price',
-  //       visible: true,
-  //     },
-  //     type: 'linear',
-  //   },
-  //   yField: 'volume',
-  // };
 
   useEffect(() => {
     const load = async () => {
@@ -142,9 +113,7 @@ export const PriceChart = () => {
       description="The over-the-counter (OTC) price of each TNBC"
       source={{text: 'tnbCrow', link: 'https://tnbcrow.pythonanywhere.com/'}}
     >
-      {/* <DualAxes {...dualChartConfig} /> */}
       <Area {...priceConfig} />
-      {/* <Column {...volumeConfig} /> */}
     </ChartsCard>
   );
 };

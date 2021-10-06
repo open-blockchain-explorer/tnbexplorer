@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {FC, useEffect, useState} from 'react';
 
 import axios from 'axios';
 import {Area} from '@ant-design/charts';
@@ -6,7 +6,6 @@ import {format as formatDate, compareDesc} from 'date-fns';
 
 import {ChartsCard} from 'components';
 import {CORS_BRIDGE} from 'constants/url';
-import stats from 'data/stats.json';
 import {formatNumber} from 'utils/format';
 import {config} from '../defaultConfig';
 
@@ -16,36 +15,39 @@ interface Trade {
   price: number;
 }
 
-export const MarketCapChart = () => {
+export const MarketCapChart: FC<{data?: any[]}> = ({data = []}) => {
   const [marketCapData, setMarketCapData] = useState<any[]>([]);
   const [priceData, setPriceData] = useState<Trade[]>([]);
 
   useEffect(() => {
     const load = async () => {
-      const {data} = await axios.get(
+      const {data: tnbCrowData} = await axios.get(
         CORS_BRIDGE.concat('/https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at'),
       );
-      console.log({data});
       const calculateRate = (t1: Trade, t2: Trade) => {
         return (t1.price * t1.amount + t2.price * t2.amount) / (t2.amount + t1.amount);
       };
 
-      const formattedPriceData = data.results.reduce((acc: Trade[], {created_at: date, rate: price, amount}: any) => {
-        price /= 10000;
-        const lastPriceObj = acc[acc.length - 1];
-        if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
-          lastPriceObj.price = calculateRate(lastPriceObj, {date, amount, price});
-          lastPriceObj.amount += amount;
-        } else {
-          const formattedObj = {
-            date,
-            amount,
-            price,
-          };
-          acc.push(formattedObj);
-        }
-        return acc;
-      }, []);
+      const formattedPriceData = tnbCrowData.results.reduce(
+        (acc: Trade[], {created_at: date, rate: price, amount}: any) => {
+          price /= 10000;
+          const lastPriceObj = acc[acc.length - 1];
+          if (acc.length && lastPriceObj.date.startsWith(date.slice(0, 10))) {
+            lastPriceObj.price = calculateRate(lastPriceObj, {date, amount, price});
+            lastPriceObj.amount += amount;
+          } else {
+            const formattedObj = {
+              date,
+              amount,
+              price,
+            };
+            acc.push(formattedObj);
+          }
+          return acc;
+        },
+        [],
+      );
+
       setPriceData(formattedPriceData);
     };
 
@@ -53,9 +55,9 @@ export const MarketCapChart = () => {
   }, []);
 
   useEffect(() => {
-    if (priceData.length > 0) {
+    if (priceData.length && data.length) {
       const calculatedData: any[] = [];
-      const supplyData = stats;
+      const supplyData = data;
       let supplyIndex = supplyData.length - 1;
 
       priceData.reverse().forEach((trade: Trade) => {
@@ -73,26 +75,16 @@ export const MarketCapChart = () => {
 
       setMarketCapData(calculatedData.reverse());
     }
-  }, [priceData]);
+  }, [priceData, data]);
+
   const distributedCoinsConfig = {
     ...config,
     data: marketCapData,
     smooth: true,
     meta: {
-      date: {
-        formatter: function formatter(date: string) {
-          return formatDate(new Date(date), 'MMM dd, yyyy');
-        },
-        nice: true,
-        tickCount: 10,
-      },
       marketCap: {
-        alias: 'Market Cap',
-        formatter: function formatter(coins: number) {
-          return coins.toLocaleString();
-        },
         nice: true,
-        tickCount: 6,
+        tickCount: 7,
       },
     },
     tooltip: {
@@ -111,7 +103,7 @@ export const MarketCapChart = () => {
         visible: true,
       },
       label: {
-        formatter: (text: string) => '$'.concat(formatNumber(Number(text.replaceAll(',', '')))),
+        formatter: (mrkcap: any) => '$'.concat(formatNumber(mrkcap)),
       },
       type: 'linear',
     },
