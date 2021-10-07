@@ -1,8 +1,9 @@
 import React, {FC, useEffect, useState} from 'react';
-import Col from 'antd/es/col';
 import axios from 'axios';
-
 import {NetworkStats, PageContentsLayout} from 'components';
+import {CORS_BRIDGE} from 'constants/url';
+import Col from 'antd/es/col';
+
 import {
   DistributionChart,
   MarketCapChart,
@@ -16,7 +17,7 @@ const Stats: FC = () => {
   const [statsData, setStatsData] = useState([]);
 
   useEffect(() => {
-    axios.get('http://bank.tnbexplorer.com/stats/api/?format=json&ordering=date').then(({data}) => {
+    axios.get(`${CORS_BRIDGE}/http://bank.tnbexplorer.com/stats/api/?format=json&ordering=date`).then(({data}) => {
       if (data && data.length) {
         data.reduce((previousTotal: number, record: any) => {
           record.changeInCoins = record.total - previousTotal;
