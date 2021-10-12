@@ -22,7 +22,7 @@ import TraceTransactions from './TraceTransactions';
 
 function App() {
   const dispatch = useDispatch();
-
+  console.log('key', process.env.REACT_APP_RECAPTCHA_KEY);
   const retrieveNetworkStats = useCallback(async () => {
     getData(`${PV_URL}/banks?limit=1`).then((data) => {
       dispatch(

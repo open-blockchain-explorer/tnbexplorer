@@ -59,9 +59,6 @@ const TestnetFaucet = () => {
   const faucetRequest = async ({amountOptionId, url}: FaucetRequest) => {
     const token = await recaptchaRef.current.executeAsync();
 
-    console.log(token);
-    console.log({amountOptionId, url});
-
     // Exit fn if token is null
     if (token === null) return message.error('Too many requests to testnet faucet');
 
@@ -83,6 +80,8 @@ const TestnetFaucet = () => {
       alertType = type as keyof MessageApi;
       alertContent = content;
     }
+
+    console.log({alertType, alertContent});
 
     // Alert message
     message[alertType](alertContent, 5);
