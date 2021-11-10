@@ -103,9 +103,9 @@ const Account: FC = () => {
 
   useEffect(() => {
     // Retrieve data for Balance History
-    getTransactions(bankUrl, {limit: 100, accountNumber}).then(({results: txs}) => {
+    getTransactions(bankUrl, {limit: 100, accountNumber, ordering: '-'}).then(({results: txs}) => {
       const {balance} = accountDetails;
-
+      console.log({txs});
       const balanceArr: BalanceData[] = [];
 
       txs.reduce((currentBalance: number, tx: any) => {
@@ -118,8 +118,8 @@ const Account: FC = () => {
         //   sender: tx.block.sender,
         //   time: tx.block.modified_date,
         // };
+
         if (balanceArr.length && tx.time.startsWith(balanceArr[0].date.slice(0, 10))) {
-          balanceArr[0].balance += tx.coins;
           balanceArr[0].transactions! += 1;
         } else {
           balanceArr.unshift({
@@ -128,7 +128,6 @@ const Account: FC = () => {
             transactions: 1,
           });
         }
-
         if (tx.sender === accountNumber) {
           return currentBalance + tx.coins;
         }
@@ -236,6 +235,7 @@ const Account: FC = () => {
     },
     yField: 'balance',
   };
+
   const contentList: {[x: string]: any} = {
     transactions: (
       <>

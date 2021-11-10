@@ -90,7 +90,7 @@ const PageContentsLayout: FC<RowProps & Props> = ({
       <Row justify="space-between" align={'middle'} style={{padding: `${breadCrumb ? '20px' : '25px'} 0px`}}>
         {title && (
           <Col>
-            <Typography.Title level={2} style={{margin: '0px', padding: '0px'}}>
+            <Typography.Title level={3} style={{margin: '0px', padding: '0px 10px'}}>
               {' '}
               {title}
             </Typography.Title>

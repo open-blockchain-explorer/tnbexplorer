@@ -37,3 +37,4 @@ yarn-error.log*
 # Optional stylelint cache
 .stylelintcache
 
+.history/

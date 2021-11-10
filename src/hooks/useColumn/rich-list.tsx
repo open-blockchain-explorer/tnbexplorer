@@ -12,14 +12,14 @@ export const richListColumn = (circulatingSupply: number): ColumnsType<any> => {
   return [
     {
       dataIndex: 'rank',
-      key: 'addr',
+
       title: 'Rank',
       width: '70px',
     },
     {
       dataIndex: 'addr',
       ellipsis: true,
-      key: 'addr',
+
       render: (address: string) => (
         <A style={{wordBreak: 'break-word', wordWrap: 'break-word'}} href={`account/${address}/`}>
           {address}
@@ -30,16 +30,19 @@ export const richListColumn = (circulatingSupply: number): ColumnsType<any> => {
     {
       align: 'right',
       dataIndex: 'bal',
-      key: 'addr',
+
       render: (balance: number) => balance.toLocaleString(),
       title: 'Balance',
-      width: '100px',
+      width: '120px',
     },
     {
       dataIndex: 'bal',
-      key: 'addr',
+
       render: (balance: number) => {
-        return ((balance / circulatingSupply) * 100).toPrecision(3).concat('%');
+        if (balance && circulatingSupply) {
+          return ((balance / circulatingSupply) * 100).toPrecision(3).concat('%');
+        }
+        return 0;
       },
       title: 'Percentage',
       width: '120px',

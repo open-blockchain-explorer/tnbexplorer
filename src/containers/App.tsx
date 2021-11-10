@@ -7,11 +7,12 @@ import {getData, getTransactions} from 'api/bank';
 import {getValidators} from 'api/validator';
 import {GoogleAnalytics, Layout} from 'components';
 import {BANK_URL, PV_URL} from 'constants/url';
-import {setNetworkStats} from 'store/app';
+import {setRecentNetworkStats, setPreviousNetworkStats} from 'store/app';
 
 import Account from './Account';
 import Overview from './Overview';
 import Stats from './Stats';
+import Transaction from './Transaction';
 import Transactions from './Transactions';
 import Nodes from './Nodes';
 import PaymentRequest from './PaymentRequest';
@@ -22,11 +23,41 @@ import TraceTransactions from './TraceTransactions';
 
 function App() {
   const dispatch = useDispatch();
-  console.log('key', process.env.REACT_APP_RECAPTCHA_KEY);
+
   const retrieveNetworkStats = useCallback(async () => {
+    const timestamp = new Date().getTime();
+    const prevDate = new Date(timestamp - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    getData(`http://bank.tnbexplorer.com/stats/api/?start=${prevDate}`).then((data) => {
+      const previousData = data[0];
+
+      dispatch(
+        setPreviousNetworkStats({
+          distributedCoins: previousData.total,
+          accounts: previousData.accounts,
+          date: previousData.date,
+        }),
+      );
+
+      const recentData = data[data.length - 1];
+      dispatch(
+        setRecentNetworkStats({
+          distributedCoins: recentData.total,
+          accounts: recentData.accounts,
+          date: recentData.date,
+        }),
+      );
+    });
+
     getData(`${PV_URL}/banks?limit=1`).then((data) => {
       dispatch(
-        setNetworkStats({
+        setPreviousNetworkStats({
+          activeBanks: data.count,
+        }),
+      );
+
+      dispatch(
+        setRecentNetworkStats({
           activeBanks: data.count,
         }),
       );
@@ -34,7 +65,13 @@ function App() {
 
     getValidators(PV_URL, {limit: 1, offset: 0}).then(({total}) => {
       dispatch(
-        setNetworkStats({
+        setPreviousNetworkStats({
+          activeValidators: total,
+        }),
+      );
+
+      dispatch(
+        setRecentNetworkStats({
           activeValidators: total,
         }),
       );
@@ -42,7 +79,13 @@ function App() {
 
     getTransactions(BANK_URL, {limit: 1, offset: 0}).then(({total}) => {
       dispatch(
-        setNetworkStats({
+        setPreviousNetworkStats({
+          transactions: total,
+        }),
+      );
+
+      dispatch(
+        setRecentNetworkStats({
           transactions: total,
         }),
       );
@@ -68,6 +111,8 @@ function App() {
 
             <Route exact path="/tnb/rich-list/" component={RichList} />
 
+            <Route exact path="/tnb/transaction/:balance_key" component={Transaction} />
+
             <Route exact path="/tnb/transactions/">
               <Transactions section="transactions" />
             </Route>
@@ -88,6 +133,8 @@ function App() {
             <Route exact path="/testnet/blocks/">
               <Transactions section="blocks" />
             </Route>
+            <Route exact path="/testnet/transaction/:balance_key" component={Transaction} />
+
             <Route exact path="/testnet/nodes/" component={Nodes} />
             <Route exact path="/testnet/faucet/" component={TestnetFaucet} />
 

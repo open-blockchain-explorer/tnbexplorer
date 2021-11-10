@@ -10,10 +10,13 @@ export const getData = async (url: string) => {
     source.cancel();
   }, 10_000);
 
-  const res = await axios.get(`${CORS_BRIDGE}/${url}`, {cancelToken: source.token});
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  if (isProduction) url = `${CORS_BRIDGE}/${url}`;
+
+  const res = await axios.get(url, {cancelToken: source.token});
 
   clearTimeout(timeout);
-  // console.log({res});
   return res.data;
 };
 
@@ -138,12 +141,12 @@ interface AccountDetails {
 export const getAccountDetails = async (nodeUrl: string, accountNumber: string) => {
   const data: AccountDetails = {balance: 0, balanceLock: ''};
 
-  await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance`).then((res) => {
-    data.balance = res.data.balance ?? 0;
+  await getData(`${nodeUrl}/accounts/${accountNumber}/balance`).then((result) => {
+    data.balance = result.balance ?? 0;
   });
 
-  await axios.get(`${CORS_BRIDGE}/${nodeUrl}/accounts/${accountNumber}/balance_lock`).then((res) => {
-    data.balanceLock = res.data.balance_lock ?? '';
+  await getData(`${nodeUrl}/accounts/${accountNumber}/balance_lock`).then((result) => {
+    data.balanceLock = result.balance_lock ?? '';
   });
 
   return data;

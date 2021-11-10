@@ -31,7 +31,7 @@ const Layout: FC = ({children}) => {
     xxl: '150px',
     xl: '70px',
     lg: '70px',
-    md: '10px',
+    md: '50px',
     sm: '25px',
     xs: '12.5px',
   };

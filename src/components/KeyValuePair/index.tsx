@@ -1,11 +1,15 @@
-import React, {FC} from 'react';
+import React, {FC, ReactNode} from 'react';
 import Col from 'antd/es/col';
 import Row from 'antd/es/row';
+import Tooltip from 'antd/es/tooltip';
+import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
+import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 
-interface CommonProps {
+export interface KeyValueType {
   title: string;
-  value: string | number;
+  value: string | number | ReactNode;
+  tooltip?: string | ReactNode;
 
   copyable?:
     | boolean
@@ -15,21 +19,40 @@ interface CommonProps {
   ellipsis?: boolean;
 }
 
-const KeyValuePair: FC<CommonProps> = ({title, value, ...others}) => (
-  <Col span={24}>
-    <Row>
-      <Col xs={14} sm={12} md={10}>
-        <Typography.Text strong type="secondary">
-          {title}
-        </Typography.Text>
-      </Col>
-      <Col xs={10} sm={12} md={14}>
-        <Typography.Text strong {...others}>
-          {typeof value === 'number' ? value.toLocaleString() : value}
-        </Typography.Text>
-      </Col>
-    </Row>
-  </Col>
-);
+const KeyValuePair: FC<KeyValueType> = ({title, value, tooltip, ...others}) => {
+  const renderValue = () => {
+    const typeOfValue = typeof value;
+    if (typeOfValue === 'string' || typeOfValue === 'number') {
+      return (
+        <Typography.Text {...others}>{typeOfValue === 'number' ? value!.toLocaleString() : value}</Typography.Text>
+      );
+    }
+
+    return value;
+  };
+
+  return (
+    <Col span={24}>
+      <Row justify="space-between" align="middle">
+        <Col xs={{flex: ''}}>
+          <Space>
+            <Typography.Text type="secondary">
+              {tooltip && (
+                <Tooltip placement="topRight" title={tooltip}>
+                  <InfoCircleOutlined />
+                </Tooltip>
+              )}
+            </Typography.Text>
+
+            <Typography.Text>{title}</Typography.Text>
+          </Space>
+        </Col>
+        <Col sm={{flex: 'auto', span: 16}} xs={{span: 24, flex: ''}}>
+          {renderValue()}
+        </Col>
+      </Row>
+    </Col>
+  );
+};
 
 export default KeyValuePair;

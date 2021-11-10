@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, combineReducers} from '@reduxjs/toolkit';
 
 // import {MANAGED_ACCOUNTS} from '@renderer/constants/actions';
 // import {Dict, ManagedAccount} from '@renderer/types';
@@ -13,21 +13,37 @@ interface NetworkStats {
   transactions?: number;
 }
 
-const networkStats = createSlice({
-  initialState: {
-    accounts: 0,
-    activeBanks: 0,
-    activeValidators: 0,
-    date: new Date(0).toISOString(),
-    distributedCoins: 0,
-    transactions: 0,
-  } as NetworkStats,
-  name: 'NETWORK_STATS',
+const initState = {
+  accounts: 0,
+  activeBanks: 0,
+  activeValidators: 0,
+  date: new Date(0).toISOString(),
+  distributedCoins: 0,
+  transactions: 0,
+};
+
+const recentStats = createSlice({
+  initialState: {...initState} as NetworkStats,
+  name: 'RECENT_NETWORK_STATS',
   reducers: {
-    setNetworkStats: setObjectsReducer<NetworkStats>(),
+    setRecentNetworkStats: setObjectsReducer<NetworkStats>(),
   },
 });
 
-export const {setNetworkStats} = networkStats.actions;
+const previousStats = createSlice({
+  initialState: {...initState} as NetworkStats,
+  name: 'PREVIOUS_NETWORK_STATS',
+  reducers: {
+    setPreviousNetworkStats: setObjectsReducer<NetworkStats>(),
+  },
+});
 
-export default networkStats.reducer;
+const networkStatsReducer = combineReducers({
+  recent: recentStats.reducer,
+  previous: previousStats.reducer,
+});
+
+export const {setRecentNetworkStats} = recentStats.actions;
+export const {setPreviousNetworkStats} = previousStats.actions;
+
+export default networkStatsReducer;
