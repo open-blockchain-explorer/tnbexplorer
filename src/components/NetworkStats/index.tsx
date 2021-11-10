@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 
-import axios from 'axios';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import Divider from 'antd/es/divider';
@@ -8,55 +7,15 @@ import Grid from 'antd/es/grid';
 import Row from 'antd/es/row';
 import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import {InfoPane} from 'components';
-import {CORS_BRIDGE} from 'constants/url';
 import {getNetworkStats} from 'selectors';
-import {setNetworkStats} from 'store/app';
 
 const {useBreakpoint} = Grid;
 const NetworkStats = () => {
   const screens = useBreakpoint();
-  const dispatch = useDispatch();
-  const networkStats = useSelector(getNetworkStats);
-  console.log({networkStats});
-
-  const defaultData = {
-    total: 0,
-    accounts: 0,
-    transactions: 0,
-    activeNodes: 0,
-    date: '',
-  };
-
-  const [prevData, setPrevData] = useState(defaultData);
-
-  useEffect(() => {
-    const timestamp = new Date().getTime();
-    const prevDate = new Date(timestamp - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-    const nextDate = new Date(timestamp).toISOString().slice(0, 10);
-
-    console.log(prevDate, nextDate);
-
-    axios
-      .get(`${CORS_BRIDGE}/http://bank.tnbexplorer.com/stats/api/?start=${prevDate}&end=${nextDate}`)
-      .then((response) => {
-        console.log(response.data);
-
-        setPrevData(response.data[0]);
-
-        const recentData = response.data[response.data.length - 1];
-
-        dispatch(
-          setNetworkStats({
-            distributedCoins: recentData.total,
-            accounts: recentData.accounts,
-            date: recentData.date,
-          }),
-        );
-      });
-  }, [dispatch]);
+  const {recent: recentStats, previous: previousStats} = useSelector(getNetworkStats);
 
   return (
     <>
@@ -69,33 +28,36 @@ const NetworkStats = () => {
                   <Space size="small" split={<Divider type="vertical" style={{height: '90px'}} />}>
                     <InfoPane
                       title="distributed coins"
-                      data={{current: Number(networkStats.distributedCoins), previous: Number(prevData.total)}}
+                      data={{
+                        current: Number(recentStats.distributedCoins),
+                        previous: Number(previousStats.distributedCoins),
+                      }}
                     />
                     {/* <InfoPane
                       title="Price"
-                      data={{current: Number(networkStats.total), previous: Number(prevData.total)}}
+                      data={{current: Number(recentStats.total), previous: Number(previousStats.total)}}
                     /> */}
                     <InfoPane
                       title="Accounts"
-                      data={{current: Number(networkStats.accounts), previous: Number(prevData.accounts)}}
+                      data={{current: Number(recentStats.accounts), previous: Number(previousStats.accounts)}}
                     />
                     <InfoPane
                       title="Transactions"
                       data={{
-                        current: networkStats.transactions as number,
-                        previous: networkStats.transactions as number,
+                        current: recentStats.transactions as number,
+                        previous: previousStats.transactions as number,
                       }}
                       showChangeAsPercent
                     />
                     <InfoPane
                       title="Active banks"
-                      data={{current: networkStats.activeBanks as number, previous: networkStats.activeBanks as number}}
+                      data={{current: recentStats.activeBanks as number, previous: previousStats.activeBanks as number}}
                     />
                     <InfoPane
                       title="Active Validators"
                       data={{
-                        current: networkStats.activeValidators as number,
-                        previous: networkStats.activeValidators as number,
+                        current: recentStats.activeValidators as number,
+                        previous: previousStats.activeValidators as number,
                       }}
                     />
                   </Space>
@@ -106,7 +68,7 @@ const NetworkStats = () => {
           <Col>
             <Typography.Text type="secondary">
               {' '}
-              Last Updated: {new Date(networkStats.date ?? 0).toString().slice(0, 16)}
+              Last Updated: {new Date(recentStats.date ?? 0).toString().slice(0, 16)}
             </Typography.Text>
           </Col>
         </Row>
@@ -117,7 +79,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="Accounts"
-                data={{current: Number(networkStats.accounts), previous: Number(prevData.accounts)}}
+                data={{current: Number(recentStats.accounts), previous: Number(previousStats.accounts)}}
               />
             </Card>
           </Col>
@@ -126,7 +88,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="Active banks"
-                data={{current: networkStats.activeBanks as number, previous: networkStats.activeBanks as number}}
+                data={{current: recentStats.activeBanks as number, previous: previousStats.activeBanks as number}}
               />
             </Card>
           </Col>
@@ -135,7 +97,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="Transactions"
-                data={{current: networkStats.transactions as number, previous: networkStats.transactions as number}}
+                data={{current: recentStats.transactions as number, previous: previousStats.transactions as number}}
                 showChangeAsPercent
               />
             </Card>
@@ -146,8 +108,8 @@ const NetworkStats = () => {
                 align="left"
                 title="Active Validators"
                 data={{
-                  current: networkStats.activeValidators as number,
-                  previous: networkStats.activeValidators as number,
+                  current: recentStats.activeValidators as number,
+                  previous: previousStats.activeValidators as number,
                 }}
               />
             </Card>
@@ -157,7 +119,7 @@ const NetworkStats = () => {
               <InfoPane
                 align="left"
                 title="distributed coins"
-                data={{current: Number(networkStats.distributedCoins), previous: Number(prevData.total)}}
+                data={{current: Number(recentStats.distributedCoins), previous: Number(previousStats.distributedCoins)}}
               />
             </Card>
           </Col>
@@ -169,7 +131,7 @@ const NetworkStats = () => {
           <Col>
             <Typography.Text type="secondary">
               {' '}
-              Last Updated: {new Date(networkStats.date ?? 0).toString().slice(0, 16)}
+              Last Updated: {new Date(recentStats.date ?? 0).toString().slice(0, 16)}
             </Typography.Text>
           </Col>
         </Row>

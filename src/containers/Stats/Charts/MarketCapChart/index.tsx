@@ -1,11 +1,10 @@
 import React, {FC, useEffect, useState} from 'react';
 
-import axios from 'axios';
 import {Area} from '@ant-design/charts';
 import {format as formatDate, compareDesc} from 'date-fns';
 
+import {getData} from 'api';
 import {ChartsCard} from 'components';
-import {CORS_BRIDGE} from 'constants/url';
 import {formatNumber} from 'utils/format';
 import {config} from '../defaultConfig';
 
@@ -21,8 +20,8 @@ export const MarketCapChart: FC<{data?: any[]}> = ({data = []}) => {
 
   useEffect(() => {
     const load = async () => {
-      const {data: tnbCrowData} = await axios.get(
-        CORS_BRIDGE.concat('/https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at'),
+      const tnbCrowData = await getData(
+        'https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at',
       );
       const calculateRate = (t1: Trade, t2: Trade) => {
         return (t1.price * t1.amount + t2.price * t2.amount) / (t2.amount + t1.amount);

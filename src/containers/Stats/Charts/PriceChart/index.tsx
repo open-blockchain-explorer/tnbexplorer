@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
-import axios from 'axios';
 import {Area} from '@ant-design/charts';
 import {format as formatDate} from 'date-fns';
 
+import {getData} from 'api';
 import {ChartsCard} from 'components';
-import {CORS_BRIDGE} from 'constants/url';
 import {formatNumber} from 'utils/format';
 import {config} from '../defaultConfig';
 
@@ -73,9 +72,7 @@ export const PriceChart = () => {
 
   useEffect(() => {
     const load = async () => {
-      const {data} = await axios.get(
-        CORS_BRIDGE.concat('/https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at'),
-      );
+      const data = await getData('https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at');
       console.log({data});
       const calculateRate = (t1: Trade, t2: Trade) => {
         return (t1.price * t1.volume + t2.price * t2.volume) / (t2.volume + t1.volume);

@@ -1,7 +1,7 @@
 import {combineReducers} from '@reduxjs/toolkit';
 
 // import reducer, {actions}
-import networkStatsReducer, {setNetworkStats} from './networkStats';
+import networkStatsReducer, {setRecentNetworkStats, setPreviousNetworkStats} from './networkStats';
 import currentChainReducer, {setCurrentChainData} from './currentChain';
 
 export default combineReducers({
@@ -9,4 +9,4 @@ export default combineReducers({
   networkStats: networkStatsReducer,
 });
 
-export {setCurrentChainData, setNetworkStats};
+export {setCurrentChainData, setRecentNetworkStats, setPreviousNetworkStats};
