@@ -11,13 +11,9 @@ export const usePaymentParams = () => {
     query.get('memo')?.replaceAll('%20', ' '),
   ];
 
-  // console.log({recipientString, amountString, memoString});
-
   if (!recipientString || !amountString) return [];
 
   const [recipients, amounts, memos] = [recipientString!.split(','), amountString!.split(','), memoString!.split(',')];
-
-  // console.log({recipients, amounts, memos});
 
   const payments: Payment[] = [];
   for (let i = 0; i < recipients.length; i += 1) {

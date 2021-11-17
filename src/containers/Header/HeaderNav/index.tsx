@@ -15,7 +15,6 @@ const HeaderNav: FC = () => {
 
   useEffect(() => {
     const navLink = url.split('/')[2];
-    console.log({navLink});
     switch (navLink) {
       case 'blocks':
       case 'transactions':
@@ -40,7 +39,6 @@ const HeaderNav: FC = () => {
   }, [url]);
 
   const onChange = ({keyPath}: any) => {
-    // console.log(keyPath);
     setSelectedNavlink(keyPath);
   };
 
@@ -53,13 +51,13 @@ const HeaderNav: FC = () => {
       selectedKeys={selectedNavlink}
     >
       <Menu.Item style={{marginLeft: '0px'}} key="overview">
-        <NavLink to={`${currentChain}/`}>Overview</NavLink>
+        <NavLink to={`${currentChain}`}>Overview</NavLink>
       </Menu.Item>
       <Menu.Item key="transactions">
-        <NavLink to={`${currentChain}/transactions/`}>Transactions</NavLink>
+        <NavLink to={`${currentChain}/transactions`}>Transactions</NavLink>
       </Menu.Item>
       <Menu.Item key="nodes">
-        <NavLink to={`${currentChain}/nodes/`}>Nodes</NavLink>
+        <NavLink to={`${currentChain}/nodes`}>Nodes</NavLink>
       </Menu.Item>
       {isMainnet ? (
         <>

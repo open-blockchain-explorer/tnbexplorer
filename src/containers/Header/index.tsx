@@ -8,11 +8,12 @@ import Input from 'antd/es/input';
 import Row from 'antd/es/row';
 import Typography from 'antd/es/typography';
 import CaretDownOutlined from '@ant-design/icons/CaretDownOutlined';
-import {Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 
 import tnbLogo from 'assets/tnb-logo.png';
 import tnbTestnetLogo from 'assets/tnb-testnet-logo.png';
+import {A} from 'components';
 import {getCurrentChain} from 'selectors';
 import {identifyQuery, QueryType} from 'utils/search';
 import Banner from './Banner';
@@ -33,7 +34,7 @@ const Header: FC<{padding: string}> = ({padding}) => {
   const menu = (
     <Menu>
       <Menu.Item>
-        <Link to="/tnb/">
+        <A network="tnb" href="">
           <Row align="bottom" gutter={[15, 0]}>
             <Col offset={1} style={{lineHeight: '20px'}}>
               <img src={tnbLogo} width={15} alt="thenewboston logo" />
@@ -43,11 +44,11 @@ const Header: FC<{padding: string}> = ({padding}) => {
               <Typography.Text strong>thenewboston</Typography.Text>
             </Col>
           </Row>
-        </Link>
+        </A>
       </Menu.Item>
 
       <Menu.Item>
-        <Link to="/testnet/">
+        <A network="testnet" href="">
           <Row align="bottom" gutter={[15, 0]}>
             <Col offset={1} style={{lineHeight: '20px'}}>
               <img src={tnbTestnetLogo} width={15} alt="thenewboston logo" />
@@ -59,7 +60,7 @@ const Header: FC<{padding: string}> = ({padding}) => {
               </Typography.Text>
             </Col>
           </Row>
-        </Link>
+        </A>
       </Menu.Item>
     </Menu>
   );
@@ -72,7 +73,7 @@ const Header: FC<{padding: string}> = ({padding}) => {
     console.log({queryType});
     switch (queryType) {
       case QueryType.account:
-        history.push(`${chainPath}/account/${query}/`);
+        history.push(`${chainPath}/account/${query}`);
         break;
       default:
         console.log('Unidentified Search Query');
@@ -117,7 +118,7 @@ const Header: FC<{padding: string}> = ({padding}) => {
                   </Row>
                 </Dropdown>
               </Col>
-              <Col>
+              <Col span={24}>
                 <HeaderNav />
               </Col>
             </Row>

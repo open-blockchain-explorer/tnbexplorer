@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, ReactNode} from 'react';
 
 import Divider from 'antd/es/divider';
 import List from 'antd/es/list';
@@ -6,7 +6,7 @@ import List from 'antd/es/list';
 import KeyValuePair, {KeyValueType} from '../KeyValuePair';
 
 interface ComponentProps {
-  items: KeyValueType[];
+  items: (KeyValueType & {show?: boolean; renderItem?: (props: KeyValueType) => ReactNode})[];
 }
 
 const KeyValueList: FC<ComponentProps> = ({items}) => {
@@ -14,11 +14,20 @@ const KeyValueList: FC<ComponentProps> = ({items}) => {
     <List
       itemLayout="horizontal"
       dataSource={items}
-      renderItem={({title, value, ...properties}) => (
-        <List.Item>
-          <KeyValuePair title={title} value={value} {...properties} />
-        </List.Item>
-      )}
+      renderItem={({title, value, show = true, renderItem, ...properties}) => {
+        if (renderItem) {
+          return <List.Item> {renderItem({title, value, ...properties})} </List.Item>;
+        }
+
+        if (show) {
+          return (
+            <List.Item>
+              <KeyValuePair title={title} value={value} {...properties} />
+            </List.Item>
+          );
+        }
+        return null;
+      }}
     >
       <Divider type="horizontal" style={{margin: '0px'}} />
     </List>

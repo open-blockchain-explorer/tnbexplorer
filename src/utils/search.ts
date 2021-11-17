@@ -38,3 +38,38 @@ export const identifyQuery = async (query: string, currentChain: any): Promise<Q
 
   return null;
 };
+
+export class QueryParams extends Map<string, string> {
+  static fromSearchString(queryString: string): QueryParams {
+    const entries = queryString
+      .slice(1)
+      .split('&')
+      .filter((entry) => {
+        const [key, value] = entry.split('=') as [string, string];
+        return key && value;
+      })
+      .map((entry) => {
+        return entry.split('=') as [string, string];
+      });
+
+    return new QueryParams(entries);
+  }
+
+  toString(): string {
+    let queryString = '?';
+
+    this.forEach((value, key) => {
+      let entry: string;
+
+      if (queryString === '?') {
+        entry = `${key}=${value}`;
+      } else {
+        entry = `&${key}=${value}`;
+      }
+
+      queryString = queryString.concat(entry);
+    });
+
+    return queryString;
+  }
+}

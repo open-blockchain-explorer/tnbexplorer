@@ -21,7 +21,7 @@ export const richListColumn = (circulatingSupply: number): ColumnsType<any> => {
       ellipsis: true,
 
       render: (address: string) => (
-        <A style={{wordBreak: 'break-word', wordWrap: 'break-word'}} href={`account/${address}/`}>
+        <A style={{wordBreak: 'break-word', wordWrap: 'break-word'}} href={`account/${address}`}>
           {address}
         </A>
       ),

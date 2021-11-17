@@ -2,7 +2,7 @@ import React from 'react';
 import Tag from 'antd/es/tag';
 import Typography from 'antd/es/typography';
 import {ColumnsType} from 'antd/es/table';
-import {formatDistance} from 'date-fns';
+import {formatDistanceToNowStrict} from 'date-fns';
 import {A} from 'components';
 
 export interface TransactionColumnType {
@@ -19,7 +19,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       return text;
     }
     return (
-      <A href={`account/${text}/`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
+      <A href={`account/${text}`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
         {text}
       </A>
     );
@@ -29,14 +29,12 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
     {
       dataIndex: 'sender',
       ellipsis: true,
-      key: 'recipient',
       render: (text: string) => formatColumnAccount(text),
       title: 'Sender',
     },
     {
       dataIndex: 'recipient',
       ellipsis: true,
-      key: 'recipient',
       render: (text: string) => formatColumnAccount(text),
       title: 'Recipient',
     },
@@ -60,7 +58,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       dataIndex: 'time',
       key: 'time',
       render: (timestamp: string) => {
-        return formatDistance(new Date(timestamp), new Date()).replace('about', '~');
+        return formatDistanceToNowStrict(new Date(timestamp));
       },
       title: 'Time',
       width: '120px',

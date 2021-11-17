@@ -17,7 +17,6 @@ const Overview: FC = () => {
 
   const currentChain = useSelector(getCurrentChain);
   const {isMainnet, bankUrl} = currentChain;
-  console.log({currentChain});
 
   useEffect(() => {
     setTransactionData(() => []);
@@ -43,7 +42,7 @@ const Overview: FC = () => {
               pagination={false}
               scroll={{x: 600}}
               sticky
-              title={() => <TableHeader title="Latest Blocks" buttonLink={'./blocks'} />}
+              title={() => <TableHeader title="Latest Blocks" buttonLink={'blocks'} />}
             />
           </Row>
         </Col>
@@ -56,7 +55,7 @@ const Overview: FC = () => {
             pagination={false}
             scroll={{x: 600}}
             sticky
-            title={() => <TableHeader title="Latest Transactions" buttonLink={'./transactions'} />}
+            title={() => <TableHeader title="Latest Transactions" buttonLink={'transactions'} />}
           />
         </Col>
       </PageContentsLayout>
