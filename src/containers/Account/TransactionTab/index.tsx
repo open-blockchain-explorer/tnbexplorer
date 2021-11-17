@@ -31,7 +31,6 @@ import {AccountPageContext} from '../accountContext';
 const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string) => void; onClear: () => void}> = ({
   confirm,
   clearFilters,
-
   onFilter,
   onClear,
 }) => {
@@ -43,7 +42,7 @@ const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string
   };
   return (
     <Form form={form} onFinish={handleFilter}>
-      <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '200px'}}>
+      <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '250px'}}>
         <Col span={24}>
           <Form.Item name="accountNumberToFilter" style={{height: '10px'}}>
             <Input allowClear autoComplete={'false'} placeholder="Search for an account" />
@@ -88,14 +87,10 @@ export const TransactionTab = React.memo(() => {
   const accountNumber = useAccount();
   const transactionColumn = useTransactionColumn(accountNumber);
 
-  // Add filter and sort to the transaction column
-  transactionColumn[0].filters = [];
-  transactionColumn[0].onFilter = (value, record) => record.sender === value;
-  transactionColumn[0].sorter = () => 0;
-  transactionColumn[0].defaultSortOrder = ((): SortOrder => {
+  const getSortOrder = (field: string): SortOrder => {
     const sortValue = queryParams?.get('sort');
 
-    if (sortValue && sortValue.slice(-6) === 'sender') {
+    if (sortValue && sortValue.slice(-6) === field) {
       if (sortValue.charAt(0) === '-') {
         return 'descend';
       }
@@ -103,7 +98,13 @@ export const TransactionTab = React.memo(() => {
     }
 
     return null;
-  })();
+  };
+
+  // Add filter and sort to the transaction column
+  transactionColumn[0].filters = [];
+  transactionColumn[0].onFilter = (value, record) => record.sender === value;
+  transactionColumn[0].sorter = () => 0;
+  transactionColumn[0].defaultSortOrder = getSortOrder('sender');
 
   transactionColumn[0].filterDropdown = (filterDropdownProps) => {
     return (
@@ -127,18 +128,7 @@ export const TransactionTab = React.memo(() => {
   ];
   transactionColumn[1].onFilter = (value, record) => record.recipient === value;
   transactionColumn[1].sorter = () => 0;
-  transactionColumn[1].defaultSortOrder = ((): SortOrder => {
-    const sortValue = queryParams?.get('sort');
-
-    if (sortValue && sortValue.slice(-6) === 'recipient') {
-      if (sortValue.charAt(0) === '-') {
-        return 'descend';
-      }
-      return 'ascend';
-    }
-
-    return null;
-  })();
+  transactionColumn[1].defaultSortOrder = getSortOrder('recipient');
   transactionColumn[1].filterDropdown = (filterDropdownProps) => {
     return (
       <FilterDropdown
@@ -158,6 +148,7 @@ export const TransactionTab = React.memo(() => {
   };
 
   transactionColumn[5].sorter = () => 0;
+  transactionColumn[5].defaultSortOrder = getSortOrder('coins');
 
   const [feeRadioGroup, setFeeRadioGroup] = useState(queryParams.get('fee') ?? '');
   const transactionTableHeader = () => {

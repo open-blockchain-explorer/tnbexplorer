@@ -9,8 +9,11 @@ export const GoogleAnalytics: FC<Partial<RouterChildContext>> = () => {
     ReactGA.pageview(history.location.pathname); // Record a pageview for the given page
   };
 
-  historyListener();
-  history.listen(historyListener);
+  if (process.env.REACT_APP_ANALYTICS_ID) {
+    console.log('analytics', process.env.REACT_APP_ANALYTICS_ID);
+    historyListener();
+    history.listen(historyListener);
+  }
 
   return <div />;
 };

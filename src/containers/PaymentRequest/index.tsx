@@ -24,6 +24,8 @@ import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import EditOutlined from '@ant-design/icons/EditOutlined';
 import QrcodeOutlined from '@ant-design/icons/QrcodeOutlined';
 import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined';
+import ShareAltOutlined from '@ant-design/icons/ShareAltOutlined';
+import CheckOutlined from '@ant-design/icons/CheckOutlined';
 
 import {getConfirmationBlocks} from 'api/bank';
 import {PageContentsLayout, Qr} from 'components';
@@ -455,6 +457,35 @@ const PaymentRequest = () => {
                   </Row>
                 </Modal>
                 <Col>
+                  <Tooltip
+                    title={
+                      copied ? (
+                        <>
+                          Copied{' '}
+                          <Typography.Text type="success">
+                            <CheckOutlined />
+                          </Typography.Text>{' '}
+                        </>
+                      ) : (
+                        'Copy url'
+                      )
+                    }
+                  >
+                    <Button
+                      shape="round"
+                      size="large"
+                      icon={<ShareAltOutlined />}
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(hrefPaymentUrl);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 5000);
+                      }}
+                    >
+                      Share
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
                   <Button
                     icon={<QrcodeOutlined width="50px" />}
                     shape="round"
@@ -624,6 +655,7 @@ const PaymentRequest = () => {
                             onClick={async () => {
                               await navigator.clipboard.writeText(hrefPaymentUrl);
                               setCopied(true);
+                              setTimeout(() => setCopied(false), 5000);
                             }}
                           >
                             {copied ? 'Copied' : 'Copy'}
