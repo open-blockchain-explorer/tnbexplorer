@@ -21,7 +21,7 @@ const KeyValueList: FC<ComponentProps> = ({items}) => {
 
         if (show) {
           return (
-            <List.Item>
+            <List.Item key={title}>
               <KeyValuePair title={title} value={value} {...properties} />
             </List.Item>
           );

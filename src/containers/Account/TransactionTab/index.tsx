@@ -2,24 +2,20 @@ import React, {FC, ReactNode, useCallback, useState, useEffect, useContext} from
 import Col from 'antd/es/col';
 
 import Button from 'antd/es/button';
-import Dropdown from 'antd/es/dropdown';
-import Space from 'antd/es/space';
-import Menu from 'antd/es/menu';
-import MenuItem from 'antd/es/menu/MenuItem';
+
 import Radio from 'antd/es/radio';
 import {useHistory} from 'react-router-dom';
 import Tag from 'antd/es/tag';
 import Form from 'antd/es/form';
 import Input from 'antd/es/input';
 import Typography from 'antd/es/typography';
-
+import Space from 'antd/es/space';
 import Row from 'antd/es/row';
 import Table, {TablePaginationConfig} from 'antd/es/table';
-import {FilterDropdownProps, SortOrder} from 'antd/es/table/interface';
+import {FilterDropdownProps} from 'antd/es/table/interface';
 // import {SorterResult, TableCurrentDataSource} from 'antd/es/table/interface';
 
 // import CloseOutlined from '@ant-design/icons/CloseOutlined';
-import MoreOutlined from '@ant-design/icons/MoreOutlined';
 import {useSelector} from 'react-redux';
 
 import {useAccount, useQueryParams} from 'hooks';
@@ -42,15 +38,15 @@ const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string
   };
   return (
     <Form form={form} onFinish={handleFilter}>
-      <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '250px'}}>
+      <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '225px'}}>
         <Col span={24}>
-          <Form.Item name="accountNumberToFilter" style={{height: '10px'}}>
+          <Form.Item name="accountNumberToFilter" style={{margin: '0px'}}>
             <Input allowClear autoComplete={'false'} placeholder="Search for an account" />
           </Form.Item>
         </Col>
 
         <Col span={12}>
-          <Form.Item style={{height: '10px'}}>
+          <Form.Item style={{margin: '0px'}}>
             <Button
               htmlType="button"
               block
@@ -66,7 +62,7 @@ const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string
           </Form.Item>
         </Col>
         <Col span={12}>
-          <Form.Item style={{height: '10px'}}>
+          <Form.Item style={{margin: '0px'}}>
             <Button htmlType="submit" block type="primary">
               Search
             </Button>
@@ -85,27 +81,20 @@ export const TransactionTab = React.memo(() => {
 
   const {isAccountValid, transactions, setTransactions} = useContext(AccountPageContext);
   const accountNumber = useAccount();
-  const transactionColumn = useTransactionColumn(accountNumber);
 
-  const getSortOrder = (field: string): SortOrder => {
-    const sortValue = queryParams?.get('sort');
-
-    if (sortValue && sortValue.slice(-6) === field) {
-      if (sortValue.charAt(0) === '-') {
-        return 'descend';
-      }
-      return 'ascend';
-    }
-
-    return null;
-  };
+  const transactionColumn = useTransactionColumn({
+    accountNumber,
+    sort: {
+      recipient: true,
+      sender: true,
+      time: 'ascend',
+      coins: true,
+    },
+  });
 
   // Add filter and sort to the transaction column
   transactionColumn[0].filters = [];
   transactionColumn[0].onFilter = (value, record) => record.sender === value;
-  transactionColumn[0].sorter = () => 0;
-  transactionColumn[0].defaultSortOrder = getSortOrder('sender');
-
   transactionColumn[0].filterDropdown = (filterDropdownProps) => {
     return (
       <FilterDropdown
@@ -127,8 +116,6 @@ export const TransactionTab = React.memo(() => {
     {text: 'address', value: '57c6214514343876fefaa1a94655b0d096388eb25d75af52ff4ed04ab1548e1d'},
   ];
   transactionColumn[1].onFilter = (value, record) => record.recipient === value;
-  transactionColumn[1].sorter = () => 0;
-  transactionColumn[1].defaultSortOrder = getSortOrder('recipient');
   transactionColumn[1].filterDropdown = (filterDropdownProps) => {
     return (
       <FilterDropdown
@@ -147,8 +134,79 @@ export const TransactionTab = React.memo(() => {
     );
   };
 
-  transactionColumn[5].sorter = () => 0;
-  transactionColumn[5].defaultSortOrder = getSortOrder('coins');
+  transactionColumn[2].filters = [];
+  transactionColumn[2].filterDropdown = ({clearFilters, confirm}) => {
+    const [form] = Form.useForm();
+    const handleTxFlowFilter = ({txFlow}: any) => {
+      console.log({txFlow});
+      if (txFlow) {
+        confirm?.();
+        if (txFlow === 'in') {
+          queryParams.set('recipient', accountNumber);
+          queryParams.delete('sender');
+          history.push(queryParams.toString());
+        } else {
+          queryParams.set('sender', accountNumber);
+          queryParams.delete('recipient');
+          history.push(queryParams.toString());
+        }
+      }
+    };
+    return (
+      <Form form={form} onFinish={handleTxFlowFilter}>
+        <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '190px'}}>
+          <Col span={24}>
+            <Form.Item name="txFlow" style={{margin: '0px'}}>
+              <Radio.Group>
+                <Space direction="vertical">
+                  <Radio value={'in'}>
+                    <Tag style={{fontWeight: 'bolder'}} color={'#87d068'}>
+                      IN
+                    </Tag>
+                    Incoming txs
+                  </Radio>
+                  <Radio value={'out'}>
+                    <Tag color={'#f50'} style={{fontWeight: 'bolder'}}>
+                      OUT
+                    </Tag>{' '}
+                    Outgoing txs
+                  </Radio>
+                </Space>
+              </Radio.Group>
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item style={{margin: '0px'}}>
+              <Button
+                htmlType="button"
+                block
+                type="ghost"
+                onClick={() => {
+                  form.resetFields();
+                  if (queryParams.get('recipient') === accountNumber || queryParams.get('sender') === accountNumber) {
+                    queryParams.delete('recipient');
+                    queryParams.delete('sender');
+                    history.push(queryParams.toString());
+                  }
+                  clearFilters?.();
+                }}
+              >
+                Clear
+              </Button>
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item style={{margin: '0px'}}>
+              <Button htmlType="submit" block type="primary">
+                Search
+              </Button>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    );
+  };
 
   const [feeRadioGroup, setFeeRadioGroup] = useState(queryParams.get('fee') ?? '');
   const transactionTableHeader = () => {
@@ -160,9 +218,9 @@ export const TransactionTab = React.memo(() => {
       let tagText: ReactNode;
 
       if (key === 'sender' && value === accountNumber) {
-        tagText = 'Showing Outgoing transactions';
+        tagText = <>Filtered Tx-Flow by: Outgoing txs</>;
       } else if (key === 'recipient' && value === accountNumber) {
-        tagText = 'Showing Incoming transactions';
+        tagText = <>Filtered Tx-Flow by: Incoming txs</>;
       } else {
         tagText = (
           <>
@@ -204,30 +262,6 @@ export const TransactionTab = React.memo(() => {
       }
     };
 
-    const incomingTagColor = '#87d068';
-    const outgoingTagColor = '#f50';
-    const txOptionsMenu = (
-      <Menu>
-        <MenuItem
-          onClick={() => {
-            queryParams.set('recipient', accountNumber);
-            queryParams.delete('sender');
-            history.push(queryParams.toString());
-          }}
-        >
-          <Tag color={incomingTagColor}> </Tag> View Incoming Transactions
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            queryParams.set('sender', accountNumber);
-            queryParams.delete('recipient');
-            history.push(queryParams.toString());
-          }}
-        >
-          <Tag color={outgoingTagColor}> </Tag> View Outgoing Transactions
-        </MenuItem>
-      </Menu>
-    );
     return (
       <Row justify={'space-between'} gutter={[0, 10]} align="middle">
         <Col span={12} xs={24} md={10} style={{}}>
@@ -236,22 +270,17 @@ export const TransactionTab = React.memo(() => {
         <Col span={12} xs={24} md={14}>
           <Row justify="end" align="middle">
             <Col>
-              <Space style={{marginLeft: 'auto'}}>
-                <Radio.Group onChange={filterFees} value={feeRadioGroup}>
-                  <Radio onClick={deselect} value={'none'}>
-                    No Fees
-                  </Radio>
-                  <Radio onClick={deselect} value={'bank'}>
-                    Bank Fees
-                  </Radio>
-                  <Radio onClick={deselect} value={'primary_validator'}>
-                    PV Fees
-                  </Radio>
-                </Radio.Group>
-                <Dropdown overlay={txOptionsMenu} trigger={['click']}>
-                  <Button type="ghost" icon={<MoreOutlined />} />
-                </Dropdown>
-              </Space>
+              <Radio.Group onChange={filterFees} value={feeRadioGroup}>
+                <Radio onClick={deselect} value={'none'}>
+                  No Fees
+                </Radio>
+                <Radio onClick={deselect} value={'bank'}>
+                  Bank Fees
+                </Radio>
+                <Radio onClick={deselect} value={'primary_validator'}>
+                  PV Fees
+                </Radio>
+              </Radio.Group>
             </Col>
           </Row>
         </Col>
@@ -290,25 +319,6 @@ export const TransactionTab = React.memo(() => {
       const sort = queryParams.get('sort');
       const sender = queryParams.get('sender');
       const recipient = queryParams.get('recipient');
-
-      const switchSortToOrdering = (sortValue?: string) => {
-        let suffix = '';
-        if (sortValue) {
-          if (sortValue.startsWith('+') || sortValue.startsWith('-')) {
-            suffix = sortValue.slice(0, 1);
-            sortValue = sortValue.slice(1);
-          }
-          switch (sortValue) {
-            case 'coins':
-              return suffix.concat('amount');
-            case 'sender':
-              return suffix.concat('block__sender');
-            default:
-              return suffix.concat(sortValue);
-          }
-        }
-        return '';
-      };
       getTransactions(bankUrl, {
         limit,
         offset,
@@ -316,7 +326,7 @@ export const TransactionTab = React.memo(() => {
         sender,
         recipient,
         fee,
-        ordering: switchSortToOrdering(sort),
+        sort,
       }).then(({results, total}) => {
         setTransactions(results);
         const pageSize = limit;
@@ -356,6 +366,7 @@ export const TransactionTab = React.memo(() => {
   return (
     <Table
       bordered
+      rowKey={(record) => record.id}
       title={transactionTableHeader}
       columns={transactionColumn}
       dataSource={transactions}

@@ -152,16 +152,6 @@ const Account: FC = () => {
       const balanceArr: BalanceData[] = [];
 
       txs.reduce((currentBalance: number, tx: any) => {
-        // {
-        //   id: tx.id,
-        //   coins: tx.amount,
-        //   fee: tx.fee,
-        //   memo: tx.memo,
-        //   recipient: tx.recipient,
-        //   sender: tx.block.sender,
-        //   time: tx.block.modified_date,
-        // };
-
         if (balanceArr.length && tx.time.startsWith(balanceArr[0].date.slice(0, 10))) {
           balanceArr[0].transactions! += 1;
         } else {

@@ -74,6 +74,28 @@ export const getBanks = async (
   return {results: banks, total};
 };
 
+const switchSortToOrdering = (sortValue?: string) => {
+  let suffix = '';
+  if (sortValue) {
+    if (sortValue.startsWith('+') || sortValue.startsWith('-')) {
+      suffix = sortValue.slice(0, 1);
+      sortValue = sortValue.slice(1);
+    }
+    switch (sortValue) {
+      case 'coins':
+        return suffix.concat('amount');
+      case 'sender':
+        return suffix.concat('block__sender');
+      case 'time':
+        suffix = suffix === '-' ? '+' : '-';
+        return suffix.concat('block__created_date');
+      default:
+        return suffix.concat(sortValue);
+    }
+  }
+  return '';
+};
+
 export const getTransactions = async (nodeUrl: string, query = {}) => {
   const defaultOptions = {
     limit: 10,
@@ -82,11 +104,11 @@ export const getTransactions = async (nodeUrl: string, query = {}) => {
     sender: '',
     recipient: '',
     fee: '',
-    ordering: '',
+    sort: '',
   };
   const queryOptions = {...defaultOptions, ...query};
 
-  const {limit, offset, accountNumber, sender, recipient, ordering} = queryOptions;
+  const {limit, offset, accountNumber, sender, recipient, sort} = queryOptions;
 
   let {fee} = queryOptions;
 
@@ -97,6 +119,8 @@ export const getTransactions = async (nodeUrl: string, query = {}) => {
   } else {
     fee = '';
   }
+
+  const ordering = switchSortToOrdering(sort);
 
   // const queryParams = new QueryParams(query);
   const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${

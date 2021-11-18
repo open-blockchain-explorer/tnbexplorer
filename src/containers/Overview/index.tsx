@@ -37,6 +37,7 @@ const Overview: FC = () => {
           <Row>
             <Table
               bordered
+              rowKey={({id}) => id}
               dataSource={blockData}
               columns={blocksColumn}
               pagination={false}
@@ -50,6 +51,7 @@ const Overview: FC = () => {
         <Col sm={24} md={12}>
           <Table
             bordered
+            rowKey={({id}) => id}
             dataSource={transactionData}
             columns={transactionColumn}
             pagination={false}

@@ -5,17 +5,27 @@ import Radio from 'antd/es/radio';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
 import {getTransactions} from 'api/bank';
 import {A, FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {blocksColumn} from 'data/tableData/blocks';
-import {useTransactionColumn} from 'hooks';
+import {useTransactionColumn, useQueryParams} from 'hooks';
 import {getCurrentChain} from 'selectors';
 
 const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const {isMainnet, bankUrl} = useSelector(getCurrentChain);
+  const queryParams = useQueryParams();
+  const history = useHistory();
 
-  const transactionColumn = useTransactionColumn();
+  const transactionColumn = useTransactionColumn({
+    sort: {
+      coins: true,
+      time: 'ascend',
+      recipient: true,
+      sender: true,
+    },
+  });
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
   const initialPagination = useMemo(
@@ -31,12 +41,28 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>(initialPagination);
 
   const handleTableChange = useCallback(
-    (pageDetails: TablePaginationConfig) => {
+    (pageDetails: TablePaginationConfig, filter, sorter, {action}: any) => {
+      if ((filter || sorter) && action) {
+        if (action === 'sort' && sorter) {
+          const {field, order} = sorter;
+          if (order) {
+            const suffix = order === 'ascend' ? '+' : '-';
+            queryParams.set('sort', suffix.concat(field as string));
+            history.push(queryParams.toString());
+          } else {
+            queryParams.delete('sort');
+            history.push(queryParams.toString());
+          }
+        }
+      }
+
       const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
+      const sort = queryParams.get('sort');
+
       if (section === 'transactions') {
-        getTransactions(bankUrl, {limit, offset}).then(({results: txs, total}) => {
+        getTransactions(bankUrl, {limit, offset, sort}).then(({results: txs, total}) => {
           setTransactionData(txs);
           const pageSize = limit;
           const currentPage = offset / limit + 1;
@@ -52,12 +78,12 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
         setBlockPagination(pageDetails);
       }
     },
-    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination],
+    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination, history, queryParams],
   );
 
   useEffect(() => {
     const load = () => {
-      handleTableChange(initialPagination);
+      handleTableChange(initialPagination, {}, {}, {});
     };
 
     load();
@@ -85,6 +111,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       <Col sm={24} md={16} xl={17}>
         {section === 'transactions' ? (
           <Table
+            rowKey={({id}) => id}
             bordered
             columns={transactionColumn}
             dataSource={transactionData}
@@ -104,6 +131,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
           />
         ) : (
           <Table
+            rowKey={({id}) => id}
             bordered
             columns={blocksColumn}
             dataSource={[]}
