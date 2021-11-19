@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
+// import {QueryParams} from 'utils/search';
 import {formatQueryParamsToString} from 'utils/format';
 
 export const getData = async (url: string) => {
@@ -46,8 +47,6 @@ export const getBanks = async (
 
         const bankIp = protocol.concat('://', ip_address, ':', port ? port.toString() : '');
 
-        // console.log({bankIp});
-
         try {
           const data = await getConfirmationBlocks(bankIp);
           if (data) {
@@ -64,7 +63,7 @@ export const getBanks = async (
             acc.push(bankData);
           }
         } catch {
-          console.log(`Bank "${bankIp}" is offline`);
+          console.warn(`Bank "${bankIp}" is offline`);
         }
 
         return acc;
@@ -75,18 +74,59 @@ export const getBanks = async (
   return {results: banks, total};
 };
 
-export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
+const switchSortToOrdering = (sortValue?: string) => {
+  let suffix = '';
+  if (sortValue) {
+    if (sortValue.startsWith('+') || sortValue.startsWith('-')) {
+      suffix = sortValue.slice(0, 1);
+      sortValue = sortValue.slice(1);
+    }
+    switch (sortValue) {
+      case 'coins':
+        return suffix.concat('amount');
+      case 'sender':
+        return suffix.concat('block__sender');
+      case 'time':
+        suffix = suffix === '-' ? '+' : '-';
+        return suffix.concat('block__created_date');
+      default:
+        return suffix.concat(sortValue);
+    }
+  }
+  return '';
+};
+
+export const getTransactions = async (nodeUrl: string, query = {}) => {
   const defaultOptions = {
     limit: 10,
     offset: 0,
     accountNumber: '',
     sender: '',
     recipient: '',
+    fee: '',
+    sort: '',
   };
-  // console.log({queryParams});
-  const {limit, offset, accountNumber, sender, recipient} = {...defaultOptions, ...queryParams};
+  const queryOptions = {...defaultOptions, ...query};
 
-  const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${accountNumber}&block__sender=${sender}&recipient=${recipient}`;
+  const {limit, offset, accountNumber, sender, recipient, sort} = queryOptions;
+
+  let {fee} = queryOptions;
+
+  if (fee) {
+    if (fee.toLowerCase() === 'none' || fee.toLowerCase() === 'bank' || fee.toLowerCase() === 'primary_validator') {
+      fee = fee.toUpperCase();
+    }
+  } else {
+    fee = '';
+  }
+
+  const ordering = switchSortToOrdering(sort);
+
+  // const queryParams = new QueryParams(query);
+  const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${
+    accountNumber ?? ''
+  }&block__sender=${sender ?? ''}&recipient=${recipient ?? ''}&ordering=${ordering}&fee=${fee ?? ''}`;
+
   const data = await getData(url);
 
   const transactions = await data.results.map((tx: any) => {
@@ -107,9 +147,9 @@ export const getTransactions = async (nodeUrl: string, queryParams = {}) => {
   };
 };
 
-type QueryParams = {[key: string]: any};
+type Dict = {[key: string]: any};
 
-interface ConfirmationBlocksQueryParams extends QueryParams {
+interface ConfirmationBlocksQueryParams extends Dict {
   limit?: number;
   offset?: number;
   block?: string;

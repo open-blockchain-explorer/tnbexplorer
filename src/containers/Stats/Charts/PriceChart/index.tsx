@@ -73,7 +73,6 @@ export const PriceChart = () => {
   useEffect(() => {
     const load = async () => {
       const data = await getData('https://tnbcrow.pythonanywhere.com/recent-trades?limit=100&ordering=created_at');
-      console.log({data});
       const calculateRate = (t1: Trade, t2: Trade) => {
         return (t1.price * t1.volume + t2.price * t2.volume) / (t2.volume + t1.volume);
       };
@@ -97,7 +96,6 @@ export const PriceChart = () => {
         },
         [],
       );
-      console.log('priceData', formattedPriceData);
       setPriceData(formattedPriceData);
     };
 

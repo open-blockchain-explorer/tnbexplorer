@@ -10,7 +10,7 @@ import InputNumber from 'antd/es/input-number';
 import Modal from 'antd/es/modal';
 import Row from 'antd/es/row';
 import Popconfirm from 'antd/es/popconfirm';
-import Popover from 'antd/es/popover';
+import Tooltip from 'antd/es/tooltip';
 import Space from 'antd/es/space';
 import Table from 'antd/es/table';
 import Statistic from 'antd/es/statistic';
@@ -19,8 +19,13 @@ import {Rule} from 'rc-field-form/lib/interface';
 import {nanoid} from 'nanoid';
 import {useHistory} from 'react-router-dom';
 
-import MoreOutlined from '@ant-design/icons/MoreOutlined';
+import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
+import EditOutlined from '@ant-design/icons/EditOutlined';
+import QrcodeOutlined from '@ant-design/icons/QrcodeOutlined';
+import QuestionCircleOutlined from '@ant-design/icons/QuestionCircleOutlined';
+import ShareAltOutlined from '@ant-design/icons/ShareAltOutlined';
+import CheckOutlined from '@ant-design/icons/CheckOutlined';
 
 import {getConfirmationBlocks} from 'api/bank';
 import {PageContentsLayout, Qr} from 'components';
@@ -68,6 +73,7 @@ const PaymentRequest = () => {
 
   // for xs screen
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
 
   const paymentsTotal = paymentData.reduce((acc, payment) => payment.amount + acc, 0);
   const isMakingPayment = initialPayments.length > 0;
@@ -182,25 +188,37 @@ const PaymentRequest = () => {
           </Space>
         ) : (
           <>
-            <Popover
-              placement="right"
-              trigger="focus"
-              content={
-                <>
-                  <Button block type="text" disabled={editingKey !== ''} onClick={() => edit(record)}>
-                    Edit
-                  </Button>
+            <Tooltip title="Edit" placement="left">
+              <Button
+                type="ghost"
+                shape="circle"
+                icon={<EditOutlined />}
+                style={{border: 'none'}}
+                onClick={() => edit(record)}
+                disabled={editingKey !== ''}
+              />
+            </Tooltip>
 
-                  <Popconfirm title="Sure you want to delete?" onConfirm={() => handleDelete(record.key as string)}>
-                    <Button type="text" block disabled={editingKey !== ''}>
-                      Delete
-                    </Button>
-                  </Popconfirm>
-                </>
-              }
-            >
-              <Button type="text" shape="circle" icon={<MoreOutlined />} />
-            </Popover>
+            <Tooltip title="Delete" placement="left">
+              <Popconfirm
+                icon={<QuestionCircleOutlined style={{color: 'red'}} />}
+                title={
+                  <>
+                    Are you sure you want to <br />
+                    delete this transaction?
+                  </>
+                }
+                onConfirm={() => handleDelete(record.key as string)}
+              >
+                <Button
+                  type="ghost"
+                  shape="circle"
+                  disabled={editingKey !== ''}
+                  icon={<DeleteOutlined />}
+                  style={{border: 'none'}}
+                />
+              </Popconfirm>
+            </Tooltip>
           </>
         );
       },
@@ -246,7 +264,6 @@ const PaymentRequest = () => {
       {
         validator: (_, value) => {
           const duplicate = paymentData.find((payment) => value === payment.recipient && payment.key !== editingKey);
-          // console.log({recipient: value, duplicate});
           if (duplicate) {
             return Promise.reject(new Error('Account Number Must be Unique'));
           }
@@ -316,7 +333,6 @@ const PaymentRequest = () => {
             <Row gutter={[20, 20]}>
               <Col span={24}>
                 <br />
-
                 <Descriptions bordered size="small" layout="vertical">
                   <Descriptions.Item label="Sender" span={24}>
                     <Row justify="space-between" gutter={[10, 10]}>
@@ -328,7 +344,7 @@ const PaymentRequest = () => {
                       </Col>
 
                       <Col>
-                        <Button href={`/tnb/account/${keysignResult?.result?.sender}/`}>View Account</Button>
+                        <Button href={`/tnb/account/${keysignResult?.result?.sender}`}>View Account</Button>
                       </Col>
                     </Row>
                   </Descriptions.Item>
@@ -422,7 +438,62 @@ const PaymentRequest = () => {
                   <Statistic title="Recipients" value={paymentData.length} />
                 </Col>
                 <Col>
-                  <Statistic title="Payments Total" value={paymentsTotal} />
+                  <Statistic title="Total Volume" value={paymentsTotal} />
+                </Col>
+                <Modal
+                  visible={showQrModal}
+                  centered
+                  closable
+                  onCancel={() => setShowQrModal(false)}
+                  footer={null}
+                  bodyStyle={{width: '100%', padding: '30px'}}
+                  title="Scan Payment Request Transactions"
+                >
+                  <Row justify="center" align="middle">
+                    <Qr
+                      text={JSON.stringify(paymentData.map(({recipient, amount, memo}) => ({recipient, amount, memo})))}
+                      width={paymentData.length < 5 ? 250 + paymentData.length * 30 : undefined}
+                    />
+                  </Row>
+                </Modal>
+                <Col>
+                  <Tooltip
+                    title={
+                      copied ? (
+                        <>
+                          Copied{' '}
+                          <Typography.Text type="success">
+                            <CheckOutlined />
+                          </Typography.Text>{' '}
+                        </>
+                      ) : (
+                        'Copy url'
+                      )
+                    }
+                  >
+                    <Button
+                      shape="round"
+                      size="large"
+                      icon={<ShareAltOutlined />}
+                      onClick={async () => {
+                        await navigator.clipboard.writeText(hrefPaymentUrl);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 5000);
+                      }}
+                    >
+                      Share
+                    </Button>
+                  </Tooltip>
+                </Col>
+                <Col>
+                  <Button
+                    icon={<QrcodeOutlined width="50px" />}
+                    shape="round"
+                    size="large"
+                    onClick={() => setShowQrModal(true)}
+                  >
+                    Scan Transactions
+                  </Button>
                 </Col>
                 <Col>
                   <Button
@@ -435,8 +506,6 @@ const PaymentRequest = () => {
                       keysign.requestTransfer(
                         paymentData.map(({recipient, amount, memo}) => ({to: recipient, amount, memo})),
                         async (res: any) => {
-                          // console.log({res});
-
                           const {success, result: keysignBlock} = res;
                           let paymentIsSuccessful: boolean;
                           try {
@@ -446,8 +515,6 @@ const PaymentRequest = () => {
                                 limit: 20,
                                 block: keysignBlock.id,
                               });
-
-                              // console.log(confirmationBlocks);
 
                               paymentIsSuccessful = confirmationBlocks.some((cb: any) => {
                                 return keysignBlock.id === cb.block;
@@ -588,6 +655,7 @@ const PaymentRequest = () => {
                             onClick={async () => {
                               await navigator.clipboard.writeText(hrefPaymentUrl);
                               setCopied(true);
+                              setTimeout(() => setCopied(false), 5000);
                             }}
                           >
                             {copied ? 'Copied' : 'Copy'}

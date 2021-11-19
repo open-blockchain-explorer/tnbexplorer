@@ -36,7 +36,7 @@ const Layout: FC = ({children}) => {
     xs: '12.5px',
   };
 
-  console.log(screens, responsiveWidth(screens, width));
+  // console.log(screens, responsiveWidth(screens, width));
 
   return (
     <AntDLayout>

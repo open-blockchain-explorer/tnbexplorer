@@ -5,6 +5,7 @@ export {default as ChartsCard} from './ChartsCard';
 export {default as FeeSummary} from './FeeSummary';
 export {GoogleAnalytics} from './GoogleAnalytics';
 export {default as KeyValuePair} from './KeyValuePair';
+export type {KeyValueType} from './KeyValuePair';
 export {default as KeyValueList} from './KeyValueList';
 export {default as Layout} from './Layout';
 export {default as InfoPane} from './InfoPane';

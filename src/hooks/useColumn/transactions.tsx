@@ -19,7 +19,7 @@ export const transactionColumn = (accountNumber?: string): ColumnsType<any> => {
       return text;
     }
     return (
-      <A href={`account/${text}/`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
+      <A href={`account/${text}`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
         {text}
       </A>
     );

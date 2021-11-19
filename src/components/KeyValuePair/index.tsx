@@ -6,10 +6,13 @@ import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
 import InfoCircleOutlined from '@ant-design/icons/InfoCircleOutlined';
 
+import {A} from 'components';
+
 export interface KeyValueType {
   title: string;
   value: string | number | ReactNode;
   tooltip?: string | ReactNode;
+  href?: string;
 
   copyable?:
     | boolean
@@ -19,10 +22,17 @@ export interface KeyValueType {
   ellipsis?: boolean;
 }
 
-const KeyValuePair: FC<KeyValueType> = ({title, value, tooltip, ...others}) => {
+const KeyValuePair: FC<KeyValueType> = ({title, value, tooltip, href, ...others}) => {
   const renderValue = () => {
     const typeOfValue = typeof value;
     if (typeOfValue === 'string' || typeOfValue === 'number') {
+      if (href) {
+        return (
+          <A href={href}>
+            <Typography.Link {...others}>{typeOfValue === 'number' ? value!.toLocaleString() : value}</Typography.Link>
+          </A>
+        );
+      }
       return (
         <Typography.Text {...others}>{typeOfValue === 'number' ? value!.toLocaleString() : value}</Typography.Text>
       );
@@ -36,13 +46,13 @@ const KeyValuePair: FC<KeyValueType> = ({title, value, tooltip, ...others}) => {
       <Row justify="space-between" align="middle">
         <Col xs={{flex: ''}}>
           <Space>
-            <Typography.Text type="secondary">
-              {tooltip && (
+            {tooltip && (
+              <Typography.Text type="secondary">
                 <Tooltip placement="topRight" title={tooltip}>
                   <InfoCircleOutlined />
                 </Tooltip>
-              )}
-            </Typography.Text>
+              </Typography.Text>
+            )}
 
             <Typography.Text>{title}</Typography.Text>
           </Space>

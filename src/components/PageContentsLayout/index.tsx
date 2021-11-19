@@ -67,7 +67,6 @@ const PageContentsLayout: FC<RowProps & Props> = ({
 
   useEffect(() => {
     const breadCrumbs = getBreadCrumb();
-    // console.log(breadCrumbs.length);
     if (breadCrumbs.length > 1) setBreadCrumb(breadCrumbs);
   }, [getBreadCrumb]);
 
