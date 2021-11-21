@@ -2,7 +2,7 @@ import React, {useEffect, useRef, ReactNode} from 'react';
 import {Form} from 'antd';
 import Input from 'antd/es/input';
 import InputNumber from 'antd/es/input-number';
-import {Rule} from 'rc-field-form/lib/interface';
+import {Rule} from 'antd/es/form';
 
 interface EditableCellProps<T> extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;

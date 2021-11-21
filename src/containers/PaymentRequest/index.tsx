@@ -3,7 +3,7 @@ import Button from 'antd/es/button';
 import Card from 'antd/es/card';
 import Col from 'antd/es/col';
 import Descriptions from 'antd/es/descriptions';
-import Form from 'antd/es/form';
+import Form, {Rule} from 'antd/es/form';
 import Grid from 'antd/es/grid';
 import Input from 'antd/es/input';
 import InputNumber from 'antd/es/input-number';
@@ -15,7 +15,6 @@ import Space from 'antd/es/space';
 import Table from 'antd/es/table';
 import Statistic from 'antd/es/statistic';
 import Typography from 'antd/es/typography';
-import {Rule} from 'rc-field-form/lib/interface';
 import {nanoid} from 'nanoid';
 import {useHistory} from 'react-router-dom';
 
