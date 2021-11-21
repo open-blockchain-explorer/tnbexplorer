@@ -29,7 +29,6 @@ interface StepProps {
   fallback: string;
   alt: string;
   title: string;
-  description?: string;
 }
 
 const Step: FC<StepProps> = ({src, fallback, alt, title, children}) => (

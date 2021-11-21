@@ -24,12 +24,9 @@ import {useTransactionColumn} from 'hooks/useTransactionColumn';
 import {getCurrentChain} from 'selectors';
 import {AccountPageContext} from '../accountContext';
 
-const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string) => void; onClear: () => void}> = ({
-  confirm,
-  clearFilters,
-  onFilter,
-  onClear,
-}) => {
+const FilterAccountNumberDropdown: FC<
+  FilterDropdownProps & {onFilter: (accountNumber: string) => void; onClear: () => void}
+> = ({confirm, clearFilters, onFilter, onClear}) => {
   const [form] = Form.useForm();
 
   const handleFilter = ({accountNumberToFilter}: any) => {
@@ -73,11 +70,76 @@ const FilterDropdown: FC<FilterDropdownProps & {onFilter: (accountNumber: string
   );
 };
 
+const FilterTxFlowDropdown: FC<
+  FilterDropdownProps & {onFilter: (txFlowValue: 'in' | 'out') => void; onClear: () => void}
+> = ({clearFilters, confirm, onClear, onFilter}) => {
+  const [form] = Form.useForm();
+
+  const handleTxFlowFilter = ({value}: any) => {
+    if (value) {
+      confirm();
+      onFilter?.(value);
+    }
+  };
+
+  return (
+    <Form form={form} onFinish={handleTxFlowFilter}>
+      <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '190px'}}>
+        <Col span={24}>
+          <Form.Item name="txFlow" style={{margin: '0px'}}>
+            <Radio.Group>
+              <Space direction="vertical">
+                <Radio value={'in'}>
+                  <Tag style={{fontWeight: 'bolder'}} color={'#87d068'}>
+                    IN
+                  </Tag>
+                  Incoming txs
+                </Radio>
+                <Radio value={'out'}>
+                  <Tag color={'#f50'} style={{fontWeight: 'bolder'}}>
+                    OUT
+                  </Tag>{' '}
+                  Outgoing txs
+                </Radio>
+              </Space>
+            </Radio.Group>
+          </Form.Item>
+        </Col>
+
+        <Col span={12}>
+          <Form.Item style={{margin: '0px'}}>
+            <Button
+              htmlType="button"
+              block
+              type="ghost"
+              onClick={() => {
+                form.resetFields();
+                onClear?.();
+
+                clearFilters?.();
+              }}
+            >
+              Clear
+            </Button>
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item style={{margin: '0px'}}>
+            <Button htmlType="submit" block type="primary">
+              Search
+            </Button>
+          </Form.Item>
+        </Col>
+      </Row>
+    </Form>
+  );
+};
+
 export const TransactionTab = React.memo(() => {
   const {bankUrl} = useSelector(getCurrentChain);
 
   const history = useHistory();
-  const queryParams = useQueryParams();
+  const searchParams = useQueryParams();
 
   const {isAccountValid, transactions, setTransactions} = useContext(AccountPageContext);
   const accountNumber = useAccount();
@@ -97,16 +159,16 @@ export const TransactionTab = React.memo(() => {
   transactionColumn[0].onFilter = (value, record) => record.sender === value;
   transactionColumn[0].filterDropdown = (filterDropdownProps) => {
     return (
-      <FilterDropdown
+      <FilterAccountNumberDropdown
         {...filterDropdownProps}
         onFilter={(accountNumberToFilter: string) => {
-          queryParams.set('sender', accountNumberToFilter);
-          queryParams.delete('recipient');
-          history.push(queryParams.toString());
+          searchParams.set('sender', accountNumberToFilter);
+          searchParams.delete('recipient');
+          history.push(searchParams.toString());
         }}
         onClear={() => {
-          queryParams.delete('sender');
-          history.push(queryParams.toString());
+          searchParams.delete('sender');
+          history.push(searchParams.toString());
         }}
       />
     );
@@ -118,101 +180,52 @@ export const TransactionTab = React.memo(() => {
   transactionColumn[1].onFilter = (value, record) => record.recipient === value;
   transactionColumn[1].filterDropdown = (filterDropdownProps) => {
     return (
-      <FilterDropdown
+      <FilterAccountNumberDropdown
         {...filterDropdownProps}
         onFilter={(accountNumberToFilter: string) => {
-          queryParams.set('recipient', accountNumberToFilter);
-          queryParams.delete('sender');
+          searchParams.set('recipient', accountNumberToFilter);
+          searchParams.delete('sender');
 
-          history.push(queryParams.toString());
+          history.push(searchParams.toString());
         }}
         onClear={() => {
-          queryParams.delete('recipient');
-          history.push(queryParams.toString());
+          searchParams.delete('recipient');
+          history.push(searchParams.toString());
         }}
       />
     );
   };
 
   transactionColumn[2].filters = [];
-  transactionColumn[2].filterDropdown = ({clearFilters, confirm}) => {
-    const [form] = Form.useForm();
-    const handleTxFlowFilter = ({txFlow}: any) => {
-      console.log({txFlow});
-      if (txFlow) {
-        confirm?.();
-        if (txFlow === 'in') {
-          queryParams.set('recipient', accountNumber);
-          queryParams.delete('sender');
-          history.push(queryParams.toString());
-        } else {
-          queryParams.set('sender', accountNumber);
-          queryParams.delete('recipient');
-          history.push(queryParams.toString());
+  transactionColumn[2].filterDropdown = (props) => (
+    <FilterTxFlowDropdown
+      {...props}
+      onClear={() => {
+        if (searchParams.get('recipient') === accountNumber || searchParams.get('sender') === accountNumber) {
+          searchParams.delete('recipient');
+          searchParams.delete('sender');
+          history.push(searchParams.toString());
         }
-      }
-    };
-    return (
-      <Form form={form} onFinish={handleTxFlowFilter}>
-        <Row gutter={[10, 10]} justify="space-between" style={{padding: '10px', width: '190px'}}>
-          <Col span={24}>
-            <Form.Item name="txFlow" style={{margin: '0px'}}>
-              <Radio.Group>
-                <Space direction="vertical">
-                  <Radio value={'in'}>
-                    <Tag style={{fontWeight: 'bolder'}} color={'#87d068'}>
-                      IN
-                    </Tag>
-                    Incoming txs
-                  </Radio>
-                  <Radio value={'out'}>
-                    <Tag color={'#f50'} style={{fontWeight: 'bolder'}}>
-                      OUT
-                    </Tag>{' '}
-                    Outgoing txs
-                  </Radio>
-                </Space>
-              </Radio.Group>
-            </Form.Item>
-          </Col>
+      }}
+      onFilter={(txFlowValue: 'in' | 'out') => {
+        if (txFlowValue === 'in') {
+          searchParams.set('recipient', accountNumber);
+          searchParams.delete('sender');
+          history.push(searchParams.toString());
+        } else {
+          searchParams.set('sender', accountNumber);
+          searchParams.delete('recipient');
+          history.push(searchParams.toString());
+        }
+      }}
+    />
+  );
 
-          <Col span={12}>
-            <Form.Item style={{margin: '0px'}}>
-              <Button
-                htmlType="button"
-                block
-                type="ghost"
-                onClick={() => {
-                  form.resetFields();
-                  if (queryParams.get('recipient') === accountNumber || queryParams.get('sender') === accountNumber) {
-                    queryParams.delete('recipient');
-                    queryParams.delete('sender');
-                    history.push(queryParams.toString());
-                  }
-                  clearFilters?.();
-                }}
-              >
-                Clear
-              </Button>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item style={{margin: '0px'}}>
-              <Button htmlType="submit" block type="primary">
-                Search
-              </Button>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    );
-  };
-
-  const [feeRadioGroup, setFeeRadioGroup] = useState(queryParams.get('fee') ?? '');
+  const [feeRadioGroup, setFeeRadioGroup] = useState(searchParams.get('fee') ?? '');
   const transactionTableHeader = () => {
     const tags: ReactNode[] = [];
 
-    queryParams.forEach((value, key) => {
+    searchParams.forEach((value, key) => {
       if (key === 'fee' || key === 'sort') return;
 
       let tagText: ReactNode;
@@ -236,8 +249,8 @@ export const TransactionTab = React.memo(() => {
             key={key}
             closable
             onClose={() => {
-              queryParams.delete(key);
-              history.push(queryParams.toString());
+              searchParams.delete(key);
+              history.push(searchParams.toString());
             }}
           >
             <Typography.Text style={{fontSize: '14px'}}> {tagText} </Typography.Text>
@@ -249,16 +262,16 @@ export const TransactionTab = React.memo(() => {
     const filterFees = (e: any) => {
       const {value} = e.target;
       setFeeRadioGroup(value);
-      queryParams.set('fee', value);
-      history.push(queryParams.toString());
+      searchParams.set('fee', value);
+      history.push(searchParams.toString());
     };
 
     const deselect = (e: any) => {
       const {value} = e.target;
       if (value === feeRadioGroup) {
         setFeeRadioGroup('');
-        queryParams.delete('fee');
-        history.push(queryParams.toString());
+        searchParams.delete('fee');
+        history.push(searchParams.toString());
       }
     };
 
@@ -303,11 +316,11 @@ export const TransactionTab = React.memo(() => {
           const {field, order} = sorter;
           if (order) {
             const suffix = order === 'ascend' ? '+' : '-';
-            queryParams.set('sort', suffix.concat(field as string));
-            history.push(queryParams.toString());
+            searchParams.set('sort', suffix.concat(field as string));
+            history.push(searchParams.toString());
           } else {
-            queryParams.delete('sort');
-            history.push(queryParams.toString());
+            searchParams.delete('sort');
+            history.push(searchParams.toString());
           }
         }
       }
@@ -315,10 +328,10 @@ export const TransactionTab = React.memo(() => {
       const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-      const fee = queryParams.get('fee');
-      const sort = queryParams.get('sort');
-      const sender = queryParams.get('sender');
-      const recipient = queryParams.get('recipient');
+      const fee = searchParams.get('fee');
+      const sort = searchParams.get('sort');
+      const sender = searchParams.get('sender');
+      const recipient = searchParams.get('recipient');
       getTransactions(bankUrl, {
         limit,
         offset,
@@ -340,7 +353,7 @@ export const TransactionTab = React.memo(() => {
         setTransactionPagination(pagination);
       });
     },
-    [accountNumber, bankUrl, setTransactions, setTransactionPagination, queryParams, history],
+    [accountNumber, bankUrl, setTransactions, setTransactionPagination, searchParams, history],
   );
 
   useEffect(() => {

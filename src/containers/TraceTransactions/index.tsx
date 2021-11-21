@@ -516,7 +516,6 @@ const TraceTransactions = () => {
             edgeStateStyles={edgeStateStyles}
             nodeStateStyles={nodeStateStyles}
             handleNodeClick={handleNodeClick}
-            graphId="dagreFirst"
           />
         </ChartsCard>
       </Col>

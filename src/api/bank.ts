@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import {CORS_BRIDGE} from 'constants/url';
-// import {QueryParams} from 'utils/search';
+// import {SearchParams} from 'utils/search';
 import {formatQueryParamsToString} from 'utils/format';
 
 export const getData = async (url: string) => {
@@ -122,7 +122,7 @@ export const getTransactions = async (nodeUrl: string, query = {}) => {
 
   const ordering = switchSortToOrdering(sort);
 
-  // const queryParams = new QueryParams(query);
+  // const searchParams = new SearchParams(query);
   const url = `${nodeUrl}/bank_transactions?limit=${limit}&offset=${offset}&account_number=${
     accountNumber ?? ''
   }&block__sender=${sender ?? ''}&recipient=${recipient ?? ''}&ordering=${ordering}&fee=${fee ?? ''}`;
@@ -156,14 +156,14 @@ interface ConfirmationBlocksQueryParams extends Dict {
   ordering?: `${'' | '+' | '-'}${'created_date' | 'modified_date' | 'id' | 'block' | 'validator' | 'block_identifier'}`;
 }
 
-export const getConfirmationBlocks = async (nodeUrl: string, queryParams?: ConfirmationBlocksQueryParams) => {
+export const getConfirmationBlocks = async (nodeUrl: string, searchParams?: ConfirmationBlocksQueryParams) => {
   const defaultOptions: ConfirmationBlocksQueryParams = {
     limit: 10,
     offset: 0,
     ordering: '-modified_date',
   };
-  queryParams = {...defaultOptions, ...queryParams};
-  const queryParamsUrl = formatQueryParamsToString(queryParams);
+  searchParams = {...defaultOptions, ...searchParams};
+  const queryParamsUrl = formatQueryParamsToString(searchParams);
   const url = `${nodeUrl}/confirmation_blocks${queryParamsUrl}`;
   const {results, count: total} = await getData(url);
 

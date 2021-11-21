@@ -15,7 +15,7 @@ import {getCurrentChain} from 'selectors';
 
 const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const {isMainnet, bankUrl} = useSelector(getCurrentChain);
-  const queryParams = useQueryParams();
+  const searchParams = useQueryParams();
   const history = useHistory();
 
   const transactionColumn = useTransactionColumn({
@@ -47,11 +47,11 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
           const {field, order} = sorter;
           if (order) {
             const suffix = order === 'ascend' ? '+' : '-';
-            queryParams.set('sort', suffix.concat(field as string));
-            history.push(queryParams.toString());
+            searchParams.set('sort', suffix.concat(field as string));
+            history.push(searchParams.toString());
           } else {
-            queryParams.delete('sort');
-            history.push(queryParams.toString());
+            searchParams.delete('sort');
+            history.push(searchParams.toString());
           }
         }
       }
@@ -59,7 +59,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
-      const sort = queryParams.get('sort');
+      const sort = searchParams.get('sort');
 
       if (section === 'transactions') {
         getTransactions(bankUrl, {limit, offset, sort}).then(({results: txs, total}) => {
@@ -78,7 +78,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
         setBlockPagination(pageDetails);
       }
     },
-    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination, history, queryParams],
+    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination, history, searchParams],
   );
 
   useEffect(() => {

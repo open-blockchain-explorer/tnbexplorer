@@ -1,10 +1,10 @@
 import {useMemo} from 'react';
 import {useLocation} from 'react-router-dom';
-import {QueryParams} from 'utils/search';
+import {SearchParams} from 'utils/search';
 
 export const useQueryParams = () => {
   const {search} = useLocation();
 
-  const mappedQuery = useMemo(() => QueryParams.fromSearchString(search), [search]);
+  const mappedQuery = useMemo(() => new SearchParams(search), [search]);
   return mappedQuery;
 };

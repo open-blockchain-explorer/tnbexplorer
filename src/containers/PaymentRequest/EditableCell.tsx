@@ -28,16 +28,18 @@ export function EditableCell<T>({
   ...restProps
 }: EditableCellProps<T>) {
   const inputRef = useRef<Input>(null);
+  const inputNumberRef = useRef<HTMLInputElement>(null);
 
   let inputNode: ReactNode;
   if (dataIndex === focusIndex) {
-    inputNode = inputType === 'number' ? <InputNumber ref={inputRef} /> : <Input ref={inputRef} />;
+    inputNode = inputType === 'number' ? <InputNumber ref={inputNumberRef} /> : <Input ref={inputRef} />;
   } else {
     inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
   }
   useEffect(() => {
     if (editing && dataIndex === focusIndex) {
-      inputRef.current!.focus();
+      inputRef.current?.focus();
+      inputNumberRef.current?.focus();
     }
   }, [editing, dataIndex, focusIndex]);
 

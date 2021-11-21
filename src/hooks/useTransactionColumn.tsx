@@ -35,7 +35,7 @@ const formatAccountNumberColumn = (text: string, accountNumber?: string) => {
 };
 
 export const useTransactionColumn = (options?: TransactionColumnOptions): ColumnsType<TransactionColumnType> => {
-  const queryParams = useQueryParams();
+  const searchParams = useQueryParams();
   const getSorter = (field: keyof TransactionColumnType) => {
     const value = options?.sort?.[field];
     if (value) {
@@ -47,7 +47,7 @@ export const useTransactionColumn = (options?: TransactionColumnOptions): Column
 
   const getDefaultSortOrder = (field: keyof TransactionColumnType) => {
     const value = options?.sort?.[field];
-    const sortQuery = queryParams.get('sort');
+    const sortQuery = searchParams.get('sort');
 
     if (sortQuery) {
       if (sortQuery.endsWith(field)) {
