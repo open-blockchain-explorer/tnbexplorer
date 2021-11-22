@@ -4,20 +4,28 @@ import Row from 'antd/es/row';
 import Radio from 'antd/es/radio';
 import Table, {TablePaginationConfig} from 'antd/es/table';
 import Typography from 'antd/es/typography';
-import {Link} from 'react-router-dom';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 
 import {getTransactions} from 'api/bank';
-import {FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
+import {A, FeeSummary, NetworkStats, PageContentsLayout, TestnetAlertMessage} from 'components';
 import {blocksColumn} from 'data/tableData/blocks';
-import {useChainPath, useTransactionColumn} from 'hooks';
+import {useTransactionColumn, useQueryParams} from 'hooks';
 import {getCurrentChain} from 'selectors';
 
 const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const {isMainnet, bankUrl} = useSelector(getCurrentChain);
-  const currentPath = useChainPath();
+  const searchParams = useQueryParams();
+  const history = useHistory();
 
-  const transactionColumn = useTransactionColumn();
+  const transactionColumn = useTransactionColumn({
+    sort: {
+      coins: true,
+      time: 'ascend',
+      recipient: true,
+      sender: true,
+    },
+  });
   const [transactionData, setTransactionData] = useState<any[]>([]);
 
   const initialPagination = useMemo(
@@ -33,13 +41,28 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
   const [transactionPagination, setTransactionPagination] = useState<TablePaginationConfig>(initialPagination);
 
   const handleTableChange = useCallback(
-    (pageDetails: TablePaginationConfig) => {
+    (pageDetails: TablePaginationConfig, filter, sorter, {action}: any) => {
+      if ((filter || sorter) && action) {
+        if (action === 'sort' && sorter) {
+          const {field, order} = sorter;
+          if (order) {
+            const suffix = order === 'ascend' ? '+' : '-';
+            searchParams.set('sort', suffix.concat(field as string));
+            history.push(searchParams.toString());
+          } else {
+            searchParams.delete('sort');
+            history.push(searchParams.toString());
+          }
+        }
+      }
+
       const limit = pageDetails.pageSize ? pageDetails.pageSize : 10;
-      // console.log(pageDetails);
       const offset = pageDetails.current ? (pageDetails.current - 1) * limit : 0;
 
+      const sort = searchParams.get('sort');
+
       if (section === 'transactions') {
-        getTransactions(bankUrl, {limit, offset}).then(({results: txs, total}) => {
+        getTransactions(bankUrl, {limit, offset, sort}).then(({results: txs, total}) => {
           setTransactionData(txs);
           const pageSize = limit;
           const currentPage = offset / limit + 1;
@@ -49,19 +72,18 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
             pageSize,
             total,
           };
-          // console.log({pagination});
           setTransactionPagination(pagination);
         });
       } else {
         setBlockPagination(pageDetails);
       }
     },
-    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination],
+    [bankUrl, section, setTransactionData, setBlockPagination, setTransactionPagination, history, searchParams],
   );
 
   useEffect(() => {
     const load = () => {
-      handleTableChange(initialPagination);
+      handleTableChange(initialPagination, {}, {}, {});
     };
 
     load();
@@ -74,20 +96,14 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       <Col span={24}>
         <Radio.Group buttonStyle="solid" value={section}>
           <Radio.Button value="transactions" style={{margin: '0px', padding: '0px'}}>
-            <Link
-              to={`${currentPath}/transactions`}
-              style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}
-            >
+            <A href={`transactions`} style={{color: section === 'transactions' ? 'white' : 'black', padding: '10px'}}>
               Transactions
-            </Link>
+            </A>
           </Radio.Button>
           <Radio.Button value="blocks" style={{margin: '0px', padding: '0px'}}>
-            <Link
-              to={`${currentPath}/blocks`}
-              style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}
-            >
+            <A href={`blocks`} style={{color: section === 'blocks' ? 'white' : 'black', padding: '10px'}}>
               Blocks
-            </Link>
+            </A>
           </Radio.Button>
         </Radio.Group>
       </Col>
@@ -95,6 +111,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
       <Col sm={24} md={16} xl={17}>
         {section === 'transactions' ? (
           <Table
+            rowKey={({id}) => id}
             bordered
             columns={transactionColumn}
             dataSource={transactionData}
@@ -114,6 +131,7 @@ const Transactions: FC<{section: 'transactions' | 'blocks'}> = ({section}) => {
           />
         ) : (
           <Table
+            rowKey={({id}) => id}
             bordered
             columns={blocksColumn}
             dataSource={[]}

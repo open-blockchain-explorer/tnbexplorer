@@ -29,7 +29,6 @@ interface StepProps {
   fallback: string;
   alt: string;
   title: string;
-  description?: string;
 }
 
 const Step: FC<StepProps> = ({src, fallback, alt, title, children}) => (
@@ -102,7 +101,7 @@ const TestnetFaucet = () => {
                   initialValues={{requiredMarkValue: requiredMark}}
                   requiredMark={requiredMark}
                   onFinish={faucetRequest}
-                  onFinishFailed={() => console.log('Form failed')}
+                  // onFinishFailed={() => console.log('Form failed')}
                 >
                   <Form.Item label="Amount" name="amountOptionId" initialValue={1}>
                     <Radio.Group>
@@ -134,8 +133,7 @@ const TestnetFaucet = () => {
               </Col>
               <Col xs={23} sm={20} md={16} lg={10}>
                 <Typography.Title level={5}>
-                  Testnet Bank:{' '}
-                  <Typography.Link href={`${TESTNET_BANK_URL}/config`}> {TESTNET_BANK_URL.slice(7)}</Typography.Link>
+                  Testnet Bank: <A href={`${TESTNET_BANK_URL}/config`}> {TESTNET_BANK_URL.slice(7)}</A>
                 </Typography.Title>
                 <Typography.Text>
                   To connect to the TNB Testnet network set the Testnet Bank as your{' '}

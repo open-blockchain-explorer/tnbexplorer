@@ -38,3 +38,9 @@ export const identifyQuery = async (query: string, currentChain: any): Promise<Q
 
   return null;
 };
+
+export class SearchParams extends URLSearchParams {
+  toString(): string {
+    return '?'.concat(super.toString());
+  }
+}

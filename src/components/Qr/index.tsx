@@ -8,7 +8,7 @@ interface QrProps {
   width?: number;
 }
 
-const Qr: FC<QrProps> = ({margin = 1, text, width = 140}) => {
+const Qr: FC<QrProps> = ({margin = 1, text, width, className}) => {
   const [qr, setQr] = useState<ReactNode | null>(null);
 
   useEffect(() => {
@@ -19,13 +19,12 @@ const Qr: FC<QrProps> = ({margin = 1, text, width = 140}) => {
           light: '#0000',
         },
         margin,
-        width,
       });
-      setQr(<img alt="QR Code" src={url} />);
+      setQr(<img alt="QR Code" src={url} className={className} style={{width: width ?? '100%'}} />);
     };
 
     generateQR();
-  }, [margin, text, width]);
+  }, [margin, text, width, className]);
 
   return <>{qr}</>;
 };

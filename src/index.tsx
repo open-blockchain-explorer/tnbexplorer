@@ -9,8 +9,10 @@ import App from 'containers/App';
 import 'styles/main.css';
 import reportWebVitals from './reportWebVitals';
 
-const measurementId = 'UA-166269409-1';
-ReactGA.initialize(measurementId, {debug: true});
+const measurementId = process.env.REACT_APP_ANALYTICS_ID;
+if (measurementId) {
+  ReactGA.initialize(measurementId, {debug: true});
+}
 
 ReactDOM.render(
   <Provider store={store}>

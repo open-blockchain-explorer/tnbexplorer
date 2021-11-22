@@ -1,9 +1,12 @@
 import React from 'react';
 import Tag from 'antd/es/tag';
+import Tooltip from 'antd/es/tooltip';
 import Typography from 'antd/es/typography';
 import {ColumnsType} from 'antd/es/table';
-import {formatDistance} from 'date-fns';
+import {formatDistanceToNowStrict} from 'date-fns';
 import {A} from 'components';
+import {SortOrder} from 'antd/es/table/interface';
+import {useQueryParams} from 'hooks';
 
 export interface TransactionColumnType {
   amount: number;
@@ -11,39 +14,77 @@ export interface TransactionColumnType {
   recipient: string;
   sender: string;
   time: number;
+  memo: string;
 }
 
-export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> => {
-  const formatColumnAccount = (text: string) => {
-    if (accountNumber && accountNumber === text) {
-      return text;
+interface TransactionColumnOptions {
+  accountNumber?: string;
+  sort?: {[Key in keyof Partial<TransactionColumnType>]: boolean | SortOrder};
+  filter?: {[Key in keyof TransactionColumnType | 'txFlow']: boolean};
+}
+
+const formatAccountNumberColumn = (text: string, accountNumber?: string) => {
+  if (accountNumber && accountNumber === text) {
+    return text;
+  }
+  return (
+    <A href={`account/${text}`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
+      {text}
+    </A>
+  );
+};
+
+export const useTransactionColumn = (options?: TransactionColumnOptions): ColumnsType<TransactionColumnType> => {
+  const searchParams = useQueryParams();
+  const getSorter = (field: keyof TransactionColumnType) => {
+    const value = options?.sort?.[field];
+    if (value) {
+      return () => 0;
     }
-    return (
-      <A href={`account/${text}/`} style={{wordBreak: 'break-all', wordWrap: 'break-word'}}>
-        {text}
-      </A>
-    );
+
+    return undefined;
   };
 
+  const getDefaultSortOrder = (field: keyof TransactionColumnType) => {
+    const value = options?.sort?.[field];
+    const sortQuery = searchParams.get('sort');
+
+    if (sortQuery) {
+      if (sortQuery.endsWith(field)) {
+        if (sortQuery.charAt(0) === '-') {
+          return 'descend';
+        }
+        return 'ascend';
+      }
+    } else if (typeof value === 'string') {
+      return value;
+    }
+
+    return null;
+  };
+
+  const accountNumber = options?.accountNumber;
   const columns: ColumnsType<TransactionColumnType> = [
     {
       dataIndex: 'sender',
       ellipsis: true,
-      key: 'recipient',
-      render: (text: string) => formatColumnAccount(text),
+      render: (text: string) => formatAccountNumberColumn(text, accountNumber),
       title: 'Sender',
+      defaultSortOrder: getDefaultSortOrder('sender'),
+      sorter: getSorter('sender'),
     },
     {
       dataIndex: 'recipient',
       ellipsis: true,
-      key: 'recipient',
-      render: (text: string) => formatColumnAccount(text),
+      render: (text: string) => formatAccountNumberColumn(text, accountNumber),
       title: 'Recipient',
+      defaultSortOrder: getDefaultSortOrder('recipient'),
+
+      sorter: getSorter('recipient'),
     },
     {
       dataIndex: 'memo',
       ellipsis: false,
-      key: 'id',
       render: (_, {memo, fee}: any) => {
         if (fee) {
           if (fee === 'PRIMARY_VALIDATOR') {
@@ -55,22 +96,29 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
         return memo;
       },
       title: 'Memo',
+      sorter: getSorter('memo'),
+      defaultSortOrder: getDefaultSortOrder('memo'),
     },
     {
       dataIndex: 'time',
-      key: 'time',
+
       render: (timestamp: string) => {
-        return formatDistance(new Date(timestamp), new Date()).replace('about', '~');
+        const date = new Date(timestamp);
+        return <Tooltip title={date.toLocaleString()}>{formatDistanceToNowStrict(date)}</Tooltip>;
       },
       title: 'Time',
       width: '120px',
+      sorter: getSorter('time'),
+      defaultSortOrder: getDefaultSortOrder('time'),
     },
     {
       align: 'right',
       dataIndex: 'coins',
       render: (coins: number) => <Typography.Text>{new Intl.NumberFormat().format(coins)}</Typography.Text>,
       title: 'Coins',
-      width: '90px',
+      width: '115px',
+      sorter: getSorter('coins'),
+      defaultSortOrder: getDefaultSortOrder('coins'),
     },
   ];
 
@@ -79,7 +127,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
       ...columns.slice(0, 2),
       {
         align: 'center',
-        key: 'type',
+        title: 'Tx Flow',
         render: (x, row) => {
           let tag = '';
 
@@ -101,7 +149,7 @@ export const useTransactionColumn = (accountNumber?: string): ColumnsType<any> =
             <></>
           );
         },
-        width: '75px',
+        width: '100px',
       },
       ...columns.slice(2),
     ];

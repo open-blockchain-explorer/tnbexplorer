@@ -2,7 +2,7 @@ import React, {useEffect, useRef, ReactNode} from 'react';
 import {Form} from 'antd';
 import Input from 'antd/es/input';
 import InputNumber from 'antd/es/input-number';
-import {Rule} from 'rc-field-form/lib/interface';
+import {Rule} from 'antd/es/form';
 
 interface EditableCellProps<T> extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -28,16 +28,18 @@ export function EditableCell<T>({
   ...restProps
 }: EditableCellProps<T>) {
   const inputRef = useRef<Input>(null);
+  const inputNumberRef = useRef<HTMLInputElement>(null);
 
   let inputNode: ReactNode;
   if (dataIndex === focusIndex) {
-    inputNode = inputType === 'number' ? <InputNumber ref={inputRef} /> : <Input ref={inputRef} />;
+    inputNode = inputType === 'number' ? <InputNumber ref={inputNumberRef} /> : <Input ref={inputRef} />;
   } else {
     inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
   }
   useEffect(() => {
     if (editing && dataIndex === focusIndex) {
-      inputRef.current!.focus();
+      inputRef.current?.focus();
+      inputNumberRef.current?.focus();
     }
   }, [editing, dataIndex, focusIndex]);
 

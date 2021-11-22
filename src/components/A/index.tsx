@@ -3,18 +3,20 @@ import {Link, LinkProps} from 'react-router-dom';
 
 import {useChainPath} from 'hooks';
 
+type Network = 'tnb' | 'testnet';
 interface ComponentProps {
   newWindow?: boolean;
   href: string;
-  network?: 'tnb' | 'testnet';
+  network?: Network;
 }
 
 type AnchorProps = ComponentProps & Partial<LinkProps>;
 
-const formatHref = (href: string, network: string) => {
+const formatHref = (href: string, network: Network) => {
   if (href.startsWith('/')) {
     return href;
   }
+
   if (href.startsWith('./')) {
     const arr = window.location.pathname.split('/');
     arr.pop();
@@ -34,7 +36,7 @@ const A: FC<AnchorProps> = ({newWindow, href, network, children, ...props}) => {
       {children}
     </a>
   ) : (
-    <Link {...props} to={formatHref(href, network ?? chain.slice(1))}>
+    <Link {...props} to={formatHref(href, network ?? (chain.slice(1) as Network))}>
       {children}
     </Link>
   );

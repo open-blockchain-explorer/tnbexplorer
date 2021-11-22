@@ -12,6 +12,7 @@ import {setRecentNetworkStats, setPreviousNetworkStats} from 'store/app';
 import Account from './Account';
 import Overview from './Overview';
 import Stats from './Stats';
+import Block from './Block';
 import Transaction from './Transaction';
 import Transactions from './Transactions';
 import Nodes from './Nodes';
@@ -19,7 +20,7 @@ import PaymentRequest from './PaymentRequest';
 import RichList from './RichList';
 import SponsorUs from './SponsorUs';
 import TestnetFaucet from './TestnetFaucet';
-import TraceTransactions from './TraceTransactions';
+// import TraceTransactions from './TraceTransactions';
 
 function App() {
   const dispatch = useDispatch();
@@ -106,10 +107,12 @@ function App() {
             <Route exact path="/tnb/sponsor-us/" component={SponsorUs} />
 
             <Route exact path="/tnb/" component={Overview} />
-            <Route exact path="/tnb/account/:accountNumber/" component={Account} />
-            <Route exact path="/tnb/account/:accountNumber/trace-transactions" component={TraceTransactions} />
+            <Route exact path="/tnb/account/:accountNumber" component={Account} />
+            {/* <Route exact path="/tnb/account/:accountNumber/trace-transactions" component={TraceTransactions} /> */}
 
-            <Route exact path="/tnb/rich-list/" component={RichList} />
+            <Route exact path="/tnb/rich-list" component={RichList} />
+
+            <Route exact path="/tnb/block/:balance_key" component={Block} />
 
             <Route exact path="/tnb/transaction/:balance_key" component={Transaction} />
 
@@ -121,18 +124,21 @@ function App() {
               <Transactions section="blocks" />
             </Route>
             <Route exact path="/tnb/nodes/" component={Nodes} />
-            <Route exact path="/tnb/payment-request/" component={PaymentRequest} />
+            <Route exact path="/tnb/payment-request" component={PaymentRequest} />
             <Route exact path="/tnb/stats/" component={Stats} />
 
             {/* Testnet  Routes */}
             <Route exact path="/testnet/" component={Overview} />
-            <Route exact path="/testnet/account/:accountNumber/" component={Account} />
-            <Route exact path="/testnet/transactions/">
+            <Route exact path="/testnet/account/:accountNumber" component={Account} />
+            <Route exact path="/testnet/transactions">
               <Transactions section="transactions" />
             </Route>
             <Route exact path="/testnet/blocks/">
               <Transactions section="blocks" />
             </Route>
+
+            <Route exact path="/testnet/block/:balance_key" component={Block} />
+
             <Route exact path="/testnet/transaction/:balance_key" component={Transaction} />
 
             <Route exact path="/testnet/nodes/" component={Nodes} />
